@@ -9,7 +9,7 @@
 {% block form %}
   <div class="form_container">
     <h1>Log In</h1>
-    <form class="form login" action="{% url 'login' %}" method="POST">
+    <form class="form login" id="login_form" action="{% url 'login' %}" method="POST">
       {% csrf_token %}
       {% if message %}
         {{ message }}

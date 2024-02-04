@@ -44,6 +44,11 @@ def fill_form(driver: webdriver.Chrome, form_fields: dict) -> None:
         driver.find_element(By.NAME, field_name).send_keys(field_value)
 
 
+def clear_form(driver: webdriver.Chrome, form_fields: dict) -> None:
+    for field_name, field_value in form_fields.items():
+        driver.find_element(By.NAME, field_name).clear()
+
+
 def click(driver: webdriver.Chrome, selector_type, selector_value) -> None:
     """
     Clicks on an element identified by the given selector.
@@ -76,7 +81,7 @@ def navigate_to(driver: webdriver.Chrome, live_server, url: str) -> None:
 
 
 def find_element(
-    driver: webdriver.Chrome, selector_type: str, selector_value: str
+    driver: webdriver.Chrome | WebElement, selector_type: str, selector_value: str
 ) -> WebElement:
     """
     Finds and returns a WebElement using the provided selector.
@@ -98,11 +103,13 @@ def find_element(
             element = driver.find_element(By.NAME, selector_value)
         case "class":
             element = driver.find_element(By.CLASS_NAME, selector_value)
+        case "tag":
+            element = driver.find_elements(By.TAG_NAME, selector_value)
     return element
 
 
 def find_elements(
-    driver: webdriver.Chrome, selector_type: str, selector_value: str
+    driver: webdriver.Chrome | WebElement, selector_type: str, selector_value: str
 ) -> list[WebElement]:
     """
     Finds and returns a list of WebElements using the provided selector.
@@ -124,6 +131,8 @@ def find_elements(
             elements = driver.find_elements(By.NAME, selector_value)
         case "class":
             elements = driver.find_elements(By.CLASS_NAME, selector_value)
+        case "tag":
+            elements = driver.find_elements(By.TAG_NAME, selector_value)
     return elements
 
 

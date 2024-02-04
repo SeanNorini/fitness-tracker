@@ -123,6 +123,8 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static", "users/static"]
 
+LOGIN_URL = "user/login"
+
 FIXTURE_DIRS = ((BASE_DIR / "fixtures"),)
 
 # Default primary key field type

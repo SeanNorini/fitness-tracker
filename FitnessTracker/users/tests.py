@@ -33,31 +33,39 @@ class TestUsersSelenium(StaticLiveServerTestCase):
         assert self.driver.current_url == self.live_server_url + "/"
 
     def test_login_validation(self) -> None:
-        login(
-            self.driver,
-            self.live_server_url + "/user/login",
+        credentials = [
             {"username": "test", "password": "invalid"},
-        )
-
-        login(
-            self.driver,
-            self.live_server_url + "/user/login",
             {"username": "invalid", "password": "test"},
-        )
-
-        login(
-            self.driver,
-            self.live_server_url + "/user/login",
             {"username": "test", "password": ""},
-        )
-
-        login(
-            self.driver,
-            self.live_server_url + "/user/login",
             {"username": "", "password": "test"},
-        )
-
-        assert self.driver.current_url == (self.live_server_url + "/user/login/")
+        ]
+        self.driver.get(self.live_server_url + "/user/login")
+        for user_login in credentials:
+            fill_form(self.driver, user_login)
+            assert self.driver.current_url == (self.live_server_url + "/user/login/")
+            clear_form(self.driver, user_login)
 
     def test_login_remember_me(self) -> None:
-        pass
+        # Navigate to login
+        self.driver.get(self.live_server_url + "/user/login")
+
+        # Click checkbox
+        click(self.driver, "name", "remember_me")
+
+        # Login User
+        fill_form(self.driver, LOGIN_USER_FORM_FIELDS)
+        click(self.driver, "name", "login")
+
+        # Check that cookie won't expire on browser close
+        assert get_cookie_expiration_time(self.driver, "sessionid") > 0
+
+    def test_login_dont_remember_me(self) -> None:
+        # Navigate to login
+        self.driver.get(self.live_server_url + "/user/login")
+
+        # Login User
+        fill_form(self.driver, LOGIN_USER_FORM_FIELDS)
+        click(self.driver, "name", "login")
+
+        # Check that cookie expires on browser close
+        assert get_cookie_expiration_time(self.driver, "sessionid") == 0
