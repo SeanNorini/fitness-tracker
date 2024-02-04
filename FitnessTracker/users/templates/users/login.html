@@ -11,6 +11,9 @@
     <h1>Log In</h1>
     <form class="form login" action="{% url 'login' %}" method="POST">
       {% csrf_token %}
+      {% if message %}
+        {{ message }}
+      {% endif %}
       <div class="username">
         {{ form.username.label }}
         {{ form.username }}
@@ -23,7 +26,7 @@
         {{ form.remember_me }}
         Remember Me
       </div>
-      <button class="button" name="login" type="button">Login</button>
+      <button class="button" name="login" type="submit">Login</button>
       <div class="bold_link row">
         Need an account?
         <a href="{% url 'registration' %}" data-text="Sign Up!">Sign Up!</a>
