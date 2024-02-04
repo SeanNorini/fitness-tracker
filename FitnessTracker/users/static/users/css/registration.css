@@ -1,0 +1,44 @@
+.form {
+  margin-top: 10%;
+  display: flex;
+  flex-direction: column;
+  gap:.75rem;
+  min-width: 20rem;
+  max-width: 40rem;
+}
+
+#name {
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.registration.row {
+  justify-content: center;
+}
+
+.registration .button {
+  min-width: 18rem;
+}
+
+#attributes {
+  gap: 1rem;
+}
+
+#id_gender label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: .25rem;
+}
+
+#optional {
+  text-align: center;
+}
+
+#name div {
+  width: 100%;
+}
+
+#name input {
+  width: 100%;
+}
