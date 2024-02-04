@@ -3,6 +3,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 from django.core.exceptions import ValidationError
+from .models import User
 import json
 
 
@@ -280,3 +281,23 @@ def read_registration(form):
         return user_info, user_config
     else:
         raise ValidationError("Passwords did not match.")
+
+
+def create_user(**user_contact) -> User:
+    user = User.objects.create_user(**user_contact, is_staff=False)
+    user.save()
+    return user
+
+
+def send_email_confirmation(**user_info) -> None:
+    # html_body = render_to_string("users/registration-email.html", user_info)
+    #
+    # message = EmailMultiAlternatives(
+    #     subject="Your Account is now Registered.",
+    #     body="mail testing",
+    #     from_email=os.environ["EMAIL_HOST_USER"],
+    #     to=["snorini@gmail.com"],
+    # )
+    # message.attach_alternative(html_body, "text/html")
+    # message.send(fail_silently=False)
+    pass

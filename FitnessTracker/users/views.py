@@ -5,6 +5,7 @@ from django.urls import reverse
 from .forms import LoginForm, RegistrationForm, SettingsForm
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
+from .utilities import create_user, read_registration, send_email_confirmation
 
 
 # Create your views here.
