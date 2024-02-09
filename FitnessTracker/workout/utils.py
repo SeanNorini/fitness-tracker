@@ -1,46 +1,45 @@
 from .models import *
 from users.models import *
-
-
-def delete_record(obj: object) -> None:
-    obj.delete()
+from django.db.models import Q
 
 
 def save_session(user, workout_form) -> None:
     workout_log = WorkoutLog()
     workout_name = workout_form.cleaned_data["name"]
-    print(workout_name)
-    workout = Workout.objects.filter(name=workout_name, user=user)
-
-    if len(workout) == 0:
-        default = User.objects.get(username="default")
-        workout = Workout.objects.filter(name=workout_name, user=default)
+    workout = Workout.objects.filter(
+        Q(name=workout_name, user=user) | Q(name=workout_name, username="default")
+    ).first()
 
     workout_log.workout = workout[0]
     workout_log.user = user
     workout_log.save()
 
-    exercises = workout_form.cleaned_data["exercises"].split(",")
-    weights = workout_form.cleaned_data["weights"].split(",")
-    reps = workout_form.cleaned_data["reps"].split(",")
+    exercises = workout_form.cleaned_data["exercises"]
+    for exercise in exercises["exercises"]:
+        ((exercise_name, set_info),) = exercise.items()
 
-    for i, exercise in enumerate(exercises):
-        curr_exercise = Exercise.objects.filter(name=exercise, user=user)
+        curr_exercise = Exercise.objects.filter(
+            Q(name=exercise_name, user=user) | Q(name=exercise_name, user=default)
+        ).first()
 
-        if len(curr_exercise) == 0:
-            default = User.objects.get(username="default")
-            curr_exercise = Exercise.objects.filter(name=exercise, user=default)
+        for i in range(len(set_info["weight"])):
+            set_log = Set()
+            set_log.workout_log = workout_log
+            set_log.exercise = curr_exercise[0]
+            set_log.weight = set_info["weight"][i]
+            set_log.reps = set_info["reps"][i]
+            set_log.save()
+    return
 
-        if weights[i] == "" or reps[i] == "":
-            continue
 
-        curr_set = Set(
-            exercise=curr_exercise[0],
-            workout_log=workout_log,
-            weight=weights[i],
-            reps=reps[i],
-        )
+def save_custom_workout(user, workout_form) -> None:
+    workout_name = workout_form.cleaned_data["name"]
+    config = workout_form.cleaned_data["exercises"]
 
-        curr_set.save()
+    Workout.objects.update_or_create(
+        name=workout_name,
+        user=user,
+        defaults={"name": workout_name, "user": user, "config": config},
+    )
 
     return

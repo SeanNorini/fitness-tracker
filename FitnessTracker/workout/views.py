@@ -4,17 +4,21 @@ from django.http import JsonResponse
 from .models import *
 from users.models import User
 from .forms import WorkoutForm
-from .utils import save_session
+from .utils import save_session, save_custom_workout
+from django.db.models import Q
+
+DEFAULT_USER = User.objects.get(username="default")
 
 
 # Create your views here.
 @login_required
 def index(request):
-    default = User.objects.get(username="default")
     exercises = list(
-        Exercise.objects.filter(user=default).values_list("name", flat=True)
+        Exercise.objects.filter(user=DEFAULT_USER).values_list("name", flat=True)
     )
-    workouts = list(Workout.objects.filter(user=default).values_list("name", flat=True))
+    workouts = list(
+        Workout.objects.filter(user=DEFAULT_USER).values_list("name", flat=True)
+    )
     # exercises.extend(list(Exercise.objects.exclude(name__in=exercises).values_list("name", flat=True)))
     # workouts.extend(list(Workout.objects.exclude(name__in=workouts).values_list("name", flat=True)))
 
@@ -48,17 +52,12 @@ def add_set(request):
 @login_required
 def select_workout(request, workout_name):
     exercises = Workout.objects.filter(
-        name=workout_name.replace("%20", " "), user=request.user
-    )
-
-    if len(exercises) == 0:
-        default = User.objects.get(username="default")
-        exercises = Workout.objects.filter(
-            name=workout_name.replace("%20", " "), user=default
-        )
+        Q(name=workout_name.replace("%20", " "), user=request.user)
+        | Q(name=workout_name.replace("%20", " "), user=DEFAULT_USER)
+    ).first()
 
     return render(
-        request, "workout/workout.html", {"exercises": exercises[0].config["exercises"]}
+        request, "workout/workout.html", {"exercises": exercises.config["exercises"]}
     )
 
 
@@ -66,6 +65,7 @@ def select_workout(request, workout_name):
 def save_workout_session(request):
     if request.method == "POST":
         workout_form = WorkoutForm(request.POST)
+
         if workout_form.is_valid():
             save_session(request.user, workout_form)
 
@@ -74,12 +74,24 @@ def save_workout_session(request):
 
 
 @login_required
+def save_workout(request):
+    if request.method == "POST":
+        workout_form = WorkoutForm(request.POST)
+        if workout_form.is_valid():
+            save_custom_workout(request.user, workout_form)
+
+            return JsonResponse({"success": True})
+        return JsonResponse({"error": "Invalid Form"})
+
+
+@login_required
 def edit_workouts(request):
-    default = User.objects.get(username="default")
     exercises = list(
-        Exercise.objects.filter(user=default).values_list("name", flat=True)
+        Exercise.objects.filter(user=DEFAULT_USER).values_list("name", flat=True)
     )
-    workouts = list(Workout.objects.filter(user=default).values_list("name", flat=True))
+    workouts = list(
+        Workout.objects.filter(user=DEFAULT_USER).values_list("name", flat=True)
+    )
 
     return render(
         request,
@@ -90,11 +102,12 @@ def edit_workouts(request):
 
 @login_required
 def exit_edit(request):
-    default = User.objects.get(username="default")
     exercises = list(
-        Exercise.objects.filter(user=default).values_list("name", flat=True)
+        Exercise.objects.filter(user=DEFAULT_USER).values_list("name", flat=True)
     )
-    workouts = list(Workout.objects.filter(user=default).values_list("name", flat=True))
+    workouts = list(
+        Workout.objects.filter(user=DEFAULT_USER).values_list("name", flat=True)
+    )
 
     return render(
         request,

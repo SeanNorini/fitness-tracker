@@ -100,22 +100,5 @@ def settings(request):
     modules = ["workout", "cardio", "log", "stats", "settings"]
     form = SettingsForm()
     for field_name, field in form.fields.items():
-        config = user.config
-        if field_name in ["gender", "height", "weight", "age"]:
-            field.widget.attrs["value"] = config[field_name]
-        else:
-            field.widget.attrs["value"] = getattr(user, field_name)
+        field.widget.attrs["value"] = getattr(user, field_name)
     return render(request, "users/settings.html", {"modules": modules, "form": form})
-
-
-@login_required
-def user_settings(request):
-    user = request.user
-    form = SettingsForm()
-    for field_name, field in form.fields.items():
-        config = user.config
-        if field_name in ["gender", "height", "weight", "age"]:
-            field.widget.attrs["value"] = config[field_name]
-        else:
-            field.widget.attrs["value"] = getattr(user, field_name)
-    return render(request, "users/user_settings.html", {"form": form})

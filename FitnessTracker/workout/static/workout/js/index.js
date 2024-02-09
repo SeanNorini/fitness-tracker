@@ -44,9 +44,9 @@ controls.addEventListener("click", (e) => {
         e.target.closest(".set").remove();
     }
 
-    if (e.target.classList.contains("save_workout_session")){
+    if (e.target.classList.contains("save_workout")){
         // Check for workout to save
-        const exercises = document.querySelectorAll(".exercise_name");
+        const exercises = document.querySelectorAll(".exercise_container");
         if (exercises.length == 0){
             set_message("You must add at least one exercise before saving a workout session.");
             return
@@ -60,30 +60,45 @@ controls.addEventListener("click", (e) => {
         workout.append("name", workoutName);
 
         // Get exercise sets
-        const sets = document.querySelectorAll(".set");
-        const setWeights= [];
-        const setReps = [];
-        const setExercises = [];
-        sets.forEach(element => {
-            const exercise = element.closest(".exercise_container").querySelector("#exercise_name");
-            setExercises.push(exercise.textContent.trim());
+        const workout_exercises = {"exercises": []}
+        exercises.forEach(element => {
+            const weights = [];
+            const reps = [];
+            const exercise_name = element.querySelector("#exercise_name").textContent.trim();
 
-            const weight = element.querySelector(".weight").value;
-            setWeights.push(weight);
+            const sets = element.querySelectorAll(".set");
+            sets.forEach(element => {
+                const setWeight = element.querySelector(".weight").value;
+                weights.push(setWeight);
 
-            const reps = element.querySelector(".reps").value;
-            setReps.push(reps);
+                const setReps = element.querySelector(".reps").value;
+                reps.push(setReps);
+            });
+            var exercise = {};
+            exercise[exercise_name] = {"weight": weights, "reps": reps}
+            workout_exercises["exercises"].push(exercise);
+
+
         });
-        workout.append("exercises", setExercises);
-        workout.append("weights", setWeights);
-        workout.append("reps", setReps);
+        workout.append("exercises", JSON.stringify(workout_exercises));
+
+
  
         // Add CSRF token
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         workout.append('csrfmiddlewaretoken', csrftoken);
 
+        var url = "";
+        if (document.querySelector("#session").value==="True"){
+            url = "save_workout_session"
+        }
+        else{
+            url = "save_workout"
+        }
+
+
         // Send workout data and display response
-        fetch("save_workout_session", {method: "POST", body: workout})
+        fetch(url, {method: "POST", body: workout})
         .then(response => response.text())
         .then(data => {
             if (data.success){
@@ -97,9 +112,7 @@ controls.addEventListener("click", (e) => {
         .then(response => response.text())
         .then(template => {
             const container = document.querySelector(".form_container");
-            const token = container.querySelector("[name=csrfmiddlewaretoken]");
             container.innerHTML = "";
-            container.appendChild(token);
             const editForm = document.createElement("template");
             editForm.innerHTML = template.trim();
             container.appendChild(editForm.content);
@@ -112,9 +125,7 @@ controls.addEventListener("click", (e) => {
         .then(response => response.text())
         .then(template => {
             const container = document.querySelector(".form_container");
-            const token = container.querySelector("[name=csrfmiddlewaretoken]");
             container.innerHTML = "";
-            container.appendChild(token);
             const editForm = document.createElement("template");
             editForm.innerHTML = template.trim();
             container.appendChild(editForm.content);
@@ -146,9 +157,6 @@ function set_message(message) {
 controls.addEventListener("change", (e) => {
     if (e.target.classList.contains("workout")){
         workout = document.querySelector(".workout").value;
-        if (workout == "custom"){
-            return
-        }
 
         const confirm = window.confirm("This will erase the current workout session, are you sure?")
 
