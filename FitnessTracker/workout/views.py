@@ -4,10 +4,8 @@ from django.http import JsonResponse
 from .models import *
 from users.models import User
 from .forms import WorkoutForm
-from .utils import save_session, save_custom_workout
+from .utils import save_session, save_custom_workout, DEFAULT_USER
 from django.db.models import Q
-
-DEFAULT_USER = User.objects.get(username="default")
 
 
 # Create your views here.

@@ -107,6 +107,14 @@ button.controls:hover {
   gap: .5rem;
 }
 
+.top_controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
 .controls div {
   align-self: center;
 }

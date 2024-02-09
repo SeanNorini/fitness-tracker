@@ -1,8 +1,8 @@
 const controls = document.querySelector("#workout_form");
 
-controls.addEventListener("click", (e) => {
-    e.preventDefault();
+document.getElementById("date").valueAsDate = new Date();
 
+controls.addEventListener("click", (e) => {
     if (e.target.classList.contains("delete_exercise")){
         e.target.closest(".exercise_container").remove(); 
 
@@ -133,12 +133,6 @@ controls.addEventListener("click", (e) => {
     }
 
 });
-
-function update_set_number(container) {
-    const sets = container.querySelectorAll(".set");
-    const test = sets[sets.length - 1].querySelector(".set_number").innerText = "Set " + sets.length + ":";
-
-    }
 
 function set_message(message) {
     if (!document.querySelector("#placeholder")){

@@ -2,15 +2,16 @@ from .models import *
 from users.models import *
 from django.db.models import Q
 
+DEFAULT_USER = User.objects.get(username="default")
 
 def save_session(user, workout_form) -> None:
     workout_log = WorkoutLog()
     workout_name = workout_form.cleaned_data["name"]
     workout = Workout.objects.filter(
-        Q(name=workout_name, user=user) | Q(name=workout_name, username="default")
+        Q(name=workout_name, user=user) | Q(name=workout_name, user=DEFAULT_USER)
     ).first()
 
-    workout_log.workout = workout[0]
+    workout_log.workout = workout
     workout_log.user = user
     workout_log.save()
 
@@ -19,13 +20,13 @@ def save_session(user, workout_form) -> None:
         ((exercise_name, set_info),) = exercise.items()
 
         curr_exercise = Exercise.objects.filter(
-            Q(name=exercise_name, user=user) | Q(name=exercise_name, user=default)
+            Q(name=exercise_name, user=user) | Q(name=exercise_name, user=DEFAULT_USER)
         ).first()
 
         for i in range(len(set_info["weight"])):
             set_log = Set()
             set_log.workout_log = workout_log
-            set_log.exercise = curr_exercise[0]
+            set_log.exercise = curr_exercise
             set_log.weight = set_info["weight"][i]
             set_log.reps = set_info["reps"][i]
             set_log.save()

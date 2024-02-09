@@ -1,24 +1,17 @@
   {% csrf_token %}
   <input type="hidden" id="session" value="True">
-  <div class="controls_container">
-      <div>
-        <div class="select_container row">
+  <div class="controls_container row">
+      <div class="top_controls">
+        <input type="date" id="date">
+        <div class="select_container">
           <select class="workout">
             {% for workout in workouts %}
               <option value="{{ workout }}">{{ workout }}</option>
             {% endfor %}
           </select>
         </div>
-
-        <div>
         <button class="edit_workouts controls" value="edit workouts">Edit Workouts</button>
-        </div>
-
       </div>
-      <span class="material-symbols-outlined routine_help workout_tooltip">
-        help
-      </span>
-      <div id="workout_tooltip">To create or edit exercises, workouts, or your routine, go to settings.</div>
     </div>
 
     <div id="exercises">
