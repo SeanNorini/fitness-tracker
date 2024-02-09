@@ -1,10 +1,6 @@
-from django.test import TestCase
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import IntegrityError
-from selenium import webdriver
-from .utilities import *
-import time
+from common.selenium_utils import *
+from common.users_utils import get_cookie_expiration_time
 
 # Constants for login and registration form fields
 LOGIN_USER_FORM_FIELDS = {"username": "test", "password": "test"}
@@ -27,20 +23,6 @@ class TestUsersSelenium(StaticLiveServerTestCase):
     def setUp(self) -> None:
         self.driver.get(self.live_server_url + "/user/login")
 
-    def register_user(self):
-        self.driver.get(f"{self.live_server_url}/user/registration")
-        self.driver.find_element(By.NAME, "username").send_keys("test_name")
-        self.driver.find_element(By.NAME, "first_name").send_keys("first_name")
-        self.driver.find_element(By.NAME, "last_name").send_keys("last_name")
-        self.driver.find_element(By.NAME, "password").send_keys("test_pass")
-        self.driver.find_element(By.NAME, "confirm_password").send_keys("test_pass")
-        self.driver.find_element(By.NAME, "email").send_keys("snorini@gmail.com")
-        self.driver.find_element(By.NAME, "weight").send_keys("150")
-        self.driver.find_element(By.NAME, "height").send_keys("75")
-        self.driver.find_element(By.NAME, "age").send_keys("28")
-        self.driver.find_element(By.NAME, "register").click()
-        time.sleep(1)
-
     def test_login_elements(self) -> None:
         elements = {"id": ["username", "password", "remember_me"]}
         assert elements_exist(self.driver, elements)
@@ -54,13 +36,15 @@ class TestUsersSelenium(StaticLiveServerTestCase):
         credentials = [
             {"username": "test", "password": "invalid"},
             {"username": "invalid", "password": "test"},
-            {"username": "test", "password": ""},
-            {"username": "", "password": "test"},
         ]
         for user_login in credentials:
             fill_form(self.driver, user_login)
             assert self.driver.current_url == (self.live_server_url + "/user/login/")
             clear_form(self.driver, user_login)
+
+    def test_login_required_fields(self) -> None:
+        required_fields = ["username", "password"]
+        assert validate_required_fields(self.driver, "login_form", required_fields)
 
     def test_login_remember_me(self) -> None:
         # Click checkbox
@@ -80,16 +64,3 @@ class TestUsersSelenium(StaticLiveServerTestCase):
 
         # Check that cookie expires on browser close
         assert get_cookie_expiration_time(self.driver, "sessionid") == 0
-
-    def test_registration(self):
-        # Confirm user does not exist
-        try:
-            User.objects.get(username="test_name")
-            raise IntegrityError
-        except ObjectDoesNotExist:
-            pass
-        # Create user
-        self.register_user()
-
-        # Confirm user created
-        assert User.objects.get(username="test_name")

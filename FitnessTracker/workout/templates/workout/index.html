@@ -1,0 +1,17 @@
+{% extends "workout/layout.html" %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link rel="stylesheet" href="{% static 'workout/css/index.css' %}">
+{% endblock %}
+
+{% block body %}
+  <form class="form_container col" id="workout_form">
+    {% include "workout/workout_session.html" %}
+  </form>
+{% endblock %}
+
+{% block javascript %}
+  <script type="text/javascript" src="{% static 'workout/js/index.js' %}"></script>
+{% endblock %}

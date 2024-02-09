@@ -1,0 +1,29 @@
+<div class="controls_container">
+    
+    <div>
+      <div class="select_container">
+        <select class="exercise">
+          <option value="New Exercise" selected>New Exercise</option>
+          {% for exercise in exercises %}
+            <option>{{ exercise }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    
+      
+    <div class="row edit_container">
+      <button class="controls" id="done_editing" type="button">Done Editing</button>
+      <span class="material-symbols-outlined help">
+        help
+      </span>
+    </div>
+      
+  </div>
+
+  <div id="exercises">
+    {% include "workout/exercise.html" %}
+  </div>
+  <div class="controls_container save_exercise">
+      <button class="save_exercise controls" type="button">Save Exercise</button>
+  </div>

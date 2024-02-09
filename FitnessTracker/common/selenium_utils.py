@@ -2,9 +2,6 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from selenium import webdriver
-from django.core.exceptions import ValidationError
-from .models import User
-import json
 
 
 def select(
@@ -65,21 +62,6 @@ def click(driver: webdriver.Chrome, selector_type, selector_value) -> None:
     """
     element = find_element(driver, selector_type, selector_value)
     element.click()
-
-
-def navigate_to(driver: webdriver.Chrome, live_server, url: str) -> None:
-    """
-    Navigates the Chrome WebDriver to a specified URL on the live server.
-
-    Args:
-        driver (webdriver.Chrome): The Chrome WebDriver instance.
-        live_server: The live server fixture.
-        url (str): The URL to navigate to.
-
-    Returns:
-        None
-    """
-    driver.get(live_server.url + url)
 
 
 def find_element(
@@ -192,112 +174,15 @@ def capture_screenshot(driver: webdriver.Chrome, file_name: str):
     driver.save_screenshot("auctions/static/tests/" + file_name + ".png")
 
 
-def save_json(data: dict, file_name: str) -> None:
-    """
-    Save the passed data as file_name.json.
+def validate_required_fields(driver, form_id, required_fields) -> bool:
+    form = find_element(driver, "id", form_id)
+    inputs = find_elements(form, "tag", "input")
 
-    Args:
-        data (dict): The data to be saved.
-        file_name (str): The name of the JSON file.
+    for form_input in inputs:
+        if (
+            form_input.get_attribute("required")
+            and form_input.get_attribute("name") not in required_fields
+        ):
+            return False
 
-    Returns:
-        None
-    """
-    with open(file_name, "w") as json_file:
-        json.dump(data, json_file, indent=4)
-
-
-def read_json(file_name: str) -> dict:
-    """
-    Reads data from file_name.json and returns a dict.
-
-    Args:
-        file_name (str): The name of the JSON file.
-
-    Returns:
-        dict: The data read from the JSON file.
-    """
-    with open(file_name, "r") as json_file:
-        data = json.loads(json_file)
-        return data
-
-
-def get_cookie_expiration_time(driver, cookie_name):
-    """
-    Gets the expiration time of a specific cookie.
-
-    Args:
-        driver: The Chrome WebDriver instance.
-        cookie_name (str): The name of the cookie.
-
-    Returns:
-        int: The expiration time of the cookie.
-    """
-    # Get all cookies
-    cookies = driver.get_cookies()
-
-    # Find the specific cookie by name
-    target_cookie = next(
-        (cookie for cookie in cookies if cookie["name"] == cookie_name), None
-    )
-
-    # Extract and return the expiration time of the cookie
-    if target_cookie:
-        if "expiry" in target_cookie:
-            return target_cookie["expiry"]
-
-    return 0
-
-
-def read_registration(form):
-    user_info = {}
-    user_config = {}
-    if form.is_valid():
-        user_info["username"] = form.cleaned_data["username"]
-        user_info["first_name"] = (
-            form.cleaned_data["first_name"]
-            if form.cleaned_data["first_name"]
-            else "Jane"
-        )
-        user_info["last_name"] = (
-            form.cleaned_data["last_name"] if form.cleaned_data["last_name"] else "Doe"
-        )
-        user_info["password"] = form.cleaned_data["password"]
-        user_info["email"] = form.cleaned_data["email"]
-        user_config["gender"] = form.cleaned_data["gender"]
-        user_config["height"] = (
-            form.cleaned_data["height"] if form.cleaned_data["height"] else 70
-        )
-        user_config["weight"] = (
-            form.cleaned_data["weight"] if form.cleaned_data["weight"] else 180
-        )
-        user_config["age"] = (
-            form.cleaned_data["age"] if form.cleaned_data["age"] else 30
-        )
-    else:
-        raise ValidationError("Invalid form data.")
-
-    if user_info["password"] == form.cleaned_data["confirm_password"]:
-        return user_info, user_config
-    else:
-        raise ValidationError("Passwords did not match.")
-
-
-def create_user(**user_contact) -> User:
-    user = User.objects.create_user(**user_contact, is_staff=False)
-    user.save()
-    return user
-
-
-def send_email_confirmation(**user_info) -> None:
-    # html_body = render_to_string("users/registration-email.html", user_info)
-    #
-    # message = EmailMultiAlternatives(
-    #     subject="Your Account is now Registered.",
-    #     body="mail testing",
-    #     from_email=os.environ["EMAIL_HOST_USER"],
-    #     to=["snorini@gmail.com"],
-    # )
-    # message.attach_alternative(html_body, "text/html")
-    # message.send(fail_silently=False)
-    pass
+    return True

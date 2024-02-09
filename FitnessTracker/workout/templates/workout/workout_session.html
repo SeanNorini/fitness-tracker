@@ -1,0 +1,44 @@
+  {% csrf_token %}
+  <div class="controls_container">
+      <div>
+        <div class="select_container row">
+          <select class="workout">
+            {% for workout in workouts %}
+              <option value="{{ workout }}">{{ workout }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+        <button class="edit_workouts controls" value="edit workouts">Edit Workouts</button>
+        </div>
+
+      </div>
+      <span class="material-symbols-outlined routine_help workout_tooltip">
+        help
+      </span>
+      <div id="workout_tooltip">To create or edit exercises, workouts, or your routine, go to settings.</div>
+    </div>
+
+    <div id="exercises">
+      <div id="placeholder">Please select a workout or add an exercise to get started.</div>
+    </div>
+    <div class="controls_container">
+      <div>
+        <div class="select_container">
+          <select class="exercise">
+            {% for exercise in exercises %}
+              <option>{{ exercise }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+        
+      <div>
+        <button class="add_exercise controls" value="add exercise">Add Exercise</button>
+      </div>
+        
+      <div>
+        <button class="save_workout_session controls" value="save workout session">Save Workout Session</button>
+      </div>
+    </div>

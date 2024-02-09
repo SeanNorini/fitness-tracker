@@ -1,0 +1,282 @@
+
+#placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 15rem;
+}
+
+#exercises {
+  gap: 1rem;
+}
+
+.exercise_name {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: bolder;
+  margin: 0 0 .25rem;
+  gap: 1rem;
+}
+
+button.delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 0;
+  transform: scale(1.25);
+}
+
+button.delete:hover {
+  background-color: rgba(0,0,0,0);
+}
+
+span {
+  color: rgb(250, 250, 250);
+}
+
+button:hover span{
+  transition: .3s all ease-in;
+  color: red;
+}
+
+.set {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  margin-bottom: .25rem;
+}
+
+.set input {
+  max-width: 3.5rem;
+}
+
+.set div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.sets {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: stretch;
+}
+
+.exercise_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #3a414a;
+  padding: .25rem;
+  border-radius: 1rem;
+  
+}
+
+button.controls {
+  display: flex;
+  flex-direction: column;
+  padding: .25rem 1rem;
+  background-color: #1f538d;
+  color: rgb(250, 250, 250);
+  border-radius: 1rem;
+  text-align: center;
+  font-size: 1.4rem;
+  border: 2px solid black;
+}
+
+button.controls:hover {
+  transition: all .3s ease-in;
+  background-color: #14375e;
+  cursor: pointer;
+}
+
+.form_container .controls_container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  border-radius: 2rem;
+  padding: .4rem .5rem;
+  background-color: #3a414a;
+  flex-grow: 1;
+  align-self: stretch;
+  align-items: center;
+  gap: .5rem;
+}
+
+.controls div {
+  align-self: center;
+}
+
+#delete_set {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.set:last-child:not(:first-child) #delete_set {
+  visibility: visible;
+  pointer-events: all;
+}
+
+.delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+hr.visible  {
+  border: 0;
+  height: 1px;
+
+  background: linear-gradient(to right, #3a414a, #6f7681, #3a414a);
+  visibility: visible;
+  max-width: 50%;
+  margin: 0 0 .5rem;
+}
+
+.set_number {
+  margin-right: 2rem;
+}
+
+.weight, .reps {
+  margin: 0 .5rem;
+  text-align: right;
+}
+
+.edit_container {
+  
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.workout {
+  max-width: 15rem;
+}
+
+.workout_tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+#workout_tooltip {
+  visibility: hidden;
+  max-width: 15rem;
+  background-color: var(--blue);
+  color: var(--light_font);
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 1.2rem;
+}
+
+.workout_tooltip:hover + #workout_tooltip{
+  visibility: visible;
+  opacity: 1;
+}
+
+
+
+
+
+
+.form_container > div {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-submit {
+  align-self: center;
+  justify-self: center;
+}
+
+.module {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1rem .5rem;
+  background-color: var(--blue);
+  border-radius: 1rem;
+  text-align: center;
+  font-size: 1.4rem;
+  margin-bottom: 0;
+}
+
+.module:hover {
+  transition: all .3s ease-in;
+  background-color: #14375e;
+}
+
+.module-link {
+  width: 100%;
+  max-width: 20%;
+}
+
+.modules-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+.form-submit {
+  width: 100%;
+}
+
+button:hover  {
+  transition: all .3s ease-in;
+  background-color: #14375e;
+}
+
+#workout_form {
+  width: 100%;
+  max-width: 50rem;
+  margin-top: 2rem;
+  gap: 1rem;
+  background-color: var(--darkgray);
+  box-shadow: none;
+}
+
+select {
+  border-radius: 1rem;
+  background-color: var(--darkgray);
+  color: var(--light_font);
+  font-size: 1.4rem;
+  padding: .25rem 1rem;
+  margin: 0;
+}
+
+option {
+  border-radius: 1rem;
+  background-color: var(--darkgray);
+  color: var(--light_font);
+  font-size: 1.4rem;
+  padding: .25rem 1rem;
+}
+
+.select_container {
+  background-color: #6f7681;
+  padding: .25rem 1rem;
+  border-radius: 2rem;
+}

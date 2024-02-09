@@ -1,0 +1,13 @@
+{% load static %}
+<a id="module-link" href="{% url module %}">
+  <div class="module">
+    <div class="module-img">
+      {% with 'img/'|add:module|add:'.jpg' as module_image %}
+      <img src="{% static module_image %}">
+      {% endwith %}
+    </div>
+    <div class="module-name">
+      {{ module }}
+    </div>
+  </div>
+</a>

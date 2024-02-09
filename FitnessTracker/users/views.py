@@ -5,7 +5,12 @@ from django.urls import reverse
 from .forms import LoginForm, RegistrationForm, SettingsForm
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from .utilities import create_user, read_registration, send_email_confirmation
+from common.users_utils import (
+    create_user,
+    read_registration,
+    send_email_confirmation,
+)
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -51,9 +56,11 @@ def registration(request):
     # Check for form data
     if request.method == "POST":
         try:
-            # Read data into contact info and physical attributes
+            # Retrieve form data from request
             form = RegistrationForm(request.POST)
-            user_info, user_config = read_registration(form)
+
+            # Read form data
+            user_info = read_registration(form)
 
         except ValidationError as error:
             # If form isn't valid or password doesn't match, return error message.
@@ -61,7 +68,7 @@ def registration(request):
 
         # Attempt to create a new user, update their info and log in to main page.
         try:
-            user = create_user(config=user_config, **user_info)
+            user = create_user(**user_info)
             send_email_confirmation(**user_info)
             login(request, user)
             return JsonResponse({"success": True})
@@ -72,3 +79,43 @@ def registration(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "users/registration.html", {"form": RegistrationForm()})
+
+
+@login_required
+def settings(request):
+    user = request.user
+    if request.method == "POST":
+        form = SettingsForm(request.POST)
+        if form.is_valid():
+            user.first_name = form.cleaned_data["first_name"]
+            user.last_name = form.cleaned_data["last_name"]
+            user.email = form.cleaned_data["email"]
+            user.gender = form.cleaned_data["gender"]
+            user.height = form.cleaned_data["height"]
+            user.weight = form.cleaned_data["weight"]
+            user.age = form.cleaned_data["age"]
+            user.save()
+            return JsonResponse({"success": True})
+    # user.get_module_list()
+    modules = ["workout", "cardio", "log", "stats", "settings"]
+    form = SettingsForm()
+    for field_name, field in form.fields.items():
+        config = user.config
+        if field_name in ["gender", "height", "weight", "age"]:
+            field.widget.attrs["value"] = config[field_name]
+        else:
+            field.widget.attrs["value"] = getattr(user, field_name)
+    return render(request, "users/settings.html", {"modules": modules, "form": form})
+
+
+@login_required
+def user_settings(request):
+    user = request.user
+    form = SettingsForm()
+    for field_name, field in form.fields.items():
+        config = user.config
+        if field_name in ["gender", "height", "weight", "age"]:
+            field.widget.attrs["value"] = config[field_name]
+        else:
+            field.widget.attrs["value"] = getattr(user, field_name)
+    return render(request, "users/user_settings.html", {"form": form})

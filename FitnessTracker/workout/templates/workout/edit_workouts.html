@@ -1,0 +1,43 @@
+<div class="controls_container">
+  <div>
+    <div class="select_container">
+      <select class="workout">
+        {% for workout in workouts %}
+          <option value="{{ workout }}">{{ workout }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+    
+  <div class="row edit_container">
+    <button class="exit_edit controls" type="button">Done Editing</button>
+    <span class="material-symbols-outlined workout_help">
+      help
+    </span>
+  </div>
+    
+</div>
+
+<div id="exercises">
+  <div id="placeholder">Please select a workout or add an exercise to get started.</div>
+</div>
+
+<div class="controls_container">
+  <div>
+    <div class="select_container">
+      <select class="exercise">
+        {% for exercise in exercises %}
+          <option>{{ exercise }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+      
+  <div>
+    <button class="add_exercise controls" type="button">Add Exercise</button>
+  </div>
+    
+  <div>
+    <button class="save_workout controls" type="button">Save Workout</button>
+  </div>
+</div>

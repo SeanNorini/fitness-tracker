@@ -1,0 +1,28 @@
+<div class="set">
+  <div class="set_number">
+  Set {{ forloop.counter }}:
+  </div>
+  <div>
+    <div>
+    <input type="number" class="weight" step=".5" value="{{ set.weight }}">
+    </div>
+    <div>
+    Lbs.
+    </div>
+  </div>
+  <div>
+    <div>
+    <input type="number" class="reps" value="{{ set.reps }}">
+    </div>
+    <div>
+    Reps
+    </div>
+  </div>
+  <div id="delete_set">
+    <button class="delete delete_set">
+      <span class="material-symbols-outlined delete delete_set">
+        delete
+      </span>
+    </button>
+  </div>
+</div>
