@@ -27,7 +27,7 @@
    ```
    ```sh
    # Activate the virtual environment, terminal should show env near prompt. Type deactivate to exit virtual environment
-   env/scripts/activate
+   env\scripts\activate
    ```
 3. Install Project Dependencies
    ```sh
