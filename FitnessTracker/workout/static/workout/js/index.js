@@ -3,6 +3,8 @@ const controls = document.querySelector("#workout_form");
 document.getElementById("date").valueAsDate = new Date();
 
 controls.addEventListener("click", (e) => {
+    e.preventDefault()
+
     if (e.target.classList.contains("delete_exercise")){
         e.target.closest(".exercise_container").remove(); 
 
@@ -147,6 +149,12 @@ function set_message(message) {
 
     placeholder.innerText = message;
 }
+
+function update_set_number(container) {
+    const sets = container.querySelectorAll(".set");
+    sets[sets.length - 1].querySelector(".set_number").innerText = "Set " + sets.length + ":";
+
+    }
 
 controls.addEventListener("change", (e) => {
     if (e.target.classList.contains("workout")){
