@@ -1,7 +1,7 @@
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.password_validation import validate_password
-from setuptools.config._validate_pyproject import ValidationError
+from django.contrib.auth.hashers import make_password
 
 from .models import User
 
@@ -160,3 +160,10 @@ class RegistrationForm(SettingsForm):
             cleaned_data["age"] = 30  # Set default age
 
         return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.password = make_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+        return user

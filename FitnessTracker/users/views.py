@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from .forms import LoginForm, RegistrationForm, SettingsForm
+from .models import User
 from .utils import (
     create_user,
     send_email_confirmation,
@@ -21,8 +22,8 @@ def user_login(request):
             username = login_form.cleaned_data["username"]
             password = login_form.cleaned_data["password"]
             remember_me = login_form.cleaned_data["remember_me"]
-
             user = authenticate(request, username=username, password=password)
+
             if user is not None:
                 login(request, user)
                 if not remember_me:
