@@ -3,14 +3,14 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import *
 from users.models import User
-from .forms import WorkoutForm
-from .utils import save_session, save_custom_workout, DEFAULT_USER
-from django.db.models import Q
+from .forms import WorkoutForm, WorkoutSessionForm
+from .utils import *
 
 
 # Create your views here.
 @login_required
 def index(request):
+    DEFAULT_USER = User.objects.get(username="default")
     exercises = list(
         Exercise.objects.filter(user=DEFAULT_USER).values_list("name", flat=True)
     )
@@ -49,20 +49,15 @@ def add_set(request):
 
 @login_required
 def select_workout(request, workout_name):
-    exercises = Workout.objects.filter(
-        Q(name=workout_name.replace("%20", " "), user=request.user)
-        | Q(name=workout_name.replace("%20", " "), user=DEFAULT_USER)
-    ).first()
-
-    return render(
-        request, "workout/workout.html", {"exercises": exercises.config["exercises"]}
-    )
+    workout = get_workout(request.user, workout_name.replace("%20", " "))
+    workout_config = configure_workout(workout)
+    return render(request, "workout/workout.html", {"workout": workout_config})
 
 
 @login_required
 def save_workout_session(request):
     if request.method == "POST":
-        workout_form = WorkoutForm(request.POST)
+        workout_form = WorkoutSessionForm(request.POST)
 
         if workout_form.is_valid():
             save_session(request.user, workout_form)
@@ -75,6 +70,7 @@ def save_workout_session(request):
 def save_workout(request):
     if request.method == "POST":
         workout_form = WorkoutForm(request.POST)
+
         if workout_form.is_valid():
             save_custom_workout(request.user, workout_form)
 
@@ -84,6 +80,7 @@ def save_workout(request):
 
 @login_required
 def edit_workouts(request):
+    DEFAULT_USER = User.objects.get(username="default")
     exercises = list(
         Exercise.objects.filter(user=DEFAULT_USER).values_list("name", flat=True)
     )
@@ -100,6 +97,7 @@ def edit_workouts(request):
 
 @login_required
 def exit_edit(request):
+    DEFAULT_USER = User.objects.get(username="default")
     exercises = list(
         Exercise.objects.filter(user=DEFAULT_USER).values_list("name", flat=True)
     )

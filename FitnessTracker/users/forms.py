@@ -1,5 +1,9 @@
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.password_validation import validate_password
+from setuptools.config._validate_pyproject import ValidationError
+
+from .models import User
 
 
 class LoginForm(forms.Form):
@@ -29,7 +33,7 @@ class LoginForm(forms.Form):
     )
 
 
-class SettingsForm(forms.Form):
+class SettingsForm(forms.ModelForm):
     first_name = forms.CharField(
         label="Name*",
         required=False,
@@ -60,30 +64,30 @@ class SettingsForm(forms.Form):
 
     gender = forms.ChoiceField(
         widget=forms.RadioSelect,
-        choices=[("Male", "Male"), ("Female", "Female")],
+        choices=[("M", "Male"), ("F", "Female")],
         label="Gender*",
-        initial="Male",
+        initial="M",
         required=False,
     )
 
     height = forms.FloatField(
         label="Height (In.)*",
         required=False,
-        widget=forms.TextInput(attrs={"placeholder": "70", "class": "numbers"}),
-        validators=[MinValueValidator(36.0), MaxValueValidator(100.0)],
+        widget=forms.NumberInput(attrs={"placeholder": "70", "class": "numbers"}),
+        validators=[MinValueValidator(20.0), MaxValueValidator(120.0)],
     )
 
     weight = forms.FloatField(
         label="Weight (Lbs.)*",
         required=False,
-        widget=forms.TextInput(attrs={"placeholder": "180", "class": "numbers"}),
-        validators=[MinValueValidator(80.0), MaxValueValidator(1000.0)],
+        widget=forms.NumberInput(attrs={"placeholder": "160", "class": "numbers"}),
+        validators=[MinValueValidator(50.0), MaxValueValidator(1000.0)],
     )
 
     age = forms.IntegerField(
         label="Age*",
         required=False,
-        widget=forms.TextInput(attrs={"placeholder": "30", "class": "numbers"}),
+        widget=forms.NumberInput(attrs={"placeholder": "30", "class": "numbers"}),
         validators=[MinValueValidator(1), MaxValueValidator(120)],
     )
 
@@ -115,3 +119,38 @@ class RegistrationForm(SettingsForm):
             }
         ),
     )
+
+    class Meta:
+        model = User
+        fields = [
+            "username",
+            "password",
+            "confirm_password",
+            "first_name",
+            "last_name",
+            "email",
+            "gender",
+            "height",
+            "weight",
+            "age",
+        ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        validate_password(password)
+
+        if password != confirm_password:
+            self.add_error("confirm_password", "Passwords don't match")
+
+        # Check if height, weight, and age are not provided
+        if not cleaned_data.get("height"):
+            cleaned_data["height"] = 70  # Set default height
+        if not cleaned_data.get("weight"):
+            cleaned_data["weight"] = 160  # Set default weight
+        if not cleaned_data.get("age"):
+            cleaned_data["age"] = 30  # Set default age
+
+        return cleaned_data

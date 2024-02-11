@@ -10,8 +10,8 @@
     <h1>Log In</h1>
     <form class="form login" id="login_form" action="{% url 'login' %}" method="POST">
       {% csrf_token %}
-      {% if message %}
-        {{ message }}
+      {% if error %}
+        <div id="form_error"><ul><li>{{ error }}</li></ul></div>
       {% endif %}
       <div class="username">
         {{ form.username.label }}

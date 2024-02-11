@@ -3,11 +3,8 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from .forms import LoginForm, RegistrationForm, SettingsForm
-from django.core.exceptions import ValidationError
-from django.db import IntegrityError
-from common.users_utils import (
+from .utils import (
     create_user,
-    read_registration,
     send_email_confirmation,
 )
 from django.contrib.auth.decorators import login_required
@@ -24,23 +21,22 @@ def user_login(request):
             username = login_form.cleaned_data["username"]
             password = login_form.cleaned_data["password"]
             remember_me = login_form.cleaned_data["remember_me"]
-        else:
-            return render(request, "users/login.html", {"form": LoginForm()})
 
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            if not remember_me:
-                request.session.set_expiry(0)
-                user.remember_me = False
-                user.save()
-            return HttpResponseRedirect(reverse("index"))
-        else:
-            return render(
-                request,
-                "users/login.html",
-                {"form": LoginForm(), "message": "Invalid username and/or password."},
-            )
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                if not remember_me:
+                    request.session.set_expiry(0)
+                return HttpResponseRedirect(reverse("index"))
+            else:
+                return render(
+                    request,
+                    "users/login.html",
+                    {
+                        "form": LoginForm(),
+                        "error": "Invalid username and/or password.",
+                    },
+                )
 
     return render(request, "users/login.html", {"form": LoginForm()})
 
@@ -49,36 +45,26 @@ def user_logout(request):
     if request.user.is_authenticated:
         logout(request)
 
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("login"))
 
 
 def registration(request):
-    # Check for form data
-    if request.method == "POST":
-        try:
-            # Retrieve form data from request
-            form = RegistrationForm(request.POST)
-
-            # Read form data
-            user_info = read_registration(form)
-
-        except ValidationError as error:
-            # If form isn't valid or password doesn't match, return error message.
-            return JsonResponse({"message": str(error)})
-
-        # Attempt to create a new user, update their info and log in to main page.
-        try:
-            user = create_user(**user_info)
-            send_email_confirmation(**user_info)
-            login(request, user)
-            return JsonResponse({"success": True})
-        except IntegrityError:
-            return JsonResponse({"message": "Username already taken."})
-
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse("index"))
-    else:
-        return render(request, "users/registration.html", {"form": RegistrationForm()})
+    # Check for form data
+    if request.method == "POST":
+        form = RegistrationForm(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+            # send_email_confirmation(user)
+            login(request, user)
+            return JsonResponse({"success": True})
+        else:
+            for error_list in form.errors.values():
+                return JsonResponse({"error": error_list})
+
+    return render(request, "users/registration.html", {"form": RegistrationForm()})
 
 
 @login_required

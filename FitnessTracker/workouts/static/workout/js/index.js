@@ -3,7 +3,9 @@ const controls = document.querySelector("#workout_form");
 document.getElementById("date").valueAsDate = new Date();
 
 controls.addEventListener("click", (e) => {
-    e.preventDefault()
+    if (e.target.id !== "date"){
+        e.preventDefault()
+    }
 
     if (e.target.classList.contains("delete_exercise")){
         e.target.closest(".exercise_container").remove(); 
@@ -91,7 +93,9 @@ controls.addEventListener("click", (e) => {
         workout.append('csrfmiddlewaretoken', csrftoken);
 
         var url = "";
-        if (document.querySelector("#session").value==="True"){
+        dateInput = document.getElementById("date");
+        if (dateInput!==null){
+            workout.append("date", dateInput.value)
             url = "save_workout_session"
         }
         else{
@@ -131,6 +135,7 @@ controls.addEventListener("click", (e) => {
             const editForm = document.createElement("template");
             editForm.innerHTML = template.trim();
             container.appendChild(editForm.content);
+            document.getElementById("date").valueAsDate = new Date();
         });
     }
 

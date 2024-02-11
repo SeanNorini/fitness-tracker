@@ -178,3 +178,7 @@ button:hover  {
   pointer-events: none;
   font-weight: var(--bold);
 }
+
+.hidden {
+  display: none;
+}

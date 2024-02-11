@@ -1,16 +1,31 @@
 import time
-
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
+from django.test import TestCase
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from common.users_utils import *
-from common.selenium_utils import validate_required_fields
+from common.selenium_utils import *
+from common.test_utils import (
+    form_without_csrf_token,
+    form_with_invalid_csrf_token,
+    form_with_valid_csrf_token,
+)
+
+REGISTRATION_FORM_FIELDS = {
+    "username": "test_name",
+    "password": "test_pass123",
+    "confirm_password": "test_pass123",
+    "first_name": "first_name",
+    "last_name": "last_name",
+    "email": "test@gmail.com",
+    "gender": "m",
+    "weight": "150",
+    "height": "75",
+    "age": "28",
+}
 
 
 # Create your tests here.
-class TestUsersSelenium(StaticLiveServerTestCase):
+class TestRegistrationUI(StaticLiveServerTestCase):
     fixtures = ["default.json"]
 
     @classmethod
@@ -26,34 +41,43 @@ class TestUsersSelenium(StaticLiveServerTestCase):
     def setUp(self) -> None:
         self.driver.get(self.live_server_url + "/user/registration")
 
-    def register_user(self):
-        self.driver.find_element(By.NAME, "username").send_keys("test_name")
-        self.driver.find_element(By.NAME, "first_name").send_keys("first_name")
-        self.driver.find_element(By.NAME, "last_name").send_keys("last_name")
-        self.driver.find_element(By.NAME, "password").send_keys("test_pass")
-        self.driver.find_element(By.NAME, "confirm_password").send_keys("test_pass")
-        self.driver.find_element(By.NAME, "email").send_keys("test@gmail.com")
-        self.driver.find_element(By.NAME, "weight").send_keys("150")
-        self.driver.find_element(By.NAME, "height").send_keys("75")
-        self.driver.find_element(By.NAME, "age").send_keys("28")
-        self.driver.find_element(By.NAME, "register").click()
-        time.sleep(1)
-
     def test_registration_create_user(self):
         # Confirm user does not exist
-        try:
-            User.objects.get(username="test_name")
+        if len(User.objects.filter(username="test_name")) > 0:
             raise IntegrityError
-        except ObjectDoesNotExist:
-            pass
-        # Create user
-        self.register_user()
+
+        fill_form(self.driver, REGISTRATION_FORM_FIELDS)
+        click(self.driver, "name", "register")
+        time.sleep(1)
 
         # Confirm user created
         assert User.objects.get(username="test_name")
+        self.assertEqual(self.driver.current_url, self.live_server_url + "/")
+
+    def test_registration_elements_exist(self) -> None:
+        elements = {"id": ["username", "password", "remember_me"]}
+        assert elements_exist(self.driver, elements)
 
     def test_registration_required_fields(self):
         required_fields = ["username", "password", "confirm_password", "email"]
         assert validate_required_fields(
             self.driver, "registration_form", required_fields
         )
+
+
+class TestRegistrationCSRFProtection(TestCase):
+    def test_registration_without_csrf_token(self):
+        status_code = form_without_csrf_token("registration", REGISTRATION_FORM_FIELDS)
+        self.assertEqual(status_code, 403)
+
+    def test_registration_with_invalid_csrf_token(self):
+        status_code = form_with_invalid_csrf_token(
+            "registration", REGISTRATION_FORM_FIELDS
+        )
+        self.assertEqual(status_code, 403)
+
+    def test_registration_with_valid_csrf_token(self):
+        status_code = form_with_valid_csrf_token(
+            "registration", REGISTRATION_FORM_FIELDS
+        )
+        self.assertEqual(status_code, 200)

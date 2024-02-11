@@ -1,6 +1,5 @@
 from django.db import models
 from users.models import User
-from datetime import date
 
 
 # Create your models here.
@@ -24,7 +23,7 @@ class Workout(models.Model):
 class WorkoutLog(models.Model):
     workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateField(default=date.today())
+    date = models.DateField()
 
 
 class Set(models.Model):

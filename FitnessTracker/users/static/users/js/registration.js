@@ -17,7 +17,7 @@ document.getElementById("registration_form").addEventListener("submit", (e) =>{
     formData.append('csrfmiddlewaretoken', csrftoken)
 
     // Send form, redirect to index on success otherwise display error.
-    const errorOutput = document.querySelector('#form-error')
+    const errorOutput = document.querySelector('#form_error')
     fetch('.', {
         method: 'POST',
         body: formData
@@ -30,7 +30,11 @@ document.getElementById("registration_form").addEventListener("submit", (e) =>{
         }
         else
         {
-            errorOutput.innerText = data['message'];
+            errorOutput.classList.remove("hidden")
+            errorOutput.innerHTML = "";
+            data['error'].forEach(error => {
+                errorOutput.innerHTML += "<li>" + error + "</li>";
+            });
         }
     })
     .catch(error => {

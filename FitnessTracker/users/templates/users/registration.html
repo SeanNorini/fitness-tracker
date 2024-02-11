@@ -10,6 +10,7 @@
   {% endif %}
     <form class="form_container" id="registration_form" action="{% url 'registration' %}" method="POST">
       <h1 id="header">Register</h1>
+      <div id="form_error" class="hidden"></div>
       {% csrf_token %}
       <div id="username_registration" class="col">
         {{ form.username.label_tag }}
@@ -55,7 +56,7 @@
         {{ form.age.label_tag }}
         {{ form.age }}
       </div>
-      <div id="optional">*Optional, default values shown will be used for calculations if left blank.</div>
+      <div id="optional">*Optional, default values shown will be used for calculations.</div>
       
       <div class="registration row">
         <button class="button" name="register" type="submit">Complete Registration</button>
@@ -65,6 +66,5 @@
         <a href="{% url 'login' %}" data-text="Log in!">Log in!</a>
       </div>
     </form>
-    <div id="form-error"></div>
   <script type="text/javascript" src="{% static 'users/js/registration.js' %}"></script>
 {% endblock %}
