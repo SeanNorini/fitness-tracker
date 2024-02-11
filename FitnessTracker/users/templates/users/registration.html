@@ -4,67 +4,7 @@
   <link rel="stylesheet" href="{% static 'users/css/registration.css' %}">
   <title>Fitness Tracker - Registration</title>
 {% endblock %}
-{% block form %} 
-  {% if message %}
-    {{ message }}
-  {% endif %}
-    <form class="form_container" id="registration_form" action="{% url 'registration' %}" method="POST">
-      <h1 id="header">Register</h1>
-      <div id="form_error" class="hidden"></div>
-      {% csrf_token %}
-      <div id="username_registration" class="col">
-        {{ form.username.label_tag }}
-        {{ form.username }}
-      </div>
-      <div class="row" id="name">
-        <div id="first_name" class="col">
-          {{ form.first_name.label_tag }}
-          {{ form.first_name }}
-        </div>
-        <div id="last_name">
-          {{ form.last_name }}
-        </div>
-      </div>
-      
-      <div id="password_registration" class="col">
-        {{ form.password.label_tag }}
-        {{ form.password }}
-      </div>
-      <div id="confirm_password" class="col">
-        {{ form.confirm_password.label_tag }}
-        {{ form.confirm_password }}
-      </div>
-
-      <div id="email" class="col">
-        {{ form.email.label_tag }}
-        {{ form.email }}
-      </div>
-      <div id="gender">
-        {{ form.gender.label_tag }}
-        {{ form.gender }}
-      </div>
-      
-      <div id="height" class="col">
-        {{ form.height.label_tag }}
-        {{ form.height }}
-      </div>
-      <div id="weight" class="col">
-        {{ form.weight.label_tag }}
-        {{ form.weight }}
-      </div>
-      <div id="age" class="col">
-        {{ form.age.label_tag }}
-        {{ form.age }}
-      </div>
-      <div id="optional">*Optional, default values shown will be used for calculations.</div>
-      
-      <div class="registration row">
-        <button class="button" name="register" type="submit">Complete Registration</button>
-      </div>
-      <div id="login" class="bold_link">
-        Already have an account?
-        <a href="{% url 'login' %}" data-text="Log in!">Log in!</a>
-      </div>
-    </form>
+{% block form %}
+  {% include "users/registration_form.html" %}
   <script type="text/javascript" src="{% static 'users/js/registration.js' %}"></script>
 {% endblock %}

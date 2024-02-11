@@ -3,6 +3,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.db import IntegrityError
 from django.test import TestCase
 from selenium import webdriver
+from users.models import User
 from common.selenium_utils import *
 from common.test_utils import (
     form_without_csrf_token,
@@ -55,7 +56,7 @@ class TestRegistrationUI(StaticLiveServerTestCase):
         self.assertEqual(self.driver.current_url, self.live_server_url + "/")
 
     def test_registration_elements_exist(self) -> None:
-        elements = {"id": ["username", "password", "remember_me"]}
+        elements = {"name": REGISTRATION_FORM_FIELDS.keys()}
         assert elements_exist(self.driver, elements)
 
     def test_registration_required_fields(self):

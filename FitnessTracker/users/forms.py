@@ -106,7 +106,12 @@ class RegistrationForm(SettingsForm):
     password = forms.CharField(
         label="Password",
         widget=forms.PasswordInput(
-            attrs={"id": "password", "name": "password", "maxlength": "100"}
+            attrs={
+                "id": "password",
+                "name": "password",
+                "minlength": 8,
+                "maxlength": "100",
+            }
         ),
     )
     confirm_password = forms.CharField(
@@ -115,6 +120,7 @@ class RegistrationForm(SettingsForm):
             attrs={
                 "id": "confirm_password",
                 "name": "confirm_password",
+                "minlength": 8,
                 "maxlength": "100",
             }
         ),

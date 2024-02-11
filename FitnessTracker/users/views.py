@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from .forms import LoginForm, RegistrationForm, SettingsForm
@@ -59,11 +59,9 @@ def registration(request):
             user = form.save()
             # send_email_confirmation(user)
             login(request, user)
-            return JsonResponse({"success": True})
+            return HttpResponse("success", content_type="text/plain")
         else:
-            for error_list in form.errors.values():
-                return JsonResponse({"error": error_list})
-
+            return render(request, "users/registration_form.html", {"form": form})
     return render(request, "users/registration.html", {"form": RegistrationForm()})
 
 

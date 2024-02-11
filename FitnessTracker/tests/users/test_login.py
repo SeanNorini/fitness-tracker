@@ -1,6 +1,6 @@
 import time
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.contrib.auth import authenticate
 from users.models import User
 from common.selenium_utils import *
@@ -9,9 +9,7 @@ from common.test_utils import (
     form_with_invalid_csrf_token,
     form_with_valid_csrf_token,
 )
-from django.urls import reverse
 
-# Constants for login and registration form fields
 LOGIN_USER_FORM_FIELDS = {"username": "testuser", "password": "testpassword"}
 
 
@@ -61,12 +59,12 @@ class TestLoginUI(StaticLiveServerTestCase):
     def test_login_remember_me(self) -> None:
         # Click checkbox
         click(self.driver, "name", "remember_me")
-
         # Login User
         fill_form(self.driver, LOGIN_USER_FORM_FIELDS)
         click(self.driver, "name", "login")
 
         # Check that cookie won't expire on browser close
+
         assert get_cookie_expiration_time(self.driver, "sessionid") > 0
 
     def test_login_dont_remember_me(self) -> None:
