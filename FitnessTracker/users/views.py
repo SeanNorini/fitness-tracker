@@ -1,11 +1,10 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.shortcuts import render, redirect
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from .forms import LoginForm, RegistrationForm, SettingsForm
 from .models import User
 from .utils import (
-    create_user,
     send_email_confirmation,
 )
 from django.contrib.auth.decorators import login_required
@@ -14,10 +13,11 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 def user_login(request):
     if request.user.is_authenticated:
-        return HttpResponseRedirect(reverse("index"))
+        return redirect("index")
 
     if request.method == "POST":
         login_form = LoginForm(request.POST)
+
         if login_form.is_valid():
             username = login_form.cleaned_data["username"]
             password = login_form.cleaned_data["password"]
@@ -28,7 +28,7 @@ def user_login(request):
                 login(request, user)
                 if not remember_me:
                     request.session.set_expiry(0)
-                return HttpResponseRedirect(reverse("index"))
+                return redirect("index")
             else:
                 return render(
                     request,
@@ -38,7 +38,15 @@ def user_login(request):
                         "error": "Invalid username and/or password.",
                     },
                 )
-
+        else:
+            return render(
+                request,
+                "users/login.html",
+                {
+                    "form": LoginForm(),
+                    "error": "Error. Please try again.",
+                },
+            )
     return render(request, "users/login.html", {"form": LoginForm()})
 
 
@@ -46,12 +54,12 @@ def user_logout(request):
     if request.user.is_authenticated:
         logout(request)
 
-    return HttpResponseRedirect(reverse("login"))
+    return redirect("login")
 
 
 def registration(request):
     if request.user.is_authenticated:
-        return HttpResponseRedirect(reverse("index"))
+        return redirect("index")
     # Check for form data
     if request.method == "POST":
         form = RegistrationForm(request.POST)

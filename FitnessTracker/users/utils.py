@@ -1,13 +1,3 @@
-from django.core.exceptions import ValidationError
-from users.models import User
-
-
-def create_user(**user_info) -> User:
-    user = User.objects.create_user(**user_info, is_staff=False)
-    user.save()
-    return user
-
-
 def send_email_confirmation(**user_info) -> None:
     # html_body = render_to_string("users/registration-email.html", user_info)
     #

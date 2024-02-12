@@ -1,28 +1,20 @@
 [
 {
-  "model": "sessions.session",
-  "pk": "7o9qq5fh4mboto722t4fhzyxdrd6l32h",
-  "fields": {
-    "session_data": ".eJxVjMsOwiAUBf-FtSE8L-DSfb-BABekaiAp7cr477ZJF7qdmXPexIdtrX4befEzkivh5PLLYkjP3A6Bj9Dunabe1mWO9EjoaQedOubX7Wz_DmoYdV_LLJVBy8AYkYChyikKXlQsTLsd2GQ0AwdM68KBCyUkBycKOp11sZF8vr0rNr8:1rYyUk:MfOhvxGEaJvGOW2PhQzr3QjqiUktpNWSe1Wea2U_eio",
-    "expire_date": "2024-02-25T01:18:58.783Z"
-  }
-},
-{
   "model": "users.user",
   "fields": {
-    "password": "pbkdf2_sha256$720000$d3YpOSzH0nfJze6qiJHisK$IUhTEIzzLViSqrwepTV++idgs9QltVbKVnky3tqyxxo=",
-    "last_login": "2024-02-11T01:18:58.780Z",
+    "password": "pbkdf2_sha256$720000$TyUxPDltU93kZnE8s0JpDv$a48j1MHLLpv5Ko4bI/sw6MhnSyxX06mEGGUP12ypakk=",
+    "last_login": "2024-02-12T01:25:04.403Z",
     "is_superuser": true,
     "username": "admin",
-    "first_name": "",
-    "last_name": "",
-    "email": "admin@gmail.com",
     "is_staff": true,
     "is_active": true,
-    "date_joined": "2024-02-11T00:28:44.893Z",
-    "gender": "m",
-    "height": 70,
-    "weight": 160,
+    "date_joined": "2024-02-12T01:12:57.351Z",
+    "email": "admin@gmail.com",
+    "first_name": "first",
+    "last_name": "last",
+    "gender": "M",
+    "height": 70.0,
+    "weight": 160.0,
     "age": 30,
     "groups": [],
     "user_permissions": []
@@ -31,40 +23,40 @@
 {
   "model": "users.user",
   "fields": {
-    "password": "pbkdf2_sha256$720000$W0oOulc5iLOtm1ZUgfDGvC$GBsAilQH7I5bnJX4DCIPedrwAwIpfDyGn/VMCIJD/qE=",
-    "last_login": "2024-02-11T00:30:57Z",
-    "is_superuser": false,
-    "username": "default",
-    "first_name": "",
-    "last_name": "",
-    "email": "default@gmail.com",
-    "is_staff": false,
-    "is_active": true,
-    "date_joined": "2024-02-11T00:29:46Z",
-    "gender": "m",
-    "height": 70,
-    "weight": 160,
-    "age": 30,
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "users.user",
-  "fields": {
-    "password": "pbkdf2_sha256$720000$SrjLF80SZYAgcZXPo4zsWd$RtANaRy9dALJURCZxkZCtWAb8Iu1qW7Pf7QMcyswwAM=",
+    "password": "pbkdf2_sha256$720000$40sFp1xLWvn7gJemWBjLT2$aHSUKV1VO0MVlop3zT6DKbis1X5MnMaL1pBJTfBsYqg=",
     "last_login": null,
+    "is_superuser": true,
+    "username": "default",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2024-02-12T01:13:27.779Z",
+    "email": "default@gmail.com",
+    "first_name": "first",
+    "last_name": "last",
+    "gender": "M",
+    "height": 70.0,
+    "weight": 160.0,
+    "age": 30,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$720000$KtstiLnLjjKbJg90rVraMA$ZHDEfkdigSc8p80gffUVzOVM9uCPJRPsVWNZQ7Al3bc=",
+    "last_login": "2024-02-12T01:25:33.196Z",
     "is_superuser": false,
     "username": "testuser",
-    "first_name": "",
-    "last_name": "",
-    "email": "testuser@gmail.com",
     "is_staff": false,
     "is_active": true,
-    "date_joined": "2024-02-11T01:18:47Z",
-    "gender": "m",
-    "height": 70,
-    "weight": 160,
+    "date_joined": "2024-02-12T01:25:32.659Z",
+    "email": "test@gmail.com",
+    "first_name": "first",
+    "last_name": "last",
+    "gender": "M",
+    "height": 70.0,
+    "weight": 160.0,
     "age": 30,
     "groups": [],
     "user_permissions": []
@@ -77,52 +69,9 @@
     "user": [
       "default"
     ],
-    "name": "Starting Strength - A",
+    "name": "Custom Workout",
     "config": {
-      "exercises": [
-        {
-          "Low Bar Squat": {
-            "weight": [
-              "",
-              "",
-              ""
-            ],
-            "reps": [
-              "",
-              "",
-              ""
-            ]
-          }
-        },
-        {
-          "Overhead Press": {
-            "weight": [
-              "",
-              "",
-              ""
-            ],
-            "reps": [
-              "",
-              "",
-              ""
-            ]
-          }
-        },
-        {
-          "Bench Press": {
-            "weight": [
-              "",
-              "",
-              ""
-            ],
-            "reps": [
-              "",
-              "",
-              ""
-            ]
-          }
-        }
-      ]
+      "exercises": []
     }
   }
 },
@@ -133,7 +82,7 @@
     "user": [
       "default"
     ],
-    "name": "Custom Workout",
+    "name": "Starting Strength - A",
     "config": {
       "exercises": []
     }

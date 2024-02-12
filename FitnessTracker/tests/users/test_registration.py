@@ -13,11 +13,11 @@ from common.test_utils import (
 
 REGISTRATION_FORM_FIELDS = {
     "username": "test_name",
-    "password": "test_pass123",
-    "confirm_password": "test_pass123",
-    "first_name": "first_name",
-    "last_name": "last_name",
-    "email": "test@gmail.com",
+    "password": "testpassword",
+    "confirm_password": "testpassword",
+    "first_name": "first",
+    "last_name": "last",
+    "email": "test_user@gmail.com",
     "gender": "m",
     "weight": "150",
     "height": "75",
@@ -42,7 +42,7 @@ class TestRegistrationUI(StaticLiveServerTestCase):
     def setUp(self) -> None:
         self.driver.get(self.live_server_url + "/user/registration")
 
-    def test_registration_create_user(self):
+    def test_registration_successful(self):
         # Confirm user does not exist
         if len(User.objects.filter(username="test_name")) > 0:
             raise IntegrityError
@@ -51,8 +51,19 @@ class TestRegistrationUI(StaticLiveServerTestCase):
         click(self.driver, "name", "register")
         time.sleep(1)
 
-        # Confirm user created
+        # Confirm user created and redirected to index
         assert User.objects.get(username="test_name")
+        self.assertEqual(self.driver.current_url, self.live_server_url + "/")
+
+        # Logout and back in to user to check persistence
+        click(self.driver, "id", "logout")
+        login(
+            self.driver,
+            self.live_server_url + "/user/login",
+            {"username": "test_name", "password": "testpassword"},
+        )
+
+        # Confirm user logged in and redirected
         self.assertEqual(self.driver.current_url, self.live_server_url + "/")
 
     def test_registration_elements_exist(self) -> None:

@@ -146,7 +146,8 @@ class RegistrationForm(SettingsForm):
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
 
-        validate_password(password)
+        if password:
+            validate_password(password)
 
         if password != confirm_password:
             self.add_error("confirm_password", "Passwords don't match")
