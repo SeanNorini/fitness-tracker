@@ -25,16 +25,9 @@ document.querySelector(".container").addEventListener("submit", (e) =>{
     })
         .then(response => response.text())
         .then(data => {
-            if (data === "success"){
-                window.location.href = "";
-            }
-            else{
-                const container = document.querySelector(".container");
-                container.innerHTML = data;
-            }
-
+            const container = document.querySelector(".container");
+            container.innerHTML = data;
         });
-
 
 });
 

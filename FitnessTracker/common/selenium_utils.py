@@ -88,7 +88,7 @@ def find_element(
         case "class":
             element = driver.find_element(By.CLASS_NAME, selector_value)
         case "tag":
-            element = driver.find_elements(By.TAG_NAME, selector_value)
+            element = driver.find_element(By.TAG_NAME, selector_value)
     return element
 
 
@@ -133,12 +133,18 @@ def elements_exist(driver: webdriver.Chrome, elements: dict) -> bool:
     """
     # Iterate over items
     for selector_type, selector_values in elements.items():
-        for value in selector_values:
-            # Find next element
-            elements = find_elements(driver, selector_type, value)
-            # Check if any of current element exist
-            if len(find_elements(driver, selector_type, value)) == 0:
-                return False
+        if not _elements_exist_helper(driver, selector_type, selector_values):
+            return False
+    return True
+
+
+def _elements_exist_helper(driver: webdriver.Chrome, selector_type, selector_values):
+    for value in selector_values:
+        # Find next element
+        elements = find_elements(driver, selector_type, value)
+        # Check if any of current element exist
+        if len(elements) == 0:
+            return False
     return True
 
 

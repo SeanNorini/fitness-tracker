@@ -3,6 +3,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.db import IntegrityError
 from django.test import TestCase
 from selenium import webdriver
+from unittest.mock import patch
 from users.models import User
 from common.selenium_utils import *
 from common.test_utils import (
@@ -44,27 +45,22 @@ class TestRegistrationUI(StaticLiveServerTestCase):
 
     def test_registration_successful(self):
         # Confirm user does not exist
-        if len(User.objects.filter(username="test_name")) > 0:
+        if len(User.objects.filter(username=REGISTRATION_FORM_FIELDS["username"])) > 0:
             raise IntegrityError
 
-        fill_form(self.driver, REGISTRATION_FORM_FIELDS)
-        click(self.driver, "name", "register")
-        time.sleep(1)
+        with patch("users.views.send_activation_link") as send_activation_link:
+            fill_form(self.driver, REGISTRATION_FORM_FIELDS)
+            click(self.driver, "name", "register")
+            time.sleep(1)
 
-        # Confirm user created and redirected to index
-        assert User.objects.get(username="test_name")
-        self.assertEqual(self.driver.current_url, self.live_server_url + "/")
-
-        # Logout and back in to user to check persistence
-        click(self.driver, "id", "logout")
-        login(
-            self.driver,
-            self.live_server_url + "/user/login",
-            {"username": "test_name", "password": "testpassword"},
-        )
-
-        # Confirm user logged in and redirected
-        self.assertEqual(self.driver.current_url, self.live_server_url + "/")
+            assert User.objects.get(username=REGISTRATION_FORM_FIELDS["username"])
+            form_header = find_element(
+                self.driver, "id", "registration_confirmation_header"
+            ).text
+            self.assertEqual(
+                form_header,
+                f"Thank you for registering, {REGISTRATION_FORM_FIELDS['first_name']}!",
+            )
 
     def test_registration_elements_exist(self) -> None:
         elements = {"name": REGISTRATION_FORM_FIELDS.keys()}

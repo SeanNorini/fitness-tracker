@@ -1,12 +1,12 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponse
+from django.contrib.auth.forms import PasswordChangeForm
+from django.shortcuts import render, redirect, reverse
+from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
-from django.urls import reverse
-from .forms import LoginForm, RegistrationForm, SettingsForm
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+from .forms import LoginForm, RegistrationForm, SettingsForm, ChangePasswordForm
 from .models import User
-from .utils import (
-    send_email_confirmation,
-)
+from .utils import send_activation_link, account_token_generator
 from django.contrib.auth.decorators import login_required
 
 
@@ -65,30 +65,76 @@ def registration(request):
         form = RegistrationForm(request.POST)
 
         if form.is_valid():
-            user = form.save()
-            # send_email_confirmation(user)
-            login(request, user)
-            return HttpResponse("success", content_type="text/plain")
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+            send_activation_link(request, user)
+
+            return render(
+                request,
+                "users/registration_confirmation.html",
+                {"name": user.first_name, "email": user.email},
+            )
         else:
             return render(request, "users/registration_form.html", {"form": form})
     return render(request, "users/registration.html", {"form": RegistrationForm()})
 
 
+def activate(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and account_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return render(
+            request, "users/login.html", {"message": "success", "form": LoginForm()}
+        )
+    return render(
+        request, "users/login.html", {"activate_error": "True", "form": LoginForm()}
+    )
+
+
+@login_required
+def change_password(request):
+    form = ChangePasswordForm()
+    if request.method == "POST":
+        form = ChangePasswordForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            if not user.check_password(form.cleaned_data["current_password"]):
+                form.add_error("current_password", "Incorrect password.")
+            if (
+                form.cleaned_data["new_password"]
+                != form.cleaned_data["confirm_password"]
+            ):
+                form.add_error("new_password", "Passwords don't match.")
+            if not form.errors:
+                user.set_password(form.cleaned_data["new_password"])
+                user.save()
+                login(request, user)
+                return render(request, "users/change_password_done.html")
+    return render(request, "users/change_password.html", {"form": form})
+
+
 @login_required
 def settings(request):
     user = request.user
-    if request.method == "POST":
-        form = SettingsForm(request.POST)
-        if form.is_valid():
-            user.first_name = form.cleaned_data["first_name"]
-            user.last_name = form.cleaned_data["last_name"]
-            user.email = form.cleaned_data["email"]
-            user.gender = form.cleaned_data["gender"]
-            user.height = form.cleaned_data["height"]
-            user.weight = form.cleaned_data["weight"]
-            user.age = form.cleaned_data["age"]
-            user.save()
-            return JsonResponse({"success": True})
+    # if request.method == "POST":
+    #     form = SettingsForm(request.POST)
+    #     if form.is_valid():
+    #         user.first_name = form.cleaned_data["first_name"]
+    #         user.last_name = form.cleaned_data["last_name"]
+    #         user.email = form.cleaned_data["email"]
+    #         user.gender = form.cleaned_data["gender"]
+    #         user.height = form.cleaned_data["height"]
+    #         user.weight = form.cleaned_data["weight"]
+    #         user.age = form.cleaned_data["age"]
+    #         user.save()
+    #         return JsonResponse({"success": True})
     # user.get_module_list()
     modules = ["workout", "cardio", "log", "stats", "settings"]
     form = SettingsForm()

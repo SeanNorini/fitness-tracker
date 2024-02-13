@@ -91,6 +91,18 @@ class SettingsForm(forms.ModelForm):
         validators=[MinValueValidator(1), MaxValueValidator(120)],
     )
 
+    class Meta:
+        model = User
+        fields = [
+            "first_name",
+            "last_name",
+            "email",
+            "gender",
+            "height",
+            "weight",
+            "age",
+        ]
+
 
 class RegistrationForm(SettingsForm):
     username = forms.CharField(
@@ -168,3 +180,39 @@ class RegistrationForm(SettingsForm):
         if commit:
             user.save()
         return user
+
+
+class ChangePasswordForm(forms.Form):
+    current_password = forms.CharField(
+        label="Current Password",
+        widget=forms.PasswordInput(
+            attrs={
+                "id": "current_password",
+                "name": "current_password",
+                "minlength": 8,
+                "maxlength": "100",
+            }
+        ),
+    )
+    new_password = forms.CharField(
+        label="New Password",
+        widget=forms.PasswordInput(
+            attrs={
+                "id": "new_password",
+                "name": "new_password",
+                "minlength": 8,
+                "maxlength": "100",
+            }
+        ),
+    )
+    confirm_password = forms.CharField(
+        label="Confirm Password",
+        widget=forms.PasswordInput(
+            attrs={
+                "id": "confirm_password",
+                "name": "confirm_password",
+                "minlength": 8,
+                "maxlength": "100",
+            }
+        ),
+    )

@@ -31,7 +31,7 @@ class TestLoginUI(StaticLiveServerTestCase):
         self.driver.get(self.live_server_url + "/user/login")
 
     def test_login_elements_exist(self) -> None:
-        elements = {"id": ["username", "password", "remember_me"]}
+        elements = {"id": ["username", "password", "remember_me"], "name": ["login"]}
         assert elements_exist(self.driver, elements)
 
     def test_login_successful(self) -> None:

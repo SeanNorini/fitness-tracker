@@ -1,6 +1,10 @@
 from users.models import User
 from django.test import TestCase
 from django.urls import reverse
+from unittest.mock import patch
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from users.utils import account_token_generator
 
 USERNAME_VALID = "testuser"
 USERNAME_INVALID = "invalid"
@@ -13,7 +17,7 @@ REGISTRATION_FORM_FIELDS = {
     "confirm_password": "test_pass123",
     "first_name": "first",
     "last_name": "last",
-    "email": "test_user@gmail.com",
+    "email": "snorini@gmail.com",
     "gender": "M",
     "weight": "150",
     "height": "75",
@@ -113,13 +117,15 @@ class TestRegistrationView(TestCase):
         self.assertEqual(response.resolver_match.view_name, "registration")
 
     def test_valid_registration(self):
-        response = self.client.post(
-            reverse("registration"),
-            data=REGISTRATION_FORM_FIELDS,
-        )
-
-        # Check that registration was successful, redirected handled in JS.
-        self.assertEqual(response.content.decode("utf-8"), "success")
+        with patch("users.views.send_activation_link") as send_activation_link:
+            response = self.client.post(
+                reverse("registration"),
+                data=REGISTRATION_FORM_FIELDS,
+            )
+            user = User.objects.get(username=REGISTRATION_FORM_FIELDS["username"])
+            send_activation_link.assert_called_once_with(response.wsgi_request, user)
+            # Check that registration was successful, confirmation message displayed.
+            self.assertTemplateUsed(response, "users/registration_confirmation.html")
 
     def test_invalid_registration(self):
         response = self.client.post(
@@ -134,3 +140,43 @@ class TestRegistrationView(TestCase):
 
         # Assert that the form has errors
         self.assertTrue(form.errors)
+
+
+class TestActivateView(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="test_name",
+            password="testpassword",
+            first_name="first",
+            last_name="last",
+            email="snorini@gmail.com",
+            gender="M",
+            weight="150",
+            height="75",
+            age="28",
+            is_active=False,
+        )
+
+    def test_valid_activation(self):
+        uidb64 = urlsafe_base64_encode(force_bytes(self.user.pk))
+        token = account_token_generator.make_token(self.user)
+        activation_url = reverse("activate", args=[uidb64, token])
+
+        response = self.client.get(activation_url)
+        self.user = User.objects.get(username=self.user.username)
+
+        self.assertTrue(self.user.is_active)
+        self.assertTemplateUsed(response, "users/login.html")
+        self.assertEqual(response.context["message"], "success")
+
+    def test_invalid_activation(self):
+        uidb64 = urlsafe_base64_encode(force_bytes(self.user.pk))
+        token = "invalid"
+        activation_url = reverse("activate", args=[uidb64, token])
+
+        response = self.client.get(activation_url)
+        self.user = User.objects.get(username=self.user.username)
+
+        self.assertFalse(self.user.is_active)
+        self.assertTemplateUsed(response, "users/login.html")
+        self.assertEqual(response.context["activate_error"], "True")
