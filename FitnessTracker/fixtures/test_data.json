@@ -1,0 +1,18 @@
+{
+    "LOGIN_USER_FORM_FIELDS": {
+        "username": "testuser",
+        "password": "testpassword"
+    },
+    "REGISTRATION_FORM_FIELDS": {
+        "username": "new_user",
+        "password": "new_user_password",
+        "confirm_password": "new_user_password",
+        "first_name": "first",
+        "last_name": "last",
+        "email": "snorini@gmail.com",
+        "gender": "M",
+        "weight": "150",
+        "height": "75",
+        "age": "28"
+    }
+}

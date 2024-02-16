@@ -14,9 +14,7 @@ class User(AbstractUser):
         ("M", "Male"),
         ("F", "Female"),
     ]
-
     email = models.EmailField(unique=True, max_length=255)
-
     first_name = models.CharField(
         max_length=30,
         validators=[MinLengthValidator(2), RegexValidator(r"^[a-zA-Z]*$")],
@@ -27,7 +25,6 @@ class User(AbstractUser):
         validators=[MinLengthValidator(2), RegexValidator(r"^[a-zA-Z]*$")],
         default="last",
     )
-
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default="M")
     height = models.FloatField(
         default=70, validators=[MinValueValidator(20.0), MaxValueValidator(120.0)]

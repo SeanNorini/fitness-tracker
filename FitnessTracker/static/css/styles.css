@@ -104,11 +104,12 @@ a {
   text-decoration: none;
 }
 
-h1 {
+h1, h2 {
   text-align: center;
-  margin:0;
+  margin:0 0 1rem;
   color: #ffffff;
 }
+
 
 label {
   font-size: 1.2rem;
@@ -143,7 +144,7 @@ button:hover  {
   display: flex;
   flex-direction: row;
   gap: .5rem;
-  margin: 1rem 0;
+  margin: .25rem 0;
   text-wrap: nowrap;
   text-align: center;
   justify-content: center;
@@ -185,4 +186,19 @@ button:hover  {
 
 .errorlist {
   color: red;
+}
+
+.inner_container .row {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-grow: 1;
+}
+
+.inner_container {
+  margin-top: 20%;
+  background-color: var(--form_background);
+  padding: 1.5rem 2rem;
+  border-radius: 1rem;
+  box-shadow: 3px 3px 10px 3px  rgba(0, 0, 0, .5);
+  max-width: 40rem;
 }

@@ -1,0 +1,28 @@
+{% extends "base/redirect.html" %}
+{% load static %}
+
+{% block head%}{{block.super}}{% endblock %}
+
+{% block title %}{{block.super}} - Account Activation{% endblock %}
+
+{% block content %}
+<div class="inner_container">
+
+  <h1 id="header">Account Activated!</h1>
+
+  Hello {{request.user.username}},
+
+  <p>
+Congratulations! Your account has been successfully activated. You will be redirected shortly or you can click the link
+    below to head into the site.</p>
+
+Best regards,<br>
+The WTCC Fitness Tracker Team
+
+
+  <div class="submit_form row">
+    <button class="button" name="return_to_site"><a href="{% url 'index' %}">Return to Site</a></button>
+  </div>
+
+</div>
+{% endblock %}

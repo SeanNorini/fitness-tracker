@@ -1,0 +1,54 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'users/css/login.css' %}">
+{% endblock %}
+
+{% block title %}{{block.super}} - Login{% endblock %}
+
+{% block content %}
+<div class="inner_container">
+  <h1>Login</h1>
+  <form class="form login" id="login_form" action="{% url 'login' %}" method="POST">
+    {% csrf_token %}
+    {% if form.errors %}
+      <div id="form_error" class="errorlist">
+        {% if form.non_field_errors %}
+            <ul>
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+      </div>
+    {% endif %}
+    <div class="username">
+      {{ form.username.label }}
+      {{ form.username }}
+      {{ form.username.errors }}
+    </div>
+    <div class="password">
+      {{ form.password.label }}
+      {{ form.password }}
+      {{ form.password.errors }}
+    </div>
+
+    <div class="remember_me row">
+      {{ form.remember_me }}
+      {{ form.remember_me.errors }}
+
+      Remember Me
+    </div>
+    <button class="button" name="login" type="submit">Login</button>
+    <div class="bold_link row">
+      Need an account?
+      <a id="registration" href="{% url 'registration' %}" data-text="Sign Up!">Sign Up!</a>
+    </div>
+    <div class="bold_link row recovery">
+      <small><a id="reset_password" href="{% url 'reset_password' %}" data-test="Forgot password?">Forgot password?</a></small>
+    </div>
+
+  </form>
+</div>
+{% endblock %}

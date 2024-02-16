@@ -1,0 +1,28 @@
+input {
+  border-radius: .25rem;
+  height: 2rem;
+
+  max-width: 100%;
+}
+
+.form.login {
+  justify-content: center;
+}
+
+#remember_me {
+  width: 1rem;
+  height: 1rem;
+}
+
+#remember_me:hover {
+  cursor: pointer;
+}
+
+.remember_me {
+  align-items: center;
+  gap: .5rem;
+}
+
+.bold_link.recovery.row {
+  gap: 0rem;
+}

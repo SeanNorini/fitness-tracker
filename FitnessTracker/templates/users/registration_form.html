@@ -1,0 +1,75 @@
+{% load static %}
+<form id="registration_form" action="{% url 'registration' %}" method="POST">
+  <h1 id="header">Register</h1>
+  {% csrf_token %}
+  <div class="col">
+    {{ form.username.label_tag }}
+    {{ form.username }}
+    {{ form.username.errors }}
+  </div>
+  <div class="col">
+    {{ form.password.label_tag }}
+    {{ form.password }}
+    {{ form.password.errors }}
+    {% if not form.errors%}
+    <ul>
+      <small>
+      <li>Password must be at least 8 characters long</li>
+      <li>Password cannot be entirely numeric</li>
+      <li>Password cannot be too common</li>
+      </small>
+    </ul>
+    {% endif %}
+  </div>
+  <div class="col">
+    {{ form.confirm_password.label_tag }}
+    {{ form.confirm_password }}
+    {{ form.confirm_password.errors }}
+  </div>
+  <div class="col">
+    {{ form.email.label_tag }}
+    {{ form.email }}
+    {{ form.email.errors }}
+  </div>
+  <div id="optional">*Optional fields below, values will be used for calculations.</div>
+  <div class="row" id="name">
+    <div class="col">
+      {{ form.first_name.label_tag }}
+      {{ form.first_name }}
+      {{ form.first_name.errors }}
+    </div>
+    <div>
+      {{ form.last_name }}
+      {{ form.last_name.errors }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      {{ form.height.label_tag }}
+      {{ form.height }}
+      {{ form.height.errors }}
+    </div>
+    <div class="col">
+      {{ form.weight.label_tag }}
+      {{ form.weight }}
+      {{ form.weight.errors }}
+    </div>
+    <div class="col">
+      {{ form.age.label_tag }}
+      {{ form.age }}
+      {{ form.age.errors }}
+    </div>
+  </div>
+  <div>
+    {{ form.gender.label_tag }}
+    {{ form.gender }}
+    {{ form.gender.errors }}
+  </div>
+  <div class="submit_form row">
+    <button class="button" name="register" type="submit">Complete Registration</button>
+  </div>
+  <div class="bold_link">
+    Already have an account?
+    <a href="{% url 'login' %}" id="login" data-text="Log in!">Log in!</a>
+  </div>
+</form>
