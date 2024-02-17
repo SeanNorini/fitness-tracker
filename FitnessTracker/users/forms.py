@@ -154,7 +154,19 @@ class SettingsForm(forms.ModelForm):
 
 
 class RegistrationForm(SettingsForm):
-    username = get_username_field()
+    username = forms.CharField(
+        min_length=2,
+        max_length=254,
+        label="Username",
+        widget=forms.TextInput(
+            attrs={
+                "id": "username",
+                "name": "username",
+                "maxlength": 100,
+                "autofocus": True,
+            }
+        ),
+    )
     password = get_password_field()
     confirm_password = get_password_field(label_prefix="Confirm ", id_prefix="confirm_")
 
@@ -177,7 +189,6 @@ class RegistrationForm(SettingsForm):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
-
         if password:
             validate_password(password)
 
@@ -191,7 +202,6 @@ class RegistrationForm(SettingsForm):
             cleaned_data["weight"] = 160  # Set default weight
         if not cleaned_data.get("age"):
             cleaned_data["age"] = 30  # Set default age
-
         return cleaned_data
 
     def save(self, commit=True):

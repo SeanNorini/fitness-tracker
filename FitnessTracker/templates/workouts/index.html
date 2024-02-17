@@ -20,13 +20,15 @@
 {% block content %}
   <div class="modules-container">
     {% for module in modules %}
-      {% include "workout/module.html" %}
+      {% include "workouts/module.html" %}
     {% endfor %}
   </div>
-
-  <div>
-    <form class="form_container col" id="workout_form">
-      {% include "workout/workout_session.html" %}
-    </form>
+  <div id="popup" class="popup" style="display: none;"></div>
+  <div id="content">
+    {% include "workouts/workout_session.html" %}
   </div>
+{% endblock %}
+
+{% block javascript %}{{block.super}}
+  <script type="text/javascript" src="{% static 'workout/js/index.js' %}"></script>
 {% endblock %}

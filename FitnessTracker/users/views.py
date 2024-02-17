@@ -22,7 +22,7 @@ from django.contrib.auth.decorators import login_required
 class UserLogin(FormView):
     template_name = "users/login.html"
     form_class = LoginForm
-    success_url = "/workout/"
+    success_url = "/workouts/"
 
     def form_valid(self, form):
         username = form.cleaned_data["username"]
@@ -46,7 +46,7 @@ class UserLogin(FormView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect("index")
+            return redirect("workouts")
         return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
@@ -82,7 +82,7 @@ class Registration(FormView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect("index")
+            return redirect("workouts")
         return super().get(request, *args, **kwargs)
 
 
@@ -101,7 +101,7 @@ class ActivateView(View):
             user.save()
             login(request, user)
             return render(
-                request, "users/activation_success.html", {"url": reverse("index")}
+                request, "users/activation_success.html", {"url": reverse("workouts")}
             )
         else:
             return render(
@@ -198,7 +198,7 @@ class SettingsView(LoginRequiredMixin, FormView):
         #         user.save()
         #         return JsonResponse({"success": True})
         # user.get_module_list()
-        modules = ["workout", "cardio", "log", "stats", "settings"]
+        modules = ["workouts", "cardio", "log", "stats", "settings"]
         form = SettingsForm()
         for field_name, field in form.fields.items():
             field.widget.attrs["value"] = getattr(user, field_name)

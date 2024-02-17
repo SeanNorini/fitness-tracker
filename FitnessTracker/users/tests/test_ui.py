@@ -101,7 +101,7 @@ class TestActivateUI(SeleniumTestCase):
 
     def test_links_exist(self) -> None:
         expected_links = [
-            f"{self.live_server_url}/workout/",
+            f"{self.live_server_url}/",
         ]
         links = [
             link.get_attribute("href")
@@ -202,7 +202,6 @@ class TestResetPasswordChangePasswordUI(SeleniumTestCase):
         )
 
     def test_title(self) -> None:
-        time.sleep(10)
         self.assertEqual(self.driver.title, "Fitness Tracker - Change Password")
 
     def test_links_exist(self) -> None:

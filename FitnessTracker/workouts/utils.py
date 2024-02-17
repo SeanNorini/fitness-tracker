@@ -17,10 +17,12 @@ def save_session(user, workout_form) -> None:
     for exercise in exercises["exercises"]:
         ((exercise_name, set_info),) = exercise.items()
 
-        curr_exercise = get_exercise(user, exercise_name)
+        curr_exercise = WorkoutExercise.objects.create(
+            workout_log=workout_log, name=exercise_name
+        )
 
         for i in range(len(set_info["weight"])):
-            set_log = Set()
+            set_log = WorkoutSet()
             set_log.workout_log = workout_log
             set_log.exercise = curr_exercise
             set_log.weight = set_info["weight"][i]

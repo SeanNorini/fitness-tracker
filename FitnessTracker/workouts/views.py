@@ -3,13 +3,20 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import *
 from users.models import User
-from .forms import WorkoutForm, WorkoutSessionForm
+from .forms import (
+    WorkoutForm,
+    WorkoutSessionForm,
+)
 from .utils import *
 
 
 # Create your views here.
+def stats(request):
+    return render(request, "workouts/stats.html")
+
+
 @login_required
-def index(request):
+def workout(request):
     DEFAULT_USER = User.objects.get(username="default")
     exercises = list(
         Exercise.objects.filter(user=DEFAULT_USER).values_list("name", flat=True)
@@ -21,13 +28,19 @@ def index(request):
     # workouts.extend(list(Workout.objects.exclude(name__in=workouts).values_list("name", flat=True)))
 
     # user.get_module_list()
-    modules = ["workout", "cardio", "log", "stats", "settings"]
-
-    return render(
-        request,
-        "workout/index.html",
-        {"modules": modules, "exercises": exercises, "workouts": workouts},
-    )
+    modules = ["workouts", "cardio", "log", "stats", "settings"]
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(
+            request,
+            "workouts/workout_session.html",
+            {"modules": modules, "exercises": exercises, "workouts": workouts},
+        )
+    else:
+        return render(
+            request,
+            "workouts/index.html",
+            {"modules": modules, "exercises": exercises, "workouts": workouts},
+        )
     # "workouts": workouts})
 
 
@@ -39,19 +52,20 @@ def add_exercise(request, exercise, sets=None):
     else:
         exercise["sets"] = sets
 
-    return render(request, "workout/exercise.html", {"exercise": exercise})
+    return render(request, "workouts/exercise.html", {"exercise": exercise})
 
 
 @login_required
 def add_set(request):
-    return render(request, "workout/set.html")
+    return render(request, "workouts/set.html")
 
 
 @login_required
 def select_workout(request, workout_name):
     workout = get_workout(request.user, workout_name.replace("%20", " "))
     workout_config = configure_workout(workout)
-    return render(request, "workout/workout.html", {"workout": workout_config})
+
+    return render(request, "workouts/workout.html", {"workout": workout_config})
 
 
 @login_required
@@ -90,7 +104,7 @@ def edit_workouts(request):
 
     return render(
         request,
-        "workout/edit_workouts.html",
+        "workouts/edit_workouts.html",
         {"workouts": workouts, "exercises": exercises},
     )
 
@@ -107,6 +121,6 @@ def exit_edit(request):
 
     return render(
         request,
-        "workout/workout_session.html",
+        "workouts/workout_session.html",
         {"exercises": exercises, "workouts": workouts},
     )

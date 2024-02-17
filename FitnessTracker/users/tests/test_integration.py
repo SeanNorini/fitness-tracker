@@ -45,12 +45,12 @@ class TestLogin(SeleniumTestCase):
             self.live_server_url + "/user/login",
             {"username": EMAIL_VALID, "password": PASSWORD_VALID},
         )
-        self.assertEqual(self.driver.current_url, self.live_server_url + "/workout/")
+        self.assertEqual(self.driver.current_url, self.live_server_url + "/workouts/")
 
     def test_login_successful_with_username(self) -> None:
         # Verify login with valid username and password
         login(self.driver, self.live_server_url + "/user/login", LOGIN_USER_FORM_FIELDS)
-        self.assertEqual(self.driver.current_url, self.live_server_url + "/workout/")
+        self.assertEqual(self.driver.current_url, self.live_server_url + "/workouts/")
 
     def test_login_unsuccessful(self) -> None:
         # Verify user can't login with incorrect credentials
@@ -166,11 +166,11 @@ class TestActivate(SeleniumTestCase):
 
     def test_link_to_index(self):
         click(self.driver, "name", "return_to_site")
-        self.assertEqual(self.driver.current_url, self.live_server_url + "/workout/")
+        self.assertEqual(self.driver.current_url, self.live_server_url + "/")
 
     def test_redirect(self):
         time.sleep(4)
-        self.assertEqual(self.driver.current_url, self.live_server_url + "/workout/")
+        self.assertEqual(self.driver.current_url, self.live_server_url + "/workouts/")
 
 
 class TestChangePassword(SeleniumTestCase):
