@@ -156,7 +156,7 @@ class ResetPasswordConfirmView(FormView):
         self.request.user.set_password(form.cleaned_data["new_password"])
         self.request.user.save()
         login(self.request, self.request.user)
-        return super().form_valid(form)
+        return render(self.request, "users/change_password_done.html")
 
     def get(self, request, *args, **kwargs):
         uidb64 = self.kwargs.get("uidb64")
