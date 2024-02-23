@@ -12,12 +12,6 @@ class WorkoutSetInline(admin.TabularInline):
     extra = 1
 
 
-class WorkoutExerciseInline(admin.TabularInline):
-    model = WorkoutExercise
-    extra = 1
-    inlines = [WorkoutSetInline]
-
-
 @admin.register(WorkoutLog)
 class WorkoutLogAdmin(admin.ModelAdmin):
-    inlines = [WorkoutExerciseInline]
+    inlines = [WorkoutSetInline]

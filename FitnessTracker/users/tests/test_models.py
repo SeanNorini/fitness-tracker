@@ -2,6 +2,7 @@ from django.test import TestCase
 from users.models import User
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
+from common.test_globals import CREATE_USER
 
 
 def input_validation(self, field_name, field_inputs):
@@ -22,7 +23,7 @@ class TestUserModel(TestCase):
     fixtures = ["default.json"]
 
     def setUp(self):
-        self.user = User.objects.get(username="testuser")
+        self.user = User.objects.create_user(**CREATE_USER)
 
     def test_gender_validation(self):
         field_inputs = {
@@ -92,10 +93,9 @@ class TestUserModel(TestCase):
 
     def test_default_values(self):
         # Verify default values for a new user
-        new_user = User.objects.create(username="newuser")
-        self.assertEqual(new_user.first_name, "first")
-        self.assertEqual(new_user.last_name, "last")
-        self.assertEqual(new_user.gender, "M")
-        self.assertEqual(new_user.height, 70)
-        self.assertEqual(new_user.weight, 160)
-        self.assertEqual(new_user.age, 30)
+        self.assertEqual(self.user.first_name, "first")
+        self.assertEqual(self.user.last_name, "last")
+        self.assertEqual(self.user.gender, "M")
+        self.assertEqual(self.user.height, 75)
+        self.assertEqual(self.user.weight, 150)
+        self.assertEqual(self.user.age, 28)

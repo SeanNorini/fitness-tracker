@@ -1,41 +1,56 @@
-<form class="form_container col" id="workout_form">
-{% csrf_token %}
-  <input type="hidden" id="session" value="True">
-  <div class="controls_container row">
-      <div class="top_controls">
-        <input type="date" id="date">
-        <div class="select_container">
-          <select class="workout">
-            {% for workout in workouts %}
-              <option value="{{ workout }}">{{ workout }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <span class="material-symbols-outlined workout_tooltip">
-        help
-        </span>
-        <div id="workout_tooltip">To create or edit exercises, workouts, or your routine, go to settings.</div>
-      </div>
-    </div>
 
-
-    <div class="controls_container">
-      <div>
-        <div class="select_container">
-          <select class="exercise">
-            {% for exercise in exercises %}
-              <option>{{ exercise }}</option>
-            {% endfor %}
-          </select>
-        </div>
-      </div>
-
-      <div>
-        <button class="add_exercise controls" value="add exercise">Add Exercise</button>
-      </div>
-
-      <div>
-        <button class="save_workout controls" value="save workout">Save Workout Session</button>
-      </div>
-    </div>
+<input type="hidden" name="view" id="view" value="stats" />
+<form id="stats_form">
+  {% csrf_token %}
+  <div class="button_group_round">
+    <button type="button" class="button_back" id="all_time" value="60" data-group="1">
+      <span class="button_front">
+        All Time
+      </span>
+    </button>
+    <button type="button" class="button_back" id="year" value="12" data-group="1">
+      <span class="button_front">
+        Year
+      </span>
+    </button>
+    <button type="button" class="button_back" id="6_months" value="6" data-group="1">
+      <span class="button_front">
+        6 Months
+      </span>
+    </button>
+    <button type="button" class="button_back" id="3_months" value="3" data-group="1">
+      <span class="button_front">
+        3 Months
+      </span>
+    </button>
+    <button type="button" class="button_back active" id="1_month" value="1" data-group="1">
+      <span class="button_front">
+        Month
+      </span>
+    </button>
+  </div>
+  <div class="button_group_round">
+    <button type="button" class="button_back active" id="bodyweight" value="bodyweight" data-group="2">
+      <span class="button_front">
+        Bodyweight
+      </span>
+    </button>
+    <button type="button" class="button_back" id="weightlifting" value="weightlifting" data-group="2">
+      <span class="button_front">
+        Weightlifting
+      </span>
+    </button>
+  </div>
+  <div class="select_container hidden">
+    <select class="select_exercise">
+      {% for exercise in exercises %}
+        <option>{{ exercise }}</option>
+      {% endfor %}
+    </select>
+  </div>
 </form>
+<div class="graph">
+</div>
+
+
+

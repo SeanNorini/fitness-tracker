@@ -114,7 +114,7 @@ class TestWorkoutLogModel(TestCase):
                     self.fail(f"Expected {str(expected_error)}.")
 
 
-class TestSetModel(TestCase):
+class TestWorkoutSetModel(TestCase):
     fixtures = ["default.json"]
 
     def setUp(self):
@@ -123,10 +123,10 @@ class TestSetModel(TestCase):
         self.workout_log = WorkoutLog.objects.create(
             workout=self.workout, user=self.user
         )
-        self.exercise = WorkoutExercise.objects.create(
-            workout_log=self.workout_log, name="test"
+        self.exercise = Exercise.objects.create(name="test", user=self.user)
+        self.set = WorkoutSet(
+            workout_log=self.workout_log, exercise=self.exercise, weight=0, reps=0
         )
-        self.set = WorkoutSet(exercise=self.exercise, weight=0, reps=0)
 
     def assert_valid_value(self, field, value):
         setattr(self.set, field, value)
@@ -140,6 +140,11 @@ class TestSetModel(TestCase):
     def test_exercise_validation(self):
         with self.assertRaises(ValidationError):
             self.set.exercise = None
+            self.set.full_clean()
+
+    def test_exercise_validation(self):
+        with self.assertRaises(ValidationError):
+            self.set.workout_log = None
             self.set.full_clean()
 
     def test_weight_validation(self):

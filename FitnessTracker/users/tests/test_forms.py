@@ -1,6 +1,6 @@
 from django.test import TestCase
 from users.forms import *
-from users.tests.test_globals import *
+from common.test_globals import *
 from django import forms
 
 MIN_LENGTH_NAME = 2

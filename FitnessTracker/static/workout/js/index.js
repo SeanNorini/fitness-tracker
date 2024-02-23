@@ -1,3 +1,5 @@
+const domain = document.querySelector("#domain").value;
+
 const controls = document.querySelector("#workout_form");
 
 
@@ -5,7 +7,7 @@ const controls = document.querySelector("#workout_form");
 const modules = document.querySelectorAll(".module")
 modules.forEach(module => {
     module.addEventListener("click", e => {
-        fetch(module.id + "/", {method:"GET", headers: {
+        fetch(`http://${domain}/${module.id}`, {method:"GET", headers: {
         "X-Requested-With": "XMLHttpRequest",
         "HTTP_X_REQUESTED_WITH": "XMLHttpRequest"
         }
@@ -17,9 +19,23 @@ modules.forEach(module => {
             if (module.id === "workouts"){
                 workoutEventListeners();
             }
+            loadJS(module.id);
         });
     });
 });
+
+function loadJS(module){
+    switch (module) {
+        case "workouts":
+            break;
+        case "stats":
+            loadStats();
+            break;
+        case "settings":
+            break;
+    }
+
+}
 
 function add_set(e) {
     e.target.removeEventListener("click", add_set);
@@ -90,7 +106,7 @@ function selectWorkoutEventListeners(){
         sets.forEach((currentSet, index) => {
             if (index > 0){
                 deleteSetButton = currentSet.querySelector(".delete_set");
-                currentSet.addEventListener("click", (e) =>{
+                deleteSetButton.addEventListener("click", (e) =>{
                 e.preventDefault();
                 delete_set(e);
                 });
@@ -105,14 +121,17 @@ function update_set_number(container) {
     }
 
 function workoutEventListeners(){
-    document.getElementById("date").valueAsDate = new Date();
+    const currentDate = new Date();
+    document.getElementById("date").valueAsDate = new Date(
+        currentDate.getTime() - currentDate.getTimezoneOffset() * 60000 );
+
 
     const workout = document.querySelector(".workout");
     workout.addEventListener("change", (e) => {
         const confirm = window.confirm("This will erase the current workouts session, are you sure?")
 
         if (confirm){
-            fetch("select_workout/" + workout.value, {method:"GET"})
+            fetch(`http://${domain}/select_workout/${workout.value}`, {method:"GET"})
             .then(response => response.text())
             .then(workoutHTML => {
                 const exercises = document.querySelector("#exercises");
@@ -183,7 +202,7 @@ function workoutEventListeners(){
                 var setWeight = element.querySelector(".weight").value;
                 if (setWeight === ""){
                     setWeight = 0;
-                };
+                }
                 weights.push(setWeight);
 
                 var setReps = element.querySelector(".reps").value;
@@ -212,6 +231,7 @@ function workoutEventListeners(){
             url = "save_workout_session"
         }
         else {url = "save_workout"}
+
 
         // Send workouts data and display response
         fetch(url, {method: "POST", body: workout})

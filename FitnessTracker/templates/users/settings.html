@@ -18,6 +18,7 @@
 {% endblock %}
 
 {% block content %}
+  <input type="hidden" name="view" id="view" value="settings" />
   <div class="modules-container">
     {% for module in modules %}
       {% include "workouts/module.html" %}

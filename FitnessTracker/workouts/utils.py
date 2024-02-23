@@ -3,7 +3,7 @@ from users.models import *
 from django.core.exceptions import ObjectDoesNotExist
 
 
-def save_session(user, workout_form) -> None:
+def save_workout_session(user, workout_form) -> None:
     workout_log = WorkoutLog()
     workout_name = workout_form.cleaned_data["name"]
     workout = get_workout(user, workout_name)
@@ -17,14 +17,12 @@ def save_session(user, workout_form) -> None:
     for exercise in exercises["exercises"]:
         ((exercise_name, set_info),) = exercise.items()
 
-        curr_exercise = WorkoutExercise.objects.create(
-            workout_log=workout_log, name=exercise_name
-        )
-
+        curr_exercise = Exercise.objects.get_or_create(name=exercise_name, user=user)
+        print(curr_exercise[0])
         for i in range(len(set_info["weight"])):
             set_log = WorkoutSet()
             set_log.workout_log = workout_log
-            set_log.exercise = curr_exercise
+            set_log.exercise = curr_exercise[0]
             set_log.weight = set_info["weight"][i]
             set_log.reps = set_info["reps"][i]
             set_log.save()
@@ -48,15 +46,6 @@ def get_workouts(user) -> list[Workout]:
     pass
 
 
-def get_workout(user, workout_name) -> Workout:
-    DEFAULT_USER = User.objects.get(username="default")
-    try:
-        workout = Workout.objects.get(name=workout_name, user=user)
-    except ObjectDoesNotExist:
-        workout = Workout.objects.get(name=workout_name, user=DEFAULT_USER)
-    return workout
-
-
 def get_exercises(user) -> list[Exercise]:
     pass
 
@@ -68,17 +57,3 @@ def get_exercise(user, exercise_name) -> Exercise:
     except ObjectDoesNotExist:
         exercise = Exercise.objects.get(name=exercise_name, user=DEFAULT_USER)
     return exercise
-
-
-def configure_workout(workout: Workout) -> dict:
-    workout_config = {"exercises": []}
-    for exercise in workout.config["exercises"]:
-        for exercise_name, exercise_config in exercise.items():
-            workout_config["exercises"].append(
-                {
-                    "name": exercise_name,
-                    "sets": zip(exercise_config["weight"], exercise_config["reps"]),
-                }
-            )
-
-    return workout_config

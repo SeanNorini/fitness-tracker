@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from users.models import User
-from .test_globals import *
+from common.test_globals import *
 from common.selenium_utils import *
 from common.test_utils import (
     form_without_csrf_token,
@@ -89,9 +89,9 @@ class TestRegistrationUI(SeleniumTestCase):
 
 class TestActivateUI(SeleniumTestCase):
     def setUp(self) -> None:
-        user = User.objects.get(username=USERNAME_VALID)
-        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-        token = account_token_generator.make_token(user)
+        self.user = User.objects.create_user(**CREATE_USER)
+        uidb64 = urlsafe_base64_encode(force_bytes(self.user.pk))
+        token = account_token_generator.make_token(self.user)
         self.driver.get(
             self.live_server_url + reverse("activate", args=[uidb64, token])
         )
@@ -113,6 +113,7 @@ class TestActivateUI(SeleniumTestCase):
 
 class TestChangePasswordUI(SeleniumTestCase):
     def setUp(self) -> None:
+        self.user = User.objects.create_user(**CREATE_USER)
         login(
             self.driver, self.live_server_url + "/user/login/", LOGIN_USER_FORM_FIELDS
         )
@@ -123,7 +124,7 @@ class TestChangePasswordUI(SeleniumTestCase):
 
     def test_links_exist(self) -> None:
         expected_links = [
-            f"{self.live_server_url}/user/settings/",
+            f"{self.live_server_url}/settings",
         ]
         links = [
             link.get_attribute("href")
@@ -193,9 +194,9 @@ class TestResetPasswordUI(SeleniumTestCase):
 
 class TestResetPasswordChangePasswordUI(SeleniumTestCase):
     def setUp(self) -> None:
-        user = User.objects.get(username=USERNAME_VALID)
-        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-        token = account_token_generator.make_token(user)
+        self.user = User.objects.create_user(**CREATE_USER)
+        uidb64 = urlsafe_base64_encode(force_bytes(self.user.pk))
+        token = account_token_generator.make_token(self.user)
         self.driver.get(
             self.live_server_url
             + reverse("reset_password_confirm_token", args=[uidb64, token])

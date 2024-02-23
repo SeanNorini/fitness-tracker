@@ -1,0 +1,60 @@
+
+.button_group_round {
+    display: flex;
+    flex-direction: row;
+}
+
+.button_group_round button:first-child span,
+.button_group_round button:first-child {
+    border-radius: 1rem 0 0 1rem;
+}
+
+.button_group_round button:last-child span,
+.button_group_round button:last-child {
+    border-radius: 0 1rem 1rem 0;
+}
+
+
+.button_group_round button {
+    padding: 0;
+}
+
+.button_front{
+    display: block;
+    background-color: var(--button_front_background);
+    font-size: 1.2rem;
+    transform: translateY(-.2rem);
+    border: 0;
+    border-right: 1px solid black;
+    padding: .4rem .6rem;
+    color: var(--font_color);
+}
+
+.button_back {
+    border: 0;
+    background-color: var(--button_back_background);
+    cursor: pointer;
+}
+
+.button_back:hover:not(.active) .button_front{
+  transition: all .3s ease-in;
+  background-color: var(--button_background_hover);
+    transform: translateY(-.3rem);
+}
+
+.button_back.active .button_front{
+    transition: all .3s ease-in;
+    transform: translateY(0);
+    background-color: var(--button_back_background);
+}
+
+.hidden {
+    display: none;
+}
+
+#stats_form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .4rem;
+}

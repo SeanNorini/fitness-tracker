@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from users.models import User
-from .test_globals import *
+from common.test_globals import *
 from common.selenium_utils import *
 from common.test_utils import (
     form_without_csrf_token,
@@ -36,6 +36,7 @@ class TestLogin(SeleniumTestCase):
     fixtures = ["default.json"]
 
     def setUp(self) -> None:
+        self.user = User.objects.create_user(**CREATE_USER)
         self.driver.get(self.live_server_url + "/user/login")
 
     def test_login_successful_with_email(self) -> None:
@@ -108,6 +109,7 @@ class TestLogout(SeleniumTestCase):
     fixtures = ["default.json"]
 
     def test_logout(self) -> None:
+        user = User.objects.create_user(**CREATE_USER)
         login(self.driver, self.live_server_url + "/user/login", LOGIN_USER_FORM_FIELDS)
         click(self.driver, "id", "logout")
         self.assertEqual(self.driver.current_url, self.live_server_url + "/user/login/")
@@ -156,9 +158,9 @@ class TestActivate(SeleniumTestCase):
     fixtures = ["default.json"]
 
     def setUp(self):
-        user = User.objects.get(username=USERNAME_VALID)
-        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-        token = account_token_generator.make_token(user)
+        self.user = User.objects.create_user(**CREATE_USER)
+        uidb64 = urlsafe_base64_encode(force_bytes(self.user.pk))
+        token = account_token_generator.make_token(self.user)
         self.activation_url = self.live_server_url + reverse(
             "activate", args=[uidb64, token]
         )
@@ -177,6 +179,7 @@ class TestChangePassword(SeleniumTestCase):
     fixtures = ["default.json"]
 
     def setUp(self):
+        self.user = User.objects.create_user(**CREATE_USER)
         login(self.driver, self.live_server_url + "/user/login", LOGIN_USER_FORM_FIELDS)
         self.driver.get(self.live_server_url + "/user/change_password/")
 
@@ -186,9 +189,7 @@ class TestChangePassword(SeleniumTestCase):
         header = find_element(self.driver, "tag", "h1")
         self.assertEqual(header.text, "Password Changed!")
         click(self.driver, "name", "return_to_settings")
-        self.assertEqual(
-            self.driver.current_url, self.live_server_url + "/user/settings/"
-        )
+        self.assertEqual(self.driver.current_url, self.live_server_url + "/settings")
 
     def test_change_password_fail(self) -> None:
         fill_form(

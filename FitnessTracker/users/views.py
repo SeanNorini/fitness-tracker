@@ -8,18 +8,16 @@ from django.utils.http import urlsafe_base64_decode
 from .forms import (
     LoginForm,
     RegistrationForm,
-    SettingsForm,
     ChangePasswordForm,
     ResetPasswordForm,
     SetPasswordForm,
 )
 from .models import User
 from .utils import send_activation_link, account_token_generator, send_reset_link
-from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
-class UserLogin(FormView):
+class UserLoginView(FormView):
     template_name = "users/login.html"
     form_class = LoginForm
     success_url = "/workouts/"
@@ -31,7 +29,6 @@ class UserLogin(FormView):
 
         # Authenticate user
         user = authenticate(username=username, password=password)
-
         # Login user if authentication was successful
         if user is not None:
             login(self.request, user)
@@ -53,14 +50,14 @@ class UserLogin(FormView):
         return self.request.GET.get("next", self.success_url)
 
 
-class UserLogout(View):
+class UserLogoutView(View):
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             logout(request)
         return redirect("login")
 
 
-class Registration(FormView):
+class RegistrationView(FormView):
     template_name = "users/registration.html"
     form_class = RegistrationForm
     success_url = "/registration/success/"
@@ -203,5 +200,5 @@ class SettingsView(LoginRequiredMixin, FormView):
         for field_name, field in form.fields.items():
             field.widget.attrs["value"] = getattr(user, field_name)
         return render(
-            request, "users/settings.html", {"modules": modules, "form": form}
+            request, "settings/settings.html", {"modules": modules, "form": form}
         )

@@ -1,7 +1,7 @@
 from django.urls import reverse
 from django.test import Client
 from django.contrib.auth import login
-from users.tests.test_globals import USERNAME_VALID, PASSWORD_VALID
+from common.test_globals import USERNAME_VALID, PASSWORD_VALID
 
 
 def form_without_csrf_token(page, form_data, login=False):

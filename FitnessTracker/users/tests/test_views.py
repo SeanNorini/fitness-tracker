@@ -5,7 +5,7 @@ from unittest.mock import patch
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from users.utils import account_token_generator
-from .test_globals import *
+from common.test_globals import *
 from common.test_utils import (
     form_without_csrf_token,
     form_with_invalid_csrf_token,
@@ -13,12 +13,19 @@ from common.test_utils import (
 )
 
 
-class TestLoginView(TestCase):
+class TestUserViews(TestCase):
     fixtures = ["default.json"]
+
+    def setUp(self):
+        self.user = User.objects.create_user(**CREATE_USER)
+        self.registration = REGISTRATION_FORM_FIELDS
+
+
+class TestLoginView(TestUserViews):
 
     def test_user_already_authenticated(self):
         # Verify redirect on user already logged in
-        self.client.login(username=USERNAME_VALID, password=PASSWORD_VALID)
+        self.client.force_login(self.user)
 
         response = self.client.get(reverse("login"))
         self.assertEqual(response.status_code, 302)
@@ -34,7 +41,7 @@ class TestLoginView(TestCase):
         # Verify redirect on valid login
         response = self.client.post(
             reverse("login"),
-            data={"username": USERNAME_VALID, "password": PASSWORD_VALID},
+            data=LOGIN_USER_FORM_FIELDS,
         )
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("workouts"))
@@ -63,12 +70,11 @@ class TestLoginView(TestCase):
         self.assertEqual(status_code, 302)
 
 
-class TestLogoutView(TestCase):
-    fixtures = ["default.json"]
+class TestLogoutView(TestUserViews):
 
     def test_user_already_authenticated(self):
         # Verify redirect on user already logged in
-        self.client.login(username=USERNAME_VALID, password=PASSWORD_VALID)
+        self.client.force_login(self.user)
 
         response = self.client.get(reverse("logout"))
         self.assertEqual(response.status_code, 302)
@@ -81,12 +87,11 @@ class TestLogoutView(TestCase):
         self.assertRedirects(response, reverse("login"))
 
 
-class TestRegistrationView(TestCase):
-    fixtures = ["default.json"]
+class TestRegistrationView(TestUserViews):
 
     def test_user_already_authenticated(self):
         # Verify authenticated users redirected to index
-        self.client.login(username=USERNAME_VALID, password=PASSWORD_VALID)
+        self.client.force_login(self.user)
         response = self.client.get(reverse("registration"))
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("workouts"))
@@ -144,22 +149,7 @@ class TestRegistrationView(TestCase):
         self.assertEqual(status_code, 200)
 
 
-class TestActivateView(TestCase):
-    fixtures = ["default.json"]
-
-    def setUp(self):
-        self.user = User.objects.create_user(
-            username="test_name",
-            password="testpassword",
-            first_name="first",
-            last_name="last",
-            email="snorini@gmail.com",
-            gender="M",
-            weight="150",
-            height="75",
-            age="28",
-            is_active=False,
-        )
+class TestActivateView(TestUserViews):
 
     def test_valid_activation(self) -> None:
         uidb64 = urlsafe_base64_encode(force_bytes(self.user.pk))
@@ -167,11 +157,13 @@ class TestActivateView(TestCase):
         activation_url = reverse("activate", args=[uidb64, token])
 
         response = self.client.get(activation_url)
-        self.user = User.objects.get(username=self.user.username)
+        user = User.objects.get(username=self.user.username)
 
-        self.assertTrue(self.user.is_active)
+        self.assertTrue(user.is_active)
 
     def test_invalid_activation(self) -> None:
+        self.user.is_active = False
+        self.user.save()
         uidb64 = urlsafe_base64_encode(force_bytes(self.user.pk))
         token = "invalid"
         activation_url = reverse("activate", args=[uidb64, token])
@@ -183,11 +175,10 @@ class TestActivateView(TestCase):
         self.assertTemplateUsed(response, "users/activation_failure.html")
 
 
-class TestChangePasswordView(TestCase):
-    fixtures = ["default.json"]
-
+class TestChangePasswordView(TestUserViews):
     def setUp(self) -> None:
-        self.client.login(username=USERNAME_VALID, password=PASSWORD_VALID)
+        super().setUp()
+        self.client.force_login(self.user)
 
     def test_change_password_success(self) -> None:
         response = self.client.post(
@@ -234,11 +225,7 @@ class TestChangePasswordView(TestCase):
         self.assertEqual(status_code, 200)
 
 
-class TestResetPasswordView(TestCase):
-    fixtures = ["default.json"]
-
-    def setUp(self):
-        self.user = User.objects.get(username=USERNAME_VALID)
+class TestResetPasswordView(TestUserViews):
 
     def test_reset_password_valid_form(self) -> None:
         with patch("users.views.send_reset_link") as send_reset_link:
@@ -275,11 +262,10 @@ class TestResetPasswordView(TestCase):
         self.assertEqual(status_code, 200)
 
 
-class TestResetPasswordConfirmView(TestCase):
-    fixtures = ["default.json"]
+class TestResetPasswordConfirmView(TestUserViews):
 
     def setUp(self) -> None:
-        self.user = User.objects.get(username=LOGIN_USER_FORM_FIELDS["username"])
+        super().setUp()
         self.uidb64 = urlsafe_base64_encode(force_bytes(self.user.pk))
         self.token = account_token_generator.make_token(self.user)
 
@@ -291,7 +277,7 @@ class TestResetPasswordConfirmView(TestCase):
             reverse("reset_password_confirm"),
             data={"new_password": PASSWORD_VALID, "confirm_password": PASSWORD_VALID},
         )
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.resolver_match.view_name, "reset_password_confirm")
 
     def test_invalid_form(self) -> None:
@@ -344,4 +330,4 @@ class TestResetPasswordConfirmView(TestCase):
                 "csrfmiddlewaretoken": csrf_token,
             },
         )
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)

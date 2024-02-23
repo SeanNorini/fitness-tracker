@@ -7,7 +7,7 @@ from users.models import User
 from django.test.client import Client
 from bs4 import BeautifulSoup
 from users.forms import RegistrationForm
-from users.tests.test_globals import (
+from common.test_globals import (
     REGISTRATION_FORM_FIELDS,
 )
 

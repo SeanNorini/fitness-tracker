@@ -4,6 +4,7 @@
 
 {% block head %}
   <link rel="stylesheet" href="{% static 'workout/css/index.css' %}">
+  <link rel="stylesheet" href="{% static 'workout/css/stats.css' %}">
 {% endblock %}
 
 {% block header %}
@@ -31,4 +32,5 @@
 
 {% block javascript %}{{block.super}}
   <script type="text/javascript" src="{% static 'workout/js/index.js' %}"></script>
+  <script type="text/javascript" src="{% static 'workout/js/stats.js' %}"></script>
 {% endblock %}

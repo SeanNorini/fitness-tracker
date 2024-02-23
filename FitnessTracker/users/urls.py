@@ -3,9 +3,9 @@ from . import views
 
 
 urlpatterns = [
-    path("login/", views.UserLogin.as_view(), name="login"),
-    path("logout/", views.UserLogout.as_view(), name="logout"),
-    path("registration/", views.Registration.as_view(), name="registration"),
+    path("login/", views.UserLoginView.as_view(), name="login"),
+    path("logout/", views.UserLogoutView.as_view(), name="logout"),
+    path("registration/", views.RegistrationView.as_view(), name="registration"),
     path("activate/<uidb64>/<token>/", views.ActivateView.as_view(), name="activate"),
     path(
         "change_password/",
