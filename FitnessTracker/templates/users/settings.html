@@ -1,35 +1,42 @@
-{% extends "base/base.html" %}
 
-{% load static %}
+<div class="form_container">
+  <form class="form" id="settings_form" action="{% url 'settings' %}" method="POST">
+    {% csrf_token %}
+    <h1 id="header">Settings</h1>
 
-{% block head %}
-  <link rel="stylesheet" href="{% static 'workout/css/index.css' %}">
-{% endblock %}
-
-{% block header %}
-  <header>
-    <div id="greeting">
-        Welcome, {{ user.username }}.
+    <div class="row" id="name">
+      <div id="first_name" class="col">
+        {{ form.first_name.label_tag }}
+        {{ form.first_name }}
+      </div>
+      <div id="last_name">
+        {{ form.last_name }}
+      </div>
     </div>
-    <div>
-        <a id="logout" href="{% url 'logout' %}">Log Out</a>
+    <div id="email" class="col">
+      {{ form.email.label_tag }}
+      {{ form.email }}
     </div>
-  </header>
-{% endblock %}
+    <div id="gender">
+      {{ form.gender.label_tag }}
+      {{ form.gender }}
+    </div>
+    <div id="height" class="col">
+      {{ form.height.label_tag }}
+      {{ form.height }}
+    </div>
+    <div id="weight" class="col">
+      {{ form.weight.label_tag }}
+      {{ form.weight }}
+    </div>
+    <div id="age" class="col">
+      {{ form.age.label_tag }}
+      {{ form.age }}
+    </div>
+    <div id="optional">*Optional, default values shown will be used for calculations if left unset.</div>
+    <div id="buttons">
+        <button class="button" id="save" type="submit">Save Changes</button>
+    </div>
+  </form>
 
-{% block content %}
-  <input type="hidden" name="view" id="view" value="settings" />
-  <div class="modules-container">
-    {% for module in modules %}
-      {% include "workouts/module.html" %}
-    {% endfor %}
-  </div>
-  <div id="popup" class="popup" style="display: none;"></div>
-  <div id="content">
-    {% include "workouts/workout_session.html" %}
-  </div>
-{% endblock %}
-
-{% block javascript %}{{block.super}}
-  <script type="text/javascript" src="{% static 'workout/js/index.js' %}"></script>
-{% endblock %}
+</div>

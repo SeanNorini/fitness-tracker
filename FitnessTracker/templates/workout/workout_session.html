@@ -6,7 +6,7 @@
       <div class="top_controls">
         <input type="date" id="date">
         <div class="select_container">
-          <select class="workout">
+          <select class="workout" id="select_workout">
             {% for workout in workouts %}
               <option value="{{ workout }}">{{ workout }}</option>
             {% endfor %}
@@ -25,7 +25,7 @@
     <div class="controls_container">
       <div>
         <div class="select_container">
-          <select class="exercise">
+          <select class="exercise" id="select_exercise">
             {% for exercise in exercises %}
               <option>{{ exercise }}</option>
             {% endfor %}
@@ -34,11 +34,11 @@
       </div>
         
       <div>
-        <button class="add_exercise controls" value="add exercise">Add Exercise</button>
+        <button class="add_exercise controls" id="add_exercise" value="add exercise">Add Exercise</button>
       </div>
         
       <div>
-        <button class="save_workout controls" value="save workout">Save Workout Session</button>
+        <button class="save_workout controls" id="save_workout_session" value="save workout">Save Workout Session</button>
       </div>
     </div>
 </form>

@@ -11,6 +11,7 @@ from .forms import (
     ChangePasswordForm,
     ResetPasswordForm,
     SetPasswordForm,
+    SettingsForm,
 )
 from .models import User
 from .utils import send_activation_link, account_token_generator, send_reset_link
@@ -20,7 +21,7 @@ from .utils import send_activation_link, account_token_generator, send_reset_lin
 class UserLoginView(FormView):
     template_name = "users/login.html"
     form_class = LoginForm
-    success_url = "/workouts/"
+    success_url = "/workout/"
 
     def form_valid(self, form):
         username = form.cleaned_data["username"]
@@ -200,5 +201,5 @@ class SettingsView(LoginRequiredMixin, FormView):
         for field_name, field in form.fields.items():
             field.widget.attrs["value"] = getattr(user, field_name)
         return render(
-            request, "settings/settings.html", {"modules": modules, "form": form}
+            request, "users/settings.html", {"modules": modules, "form": form}
         )

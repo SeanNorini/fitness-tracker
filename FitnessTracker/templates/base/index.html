@@ -1,0 +1,45 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'workout/css/index.css' %}">
+  {% if css_file %}
+    <link rel="stylesheet" href="{% static css_file %}">
+  {% endif %}
+{% endblock %}
+
+{% block header %}
+{% include "base/header.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="modules-container">
+  {% for module in modules %}
+    {% include "base/module.html" %}
+  {% endfor %}
+</div>
+<div id="popup" class="popup" style="display: none;"></div>
+<div id="content">
+  {% if template_content%}
+    {% include template_content %}
+  {% elif calendar %}
+    {{ calendar|safe }}
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block javascript %}{{block.super}}
+<script type="text/javascript" src="{% static 'workout/js/index.js' %}"></script>
+  {% if js_file %}
+    <script type="text/javascript" src="{% static js_file %}"></script>
+  {% endif %}
+{% endblock %}
+
+
+
+
+
+
+
+

@@ -1,0 +1,49 @@
+table.calendar {
+    display: flex;
+    flex-direction: column;
+
+
+    font-family: Arial, sans-serif;
+    min-width: 40rem;
+}
+
+table.calendar th:not(.month) {
+    border-right: 1px solid #ccc;
+    width: 100%;
+}
+
+.calendar.month tr:not(:first-child) {
+    display: flex;
+    flex-direction: row;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+
+}
+
+.calendar.month tr:last-child {
+    border-bottom: 1px solid #ccc;
+}
+
+table.calendar tbody {
+    width: 100%;
+}
+
+table.calendar td {
+    border-right: 1px solid #ccc;
+    text-align: center;
+    width:100%;
+    min-height: 5rem;
+}
+
+th.month {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+}
+
+tr {
+    display: flex;
+    width: 100%;
+}
+

@@ -34,7 +34,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    "workouts",
+    "log",
+    "workout",
     "users.apps.UsersConfig",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -147,3 +148,5 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 4
+
+SELENIUM_LOGIN_START_PAGE = "/workouts"
