@@ -1068,6 +1068,14 @@
   }
 },
 {
+  "model": "sessions.session",
+  "pk": "f4bbrjfboqtcq39e46ewlk40dacmqybh",
+  "fields": {
+    "session_data": ".eJxVjMEKwjAQRP8lZymbpOlqj0K_I2ySXRrUKl0LivjvWuhBj2_ezLxMpOU-xkV5jrWY3niz-80S5RNPq1hRm421GS5Uz8fN_k1G0vHbl04kZ7-32ZNvLTCAlzZYx6XLYiEh2iJMhRyis04YAiWUDg6hYMD1VFm1XqfIj1udn6aH9wflYzoV:1rdOKg:pLH9TEfb9iOHQLXJInesqOZUhxw-0GNRzVx0zIhJTv0",
+    "expire_date": "2024-03-08T05:42:50.022Z"
+  }
+},
+{
   "model": "users.user",
   "fields": {
     "password": "pbkdf2_sha256$720000$DccC4JNAhaFm7ViaiC0Ei1$rqMGuzeBDDR8wDDAcXZDR5F32s3qi0qbiLJNckTJe5w=",
@@ -1113,7 +1121,7 @@
   "model": "users.user",
   "fields": {
     "password": "pbkdf2_sha256$720000$SsLG43oG7pmpwpdDmMLEts$X7huICkr2qvWgG9/4It2k4in3B9zEj7oQr2/TzM9f/A=",
-    "last_login": "2024-02-21T03:02:27.062Z",
+    "last_login": "2024-02-23T05:42:50.018Z",
     "is_superuser": false,
     "username": "snorini",
     "is_staff": false,

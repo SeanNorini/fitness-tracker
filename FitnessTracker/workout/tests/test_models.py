@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from datetime import date
 
-from ..models import *
+from workout.models import *
 from users.models import User
 
 

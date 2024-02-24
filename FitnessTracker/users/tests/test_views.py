@@ -29,7 +29,7 @@ class TestLoginView(TestUserViews):
 
         response = self.client.get(reverse("login"))
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("workouts"))
+        self.assertRedirects(response, reverse("workout"))
 
     def test_user_not_authenticated(self):
         # Verify login page loads
@@ -44,7 +44,7 @@ class TestLoginView(TestUserViews):
             data=LOGIN_USER_FORM_FIELDS,
         )
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("workouts"))
+        self.assertRedirects(response, reverse("workout"))
 
     def test_invalid_login(self):
         # Verify form loads again with field errors
@@ -94,7 +94,7 @@ class TestRegistrationView(TestUserViews):
         self.client.force_login(self.user)
         response = self.client.get(reverse("registration"))
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("workouts"))
+        self.assertRedirects(response, reverse("workout"))
 
     def test_user_not_authenticated(self):
         response = self.client.get(reverse("registration"))

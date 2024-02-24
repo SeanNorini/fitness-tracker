@@ -124,7 +124,7 @@ class TestChangePasswordUI(SeleniumTestCase):
 
     def test_links_exist(self) -> None:
         expected_links = [
-            f"{self.live_server_url}/settings",
+            f"{self.live_server_url}/user/settings/",
         ]
         links = [
             link.get_attribute("href")

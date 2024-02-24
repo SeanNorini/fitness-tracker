@@ -92,7 +92,7 @@ function loadWorkout(){
         const confirm = window.confirm("This will erase the current workout session, are you sure?")
 
         if (confirm){
-            fetch(`http://${domain}/select_workout/${workout.value}`, {method:"GET"})
+            fetch(`http://${domain}/workout/select_workout/${workout.value}`, {method:"GET"})
             .then(response => response.text())
             .then(workoutHTML => {
                 const exercises = document.querySelector("#exercises");

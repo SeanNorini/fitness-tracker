@@ -70,4 +70,6 @@ class WorkoutSet(models.Model):
         decimal_places=2,
         validators=[MaxValueValidator(1500), MinValueValidator(0)],
     )
-    reps = models.PositiveIntegerField(validators=[MaxValueValidator(100)])
+    reps = models.PositiveIntegerField(
+        validators=[MaxValueValidator(100), MinValueValidator(0)]
+    )

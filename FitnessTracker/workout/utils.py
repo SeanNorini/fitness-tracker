@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 def save_workout_session(user, workout_form) -> None:
     workout_log = WorkoutLog()
     workout_name = workout_form.cleaned_data["name"]
-    workout = get_workout(user, workout_name)
+    workout = Workout.get_workout(user, workout_name)
 
     workout_log.workout = workout
     workout_log.user = user

@@ -44,7 +44,7 @@ class UserLoginView(FormView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect("workouts")
+            return redirect("workout")
         return super().get(request, *args, **kwargs)
 
     def get_success_url(self):
@@ -80,7 +80,7 @@ class RegistrationView(FormView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect("workouts")
+            return redirect("workout")
         return super().get(request, *args, **kwargs)
 
 
@@ -99,7 +99,7 @@ class ActivateView(View):
             user.save()
             login(request, user)
             return render(
-                request, "users/activation_success.html", {"url": reverse("workouts")}
+                request, "users/activation_success.html", {"url": reverse("workout")}
             )
         else:
             return render(

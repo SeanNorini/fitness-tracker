@@ -46,12 +46,12 @@ class TestLogin(SeleniumTestCase):
             self.live_server_url + "/user/login",
             {"username": EMAIL_VALID, "password": PASSWORD_VALID},
         )
-        self.assertEqual(self.driver.current_url, self.live_server_url + "/workouts/")
+        self.assertEqual(self.driver.current_url, self.live_server_url + "/workout/")
 
     def test_login_successful_with_username(self) -> None:
         # Verify login with valid username and password
         login(self.driver, self.live_server_url + "/user/login", LOGIN_USER_FORM_FIELDS)
-        self.assertEqual(self.driver.current_url, self.live_server_url + "/workouts/")
+        self.assertEqual(self.driver.current_url, self.live_server_url + "/workout/")
 
     def test_login_unsuccessful(self) -> None:
         # Verify user can't login with incorrect credentials
@@ -159,6 +159,8 @@ class TestActivate(SeleniumTestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(**CREATE_USER)
+        self.user.is_active = False
+        self.user.save()
         uidb64 = urlsafe_base64_encode(force_bytes(self.user.pk))
         token = account_token_generator.make_token(self.user)
         self.activation_url = self.live_server_url + reverse(
@@ -168,11 +170,11 @@ class TestActivate(SeleniumTestCase):
 
     def test_link_to_index(self):
         click(self.driver, "name", "return_to_site")
-        self.assertEqual(self.driver.current_url, self.live_server_url + "/")
+        self.assertEqual(self.driver.current_url, self.live_server_url + "/workout/")
 
     def test_redirect(self):
         time.sleep(4)
-        self.assertEqual(self.driver.current_url, self.live_server_url + "/workouts/")
+        self.assertEqual(self.driver.current_url, self.live_server_url + "/workout/")
 
 
 class TestChangePassword(SeleniumTestCase):
@@ -189,7 +191,9 @@ class TestChangePassword(SeleniumTestCase):
         header = find_element(self.driver, "tag", "h1")
         self.assertEqual(header.text, "Password Changed!")
         click(self.driver, "name", "return_to_settings")
-        self.assertEqual(self.driver.current_url, self.live_server_url + "/settings")
+        self.assertEqual(
+            self.driver.current_url, self.live_server_url + "/user/settings/"
+        )
 
     def test_change_password_fail(self) -> None:
         fill_form(

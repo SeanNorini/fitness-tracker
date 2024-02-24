@@ -31,7 +31,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user(**CREATE_USER)
         force_login(self.user, self.driver, self.live_server_url)
-        self.driver.get(self.live_server_url + "/workouts")
+        self.driver.get(self.live_server_url + "/workout")
 
 
 class TestWorkoutUI(SeleniumTestCase):

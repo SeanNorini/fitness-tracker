@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from calendar import HTMLCalendar, month_name
+from calendar import HTMLCalendar, month_name, SUNDAY
 
 
 # Create your views here.
@@ -17,7 +17,7 @@ class LogView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         year = 2024
         month = 2
-        cal = LogHTMLCalendar()
+        cal = LogHTMLCalendar(SUNDAY)
         html_calendar = cal.formatmonth(year, month)
         if request.headers.get("x-requested-with") == "XMLHttpRequest":
             return HttpResponse(html_calendar)
@@ -27,11 +27,6 @@ class LogView(LoginRequiredMixin, TemplateView):
 
 
 class LogHTMLCalendar(HTMLCalendar):
-    def formatweekheader(self):
-        header = "".join(
-            self.formatweekday(i) for i in range(6, -1, -1)
-        )  # Start with Sunday
-        return '<tr class="weekdays">' + header + "</tr>"
 
     def formatday(self, day, weekday):
         if day == 0:
