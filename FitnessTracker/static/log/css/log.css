@@ -35,6 +35,10 @@ table.calendar td {
     min-height: 5rem;
 }
 
+table.calendar td div:not(:first-child){
+    display: flex;
+}
+
 th.month {
     display: flex;
     flex-direction: row;
@@ -47,3 +51,49 @@ tr {
     width: 100%;
 }
 
+.calendar span, #close {
+    font-size:2rem;
+}
+
+#close:hover {
+    cursor: pointer;
+}
+
+.log:hover {
+    background-color: var(--medgray);
+    cursor: pointer;
+    transition: all .3s ease-in;
+}
+
+.calendar span#nav_next,
+.calendar span#nav_prev{
+    font-size:2rem;
+    background-color: var(--medgray);
+    border-radius: 1rem;
+}
+
+.calendar span#nav_next:hover,
+.calendar span#nav_prev:hover{
+    background-color: var(--lightgray);
+    transition: all .3s ease-in;
+    cursor: pointer;
+}
+
+#log_popup_header {
+    display: flex;
+    justify-content: space-between;
+}
+
+#log_popup {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--darkgray);
+  border: 1px solid #ccc;
+  padding: .5rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+  min-width: 25rem;
+  min-height: 10rem;
+}

@@ -1,18 +1,73 @@
-const months = {
-    January: 1,
-    February: 2,
-    March: 3,
-    April: 4,
-    May: 5,
-    June: 6,
-    July: 7,
-    August: 8,
-    September: 9,
-    October: 10,
-    November: 11,
-    December: 12
-};
+function loadLog (){
+    const navPrev = document.querySelector("#nav_prev");
+    navPrev.addEventListener("click", e => {
+        getCalendar("prev")
+    });
 
-// Example usage:
-let currentMonth = MonthsOfYear.February;
-console.log("Current month:", currentMonth);
+    const navNext = document.querySelector("#nav_next");
+    navNext.addEventListener("click", e => {
+        getCalendar("next")
+    });
+
+    const logs = document.querySelectorAll(".log");
+    logs.forEach(log => {
+        log.addEventListener("click", e =>{
+            getLog(log);
+        });
+    });
+}
+
+function getCalendar(calendarNav) {
+    const monthAndYear = document.querySelector("#month_name");
+    let month = parseInt(monthAndYear.dataset.month);
+    let year = parseInt(monthAndYear.dataset.year);
+    if (calendarNav === "prev"){
+        month--;
+        if (month === 0){
+            month = 12;
+            year--;
+        }
+    } else {
+        month++;
+        if (month === 12){
+            month = 1;
+            year++;
+        }
+
+    }
+
+    fetch(`${year}/${month}/`, {method: "GET", headers: {"X-Requested-With": "XMLHttpRequest"}})
+    .then(response => response.text())
+    .then(calendarHTML => {
+        const content = document.querySelector("#content");
+        content.innerHTML = calendarHTML;
+        loadLog();
+    });
+
+}
+
+function getLog(log){
+    const monthAndYear = document.querySelector("#month_name");
+    const year = monthAndYear.dataset.year;
+    const month = monthAndYear.dataset.month;
+    const day = log.dataset.day;
+
+    fetch(`${year}/${month}/${day}`, {method: "GET", headers: {"X-Requested-With": "XMLHttpRequest"}})
+    .then(response => response.text())
+    .then(dailyLogHTML => {
+        showPopupDailyLog(dailyLogHTML);
+    });
+}
+
+function showPopupDailyLog(dailyLogHTML) {
+    // Create a new popup element
+    const popup_content = document.getElementById('log_popup_content');
+    popup_content.innerHTML = dailyLogHTML;
+    const popup = document.getElementById('log_popup');
+    popup.style.display = 'block';
+
+    const closePopup = document.getElementById('close');
+    closePopup.addEventListener("click", e => {
+        popup.style.display = 'none';
+    });
+}

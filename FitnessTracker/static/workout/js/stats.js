@@ -1,4 +1,6 @@
 function loadStats(){
+    getGraph();
+
     const selectExerciseDropdown = document.querySelector(".select_container");
     selectExerciseDropdown.addEventListener("change", e =>{
        getGraph();
@@ -27,7 +29,6 @@ function loadStats(){
         else {
             selectExerciseDropdown.classList.add("hidden");
         }
-
         getGraph();
     });
 });
@@ -68,3 +69,4 @@ function getGraph(){
             graphContainer.appendChild(img);
     });
 }
+

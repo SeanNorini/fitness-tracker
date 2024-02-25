@@ -35,3 +35,28 @@ class User(AbstractUser):
     age = models.PositiveIntegerField(
         default=30, validators=[MinValueValidator(1), MaxValueValidator(120)]
     )
+
+
+class WeightLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    weight = models.FloatField(
+        validators=[MinValueValidator(50.0), MaxValueValidator(1000.0)]
+    )
+    date = models.DateField()
+
+    class Meta:
+        # Ensure only one weight entry per user per date
+        unique_together = ("user", "date")
+
+    def save(self, *args, **kwargs):
+        # Check if there's an existing weight entry for the same date and user
+        existing_weight_entry = WeightLog.objects.filter(
+            user=self.user, date=self.date
+        ).first()
+        if existing_weight_entry:
+            # Update the existing weight entry with the new weight
+            existing_weight_entry.weight = self.weight
+            existing_weight_entry.save()
+        else:
+            # No existing weight entry for the same date and user, create a new one
+            super().save(*args, **kwargs)

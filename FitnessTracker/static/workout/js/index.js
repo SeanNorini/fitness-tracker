@@ -8,7 +8,6 @@ modules.forEach(module => {
     module.addEventListener("click", e => {
         fetch(`http://${domain}/${module.id}`, {method:"GET", headers: {
         "X-Requested-With": "XMLHttpRequest",
-        "HTTP_X_REQUESTED_WITH": "XMLHttpRequest"
         }
         })
         .then(response => response.text())
@@ -51,6 +50,13 @@ function loadModule(module){
         case "log":
             window.history.pushState({}, "", "/log/");
             addStylesheet("/static/log/css/log.css");
+            scriptLoaded = addScript("/static/log/js/log.js");
+            if (scriptLoaded){
+                scriptLoaded.onload = function(){loadLog();};
+            }
+            else{
+                loadLog();
+            }
             break;
         case "cardio":
             window.history.pushState({}, "", "/cardio/");

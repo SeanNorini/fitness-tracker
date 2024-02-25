@@ -1,6 +1,8 @@
 :root {
   --background: #121212;
   --darkgray: #212121;
+  --medgray: #3a414a;
+  --lightgray: #6f7681;
   --form_background: rgba(20, 55, 94, .7);
   --light_font: rgb(250, 250, 250);
   --blue: #1f538d;

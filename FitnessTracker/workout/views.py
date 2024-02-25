@@ -9,7 +9,7 @@ from django.http import JsonResponse, HttpResponse
 from django.views.generic import TemplateView, FormView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
-from users.models import User
+from users.models import User, WeightLog
 from .forms import (
     WorkoutForm,
     WorkoutSessionForm,
@@ -73,6 +73,8 @@ class StatsView(LoginRequiredMixin, TemplateView):
         start_date = date.today() - relativedelta(months=months)
         end_date = date.today()
 
+        dates = []
+        weights = []
         if stat == "weightlifting":
             exercise_name = request.POST["exercise"]
             exercise = Exercise.objects.get(name=exercise_name, user=user)
@@ -86,13 +88,20 @@ class StatsView(LoginRequiredMixin, TemplateView):
                 .order_by("workout_log__date")
             )
 
-            dates = []
-            weights = []
             for entry in max_weight_info:
-                dates.append(entry["workout_log__date"].strftime("%#d/%#m"))
+                dates.append(entry["workout_log__date"].strftime("%#m/%#d"))
                 weights.append(entry["max_weight"])
             # exercise_values = list(workout_sets.values_list("weight", flat=True))
             graph = plot_graph(exercise_name, weights, dates)
+            return HttpResponse(graph, content_type="image/png")
+        else:
+            weight_info = WeightLog.objects.filter(
+                user=user, date__range=[start_date, end_date]
+            ).values("date", "weight")
+            for entry in weight_info:
+                dates.append(entry["date"].strftime("%#d/%#m"))
+                weights.append(entry["weight"])
+            graph = plot_graph("Bodyweight", weights, dates)
             return HttpResponse(graph, content_type="image/png")
 
         return render(request, "workout/stats.html")
