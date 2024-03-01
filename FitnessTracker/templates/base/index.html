@@ -30,7 +30,7 @@
 {% endblock %}
 
 {% block javascript %}{{block.super}}
-<script type="text/javascript" src="{% static 'workout/js/index.js' %}"></script>
+<script type="text/javascript" src="{% static '/js/index.js' %}"></script>
   {% if js_file %}
     <script type="text/javascript" src="{% static js_file %}"></script>
   {% endif %}

@@ -1,0 +1,40 @@
+
+<h1>Body Composition</h1>
+<form class="form" id="body_composition_form" method="POST">
+  {% csrf_token %}
+  <div id="optional">*Optional, default values shown will be used for calculations if left unset.</div>
+  <div class="row grow">
+    <div>
+      {{ form2.unit_of_measurement.label_tag }}
+      {{ form2.unit_of_measurement }}
+    </div>
+    <div id="gender">
+      {{ form2.gender.label_tag }}
+      {{ form2.gender }}
+    </div>
+  </div>
+  <div id="age" class="col">
+    {{ form2.age.label_tag }}
+    {{ form2.age }}
+    {{ form2.age.errors }}
+  </div>
+  <div id="height" class="col">
+    {{ form2.height.label_tag }}
+    {{ form2.height }}
+    {{ form2.height.errors }}
+  </div>
+    <div id="weight" class="col">
+    {{ form2.weight.label_tag }}
+    {{ form2.weight }}
+    {{ form2.weight.errors }}
+  </div>
+    <div id="bodyfat" class="col">
+    {{ form2.bodyfat.label_tag }}
+    {{ form2.bodyfat }}
+    {{ form2.bodyfat.errors }}
+  </div>
+  {% if message %}
+    <div class="success_message">{{ message }}</div>
+  {% endif %}
+  <button class="button" id="update_body_composition" type="button">Update Body Composition</button>
+</form>

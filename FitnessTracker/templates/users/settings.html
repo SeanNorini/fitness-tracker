@@ -1,42 +1,18 @@
-
-<div class="form_container">
-  <form class="form" id="settings_form" action="{% url 'settings' %}" method="POST">
-    {% csrf_token %}
-    <h1 id="header">Settings</h1>
-
-    <div class="row" id="name">
-      <div id="first_name" class="col">
-        {{ form.first_name.label_tag }}
-        {{ form.first_name }}
-      </div>
-      <div id="last_name">
-        {{ form.last_name }}
-      </div>
-    </div>
-    <div id="email" class="col">
-      {{ form.email.label_tag }}
-      {{ form.email }}
-    </div>
-    <div id="gender">
-      {{ form.gender.label_tag }}
-      {{ form.gender }}
-    </div>
-    <div id="height" class="col">
-      {{ form.height.label_tag }}
-      {{ form.height }}
-    </div>
-    <div id="weight" class="col">
-      {{ form.weight.label_tag }}
-      {{ form.weight }}
-    </div>
-    <div id="age" class="col">
-      {{ form.age.label_tag }}
-      {{ form.age }}
-    </div>
-    <div id="optional">*Optional, default values shown will be used for calculations if left unset.</div>
-    <div id="buttons">
-        <button class="button" id="save" type="submit">Save Changes</button>
-    </div>
-  </form>
-
+<div class="button_group_round">
+  <button type="button" class="button_back active" id="user" data-group="1">
+    <span class="button_front">
+      User
+    </span>
+  </button>
+  <button type="button" class="button_back" id="workouts" value="12" data-group="1">
+    <span class="button_front">
+      Workouts
+    </span>
+  </button>
+  <button type="button" class="button_back" id="routine" value="6" data-group="1">
+    <span class="button_front">
+      Routine
+    </span>
+  </button>
 </div>
+{% include "users/settings_form.html" %}

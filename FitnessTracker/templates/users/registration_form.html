@@ -43,27 +43,37 @@
       {{ form.last_name.errors }}
     </div>
   </div>
-  <div class="row">
-    <div class="col">
-      {{ form.height.label_tag }}
-      {{ form.height }}
-      {{ form.height.errors }}
+  <div class="row grow">
+    <div>
+      {{ form2.unit_of_measurement.label_tag }}
+      {{ form2.unit_of_measurement }}
     </div>
-    <div class="col">
-      {{ form.weight.label_tag }}
-      {{ form.weight }}
-      {{ form.weight.errors }}
-    </div>
-    <div class="col">
-      {{ form.age.label_tag }}
-      {{ form.age }}
-      {{ form.age.errors }}
+    <div id="gender">
+      {{ form2.gender.label_tag }}
+      {{ form2.gender }}
     </div>
   </div>
-  <div>
-    {{ form.gender.label_tag }}
-    {{ form.gender }}
-    {{ form.gender.errors }}
+  <div class="row">
+    <div class="col">
+      {{ form2.height.label_tag }}
+      {{ form2.height }}
+      {{ form2.height.errors }}
+    </div>
+    <div class="col">
+      {{ form2.weight.label_tag }}
+      {{ form2.weight }}
+      {{ form2.weight.errors }}
+    </div>
+    <div class="col">
+      {{ form2.bodyfat.label_tag }}
+      {{ form2.bodyfat }}
+      {{ form2.bodyfat.errors }}
+    </div>
+    <div class="col">
+      {{ form2.age.label_tag }}
+      {{ form2.age }}
+      {{ form2.age.errors }}
+    </div>
   </div>
   <div class="submit_form row">
     <button class="button" name="register" type="submit">Complete Registration</button>

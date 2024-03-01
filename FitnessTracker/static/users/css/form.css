@@ -19,7 +19,7 @@ form {
   gap: 1rem;
 }
 
-#gender label {
+#gender label, #unit_of_measurement label {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -32,6 +32,8 @@ form {
 
 #name div {
   width: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 #name input {
@@ -43,5 +45,13 @@ form {
 }
 
 ul {
+  margin: 0;
+}
+
+.success_message {
+  display: flex;
+  align-self: center;
+  text-align: center;
+  color: var(--font_success_color);
   margin: 0;
 }

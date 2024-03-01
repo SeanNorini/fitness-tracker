@@ -138,7 +138,6 @@ FIXTURE_DIRS = ((BASE_DIR / "fixtures"),)
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
 EMAIL_BACKEND = os.environ["EMAIL_BACKEND"]
 EMAIL_HOST = os.environ["EMAIL_HOST"]
 EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]
@@ -149,4 +148,4 @@ EMAIL_USE_SSL = False
 
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 4
 
-SELENIUM_LOGIN_START_PAGE = "/workouts"
+SELENIUM_LOGIN_START_PAGE = "/workout"

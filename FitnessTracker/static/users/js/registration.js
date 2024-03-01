@@ -1,4 +1,24 @@
+const measurementRadios = document.querySelectorAll('input[name="unit_of_measurement"]');
+measurementRadios.forEach(radio => {
+    radio.addEventListener("change", e=> {
+        const heightLabel = document.querySelector('label[for="height"]');
+        const heightInput = document.querySelector('input[name="height"]');
+        const weightLabel = document.querySelector('label[for="weight"]');
+        const weightInput = document.querySelector('input[name="weight"]');
 
+        if (e.target.value === "Imperial"){
+            heightLabel.textContent = heightLabel.textContent.replace("(cm)", "(in.)");
+            heightInput.placeholder = "70";
+            weightLabel.textContent = weightLabel.textContent.replace("(kg)", "(lbs)");
+            weightInput.placeholder = "160";
+        } else {
+            heightLabel.textContent = heightLabel.textContent.replace("(in.)", "(cm)");
+            heightInput.placeholder = "175";
+            weightLabel.textContent = weightLabel.textContent.replace("(lbs)", "(kg)");
+            weightInput.placeholder = "70";
+        }
+    });
+});
 document.querySelector(".inner_container").addEventListener("submit", (e) =>{
     e.preventDefault();
 
@@ -10,9 +30,11 @@ document.querySelector(".inner_container").addEventListener("submit", (e) =>{
         formData.append(element.name, element.value);
     });
 
-    gender = document.querySelector("#gender_0");
+    const gender = document.querySelector("#gender_0");
     if (gender.checked) {
-        formData.set("gender", gender.value);
+        formData.set("gender", "M");
+    } else {
+        formData.set("gender", "F");
     }
     // Add CSRF token
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;

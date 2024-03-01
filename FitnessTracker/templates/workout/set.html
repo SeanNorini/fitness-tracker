@@ -7,7 +7,11 @@
     <input type="number" class="weight" step=".5" value="{{ set.0 }}">
     </div>
     <div>
-    Lbs.
+      {% if imperial %}
+        Lbs
+      {% else %}
+        Kg
+      {% endif %}
     </div>
   </div>
   <div>

@@ -1,19 +1,21 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from django.db import transaction
 from django.shortcuts import render, redirect, reverse
-from django.views.generic import FormView, View
+from django.views.generic import FormView, View, DeleteView, UpdateView
 from django.contrib.auth import login, authenticate, logout
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from .forms import (
     LoginForm,
-    RegistrationForm,
+    UserRegistrationForm,
+    UserBodyCompositionForm,
     ChangePasswordForm,
     ResetPasswordForm,
     SetPasswordForm,
-    SettingsForm,
+    UpdateAccountForm,
 )
-from .models import User
+from .models import User, UserBodyCompositionSetting
 from .utils import send_activation_link, account_token_generator, send_reset_link
 
 
@@ -60,28 +62,46 @@ class UserLogoutView(View):
 
 class RegistrationView(FormView):
     template_name = "users/registration.html"
-    form_class = RegistrationForm
+    form_class = UserRegistrationForm
+    form_class2 = UserBodyCompositionForm
     success_url = "/registration/success/"
 
-    def form_valid(self, form):
-        # If form is valid create user
-        user = form.save(commit=False)
-        user.is_active = False
-        user.save()
+    def post(self, request, *args, **kwargs):
+        user_form = UserRegistrationForm(request.POST)
+        user_settings_form = UserBodyCompositionForm(request.POST)
+        print(request.POST["height"])
+        if user_form.is_valid() and user_settings_form.is_valid():
+            with transaction.atomic():
+                user = user_form.save(commit=False)
+                user.is_active = False
+                user.save()
 
-        # Send email activation link
-        send_activation_link(self.request, user)
-        self.request.user = user
-        # Return confirmation template
-        return render(self.request, "users/registration_success.html")
+                user_settings = user_settings_form.save(commit=False)
+                user_settings.user = user
+                user_settings.save()
 
-    def form_invalid(self, form):
-        return render(self.request, "users/registration_form.html", {"form": form})
+                # Send email activation link
+                send_activation_link(self.request, user)
+                self.request.user = user
+                # Return confirmation template
+                return render(self.request, "users/registration_success.html")
+
+        else:
+            print(user_form.errors)
+            return render(
+                self.request,
+                "users/registration_form.html",
+                {"form": user_form, "form2": user_settings_form},
+            )
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect("workout")
-        return super().get(request, *args, **kwargs)
+        return render(
+            request,
+            "users/registration.html",
+            {"form": self.form_class, "form2": self.form_class2},
+        )
 
 
 class ActivateView(View):
@@ -180,26 +200,87 @@ class ResetPasswordConfirmView(FormView):
             )
 
 
-class SettingsView(LoginRequiredMixin, FormView):
+class UserSettingsView(LoginRequiredMixin, FormView):
+    form_class = UpdateAccountForm
+    form_class2 = UserBodyCompositionForm
+
+    def get(self, request, *args, **kwargs):
+        user_account_form = UpdateAccountForm(instance=self.request.user)
+
+        user_settings_instance = UserBodyCompositionSetting.objects.filter(
+            user=self.request.user
+        ).first()
+
+        user_body_composition_form = UserBodyCompositionForm(
+            instance=user_settings_instance
+        )
+
+        if request.headers.get("x-requested-with") == "XMLHttpRequest":
+            return render(
+                request,
+                "users/settings.html",
+                {
+                    "form": user_account_form,
+                    "form2": user_body_composition_form,
+                },
+            )
+        else:
+            modules = ["workout", "cardio", "log", "stats", "settings"]
+            return render(
+                request,
+                "base/index.html",
+                {
+                    "modules": modules,
+                    "form": user_account_form,
+                    "form2": user_body_composition_form,
+                    "template_content": "users/settings.html",
+                },
+            )
+
+
+class DeleteUserView(LoginRequiredMixin, DeleteView):
     def get(self, request, *args, **kwargs):
         user = request.user
-        # if request.method == "POST":
-        #     form = SettingsForm(request.POST)
-        #     if form.is_valid():
-        #         user.first_name = form.cleaned_data["first_name"]
-        #         user.last_name = form.cleaned_data["last_name"]
-        #         user.email = form.cleaned_data["email"]
-        #         user.gender = form.cleaned_data["gender"]
-        #         user.height = form.cleaned_data["height"]
-        #         user.weight = form.cleaned_data["weight"]
-        #         user.age = form.cleaned_data["age"]
-        #         user.save()
-        #         return JsonResponse({"success": True})
-        # user.get_module_list()
-        modules = ["workouts", "cardio", "log", "stats", "settings"]
-        form = SettingsForm()
-        for field_name, field in form.fields.items():
-            field.widget.attrs["value"] = getattr(user, field_name)
+        user.delete()
+        return redirect("login")
+
+
+class UpdateAccountSettingsView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UpdateAccountForm
+    template_name = "users/account_settings_form.html"
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def form_valid(self, form):
+        user = form.save()
+        message = "Account updated successfully"
         return render(
-            request, "users/settings.html", {"modules": modules, "form": form}
+            self.request, self.template_name, {"form": form, "message": message}
         )
+
+    def form_invalid(self, form):
+        return render(self.request, self.template_name, {"form": form})
+
+
+class UpdateBodyCompositionSettingsView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UserBodyCompositionForm
+    template_name = "users/body_composition_form.html"
+
+    def get_object(self, queryset=None):
+        return UserBodyCompositionSetting.objects.filter(user=self.request.user).first()
+
+    def form_valid(self, form):
+        user_body_composition_settings = form.save(commit=False)
+        user_body_composition_settings.user = self.request.user
+        user_body_composition_settings.save()
+
+        message = "Body composition updated successfully"
+        return render(
+            self.request, self.template_name, {"form2": form, "message": message}
+        )
+
+    def form_invalid(self, form):
+        return render(self.request, self.template_name, {"form2": form})

@@ -9,7 +9,7 @@ from django.http import JsonResponse, HttpResponse
 from django.views.generic import TemplateView, FormView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
-from users.models import User, WeightLog
+from users.models import User, UserBodyCompositionSetting, WeightLog
 from .forms import (
     WorkoutForm,
     WorkoutSessionForm,
@@ -104,8 +104,6 @@ class StatsView(LoginRequiredMixin, TemplateView):
             graph = plot_graph("Bodyweight", weights, dates)
             return HttpResponse(graph, content_type="image/png")
 
-        return render(request, "workout/stats.html")
-
     def get(self, request, *args, **kwargs):
         if request.headers.get("x-requested-with") == "XMLHttpRequest":
             return render(
@@ -122,6 +120,11 @@ class SelectWorkoutView(LoginRequiredMixin, TemplateView):
         workout = Workout.get_workout(self.request.user, workout_name)
         context = super().get_context_data()
         context["workout"] = workout.configure_workout()
+        user_body_composition_setting = UserBodyCompositionSetting.objects.filter(
+            user=self.request.user
+        ).first()
+        unit_of_measurement = user_body_composition_setting.unit_of_measurement
+        context["imperial"] = True if unit_of_measurement == "Imperial" else False
         return context
 
 
@@ -173,11 +176,25 @@ class AddExerciseView(LoginRequiredMixin, TemplateView):
 
         context = super().get_context_data(**kwargs)
         context["exercise"] = exercise
+        user_body_composition_setting = UserBodyCompositionSetting.objects.filter(
+            user=self.request.user
+        ).first()
+        unit_of_measurement = user_body_composition_setting.unit_of_measurement
+        context["imperial"] = True if unit_of_measurement == "Imperial" else False
         return context
 
 
 class AddSetView(LoginRequiredMixin, TemplateView):
     template_name = "workout/set.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_body_composition_setting = UserBodyCompositionSetting.objects.filter(
+            user=self.request.user
+        ).first()
+        unit_of_measurement = user_body_composition_setting.unit_of_measurement
+        context["imperial"] = True if unit_of_measurement == "Imperial" else False
+        return context
 
 
 class SaveWorkoutSessionView(LoginRequiredMixin, FormView):
@@ -202,21 +219,21 @@ class SaveWorkoutView(LoginRequiredMixin, FormView):
         return JsonResponse({"error": "Invalid Form"})
 
 
-@login_required
-def edit_workouts(request):
-    DEFAULT_USER = User.objects.get(username="default")
-    exercises = list(
-        Exercise.objects.filter(user=DEFAULT_USER).values_list("name", flat=True)
-    )
-    workouts = list(
-        Workout.objects.filter(user=DEFAULT_USER).values_list("name", flat=True)
-    )
+class EditWorkoutsView(LoginRequiredMixin, TemplateView):
+    template_name = "workout/edit_workouts.html"
 
-    return render(
-        request,
-        "workout/edit_workouts.html",
-        {"workouts": workouts, "exercises": exercises},
-    )
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        DEFAULT_USER = User.objects.get(username="default")
+        exercises = Exercise.objects.filter(user=DEFAULT_USER).values_list(
+            "name", flat=True
+        )
+        workouts = Workout.objects.filter(user=DEFAULT_USER).values_list(
+            "name", flat=True
+        )
+        context["workouts"] = list(workouts)
+        context["exercises"] = list(exercises)
+        return context
 
 
 @login_required

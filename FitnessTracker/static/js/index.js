@@ -36,6 +36,7 @@ function loadModule(module){
         case "stats":
             window.history.pushState({}, "", "/stats/");
             addStylesheet("/static/workout/css/stats.css");
+            addStylesheet("/static/css/button_group.css");
             scriptLoaded = addScript("/static/workout/js/stats.js");
             if (scriptLoaded){
                 scriptLoaded.onload = function(){loadStats();};
@@ -46,6 +47,15 @@ function loadModule(module){
             break;
         case "user/settings":
             window.history.pushState({}, "", "/user/settings/");
+            addStylesheet("/static/css/button_group.css");
+            addStylesheet("/static/users/css/form.css");
+            scriptLoaded = addScript("/static/users/js/settings.js");
+            if (scriptLoaded){
+                scriptLoaded.onload = function(){loadSettings();};
+            }
+            else{
+                loadSettings();
+            }
             break;
         case "log":
             window.history.pushState({}, "", "/log/");
@@ -106,11 +116,11 @@ function isStylesheetLoaded(href) {
 const startingURL = window.location.href;
 
 if (startingURL.includes("stats")){
-    loadModule("stats")
+    loadModule("stats");
 } else if (startingURL.includes("settings")){
-    loadModule("user/settings")
+    loadModule("user/settings");
 } else if (startingURL.includes("log")){
-    loadModule("log")
+    loadModule("log");
 } else {
-    loadModule("workout")
+    loadModule("workout");
 }

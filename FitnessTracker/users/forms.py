@@ -3,7 +3,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.hashers import make_password
 
-from .models import User
+from .models import User, UserBodyCompositionSetting
 
 
 def get_username_field():
@@ -35,6 +35,33 @@ def get_password_field(label_prefix="", id_prefix=""):
                 "name": field_name,
                 "maxlength": 100,
             },
+        ),
+    )
+
+
+def get_name_field(placeholder=""):
+    return forms.CharField(
+        label="Name",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "id": f"{placeholder}_name",
+                "name": f"{placeholder}_name",
+                "maxlength": 100,
+                "placeholder": f"{placeholder.capitalize()}",
+            }
+        ),
+    )
+
+
+def get_email_field(label_prefix="", id_prefix="", required=True):
+    return forms.EmailField(
+        label=f"{label_prefix}Email",
+        max_length=254,
+        required=required,
+        widget=forms.EmailInput(
+            attrs={"id": f"{id_prefix}email", "placeholder": "example@gmail.com"}
         ),
     )
 
@@ -71,89 +98,7 @@ class ChangePasswordForm(SetPasswordForm):
     current_password = get_password_field(label_prefix="Current ", id_prefix="current_")
 
 
-class SettingsForm(forms.ModelForm):
-    first_name = forms.CharField(
-        label="Name",
-        max_length=100,
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                "id": "first_name",
-                "name": "first_name",
-                "maxlength": 100,
-                "placeholder": "First",
-            }
-        ),
-    )
-    last_name = forms.CharField(
-        required=False,
-        max_length=100,
-        widget=forms.TextInput(
-            attrs={
-                "id": "last_name",
-                "name": "last_name",
-                "maxlength": 100,
-                "placeholder": "Last",
-            },
-        ),
-    )
-    email = forms.EmailField(
-        label="Email",
-        max_length=254,
-        widget=forms.EmailInput(
-            attrs={"id": "email", "placeholder": "example@gmail.com"}
-        ),
-    )
-
-    gender = forms.ChoiceField(
-        widget=forms.RadioSelect(attrs={"id": "gender"}),
-        choices=[("M", "Male"), ("F", "Female")],
-        label="Gender",
-        initial="M",
-        required=False,
-    )
-
-    height = forms.FloatField(
-        label="Height (In.)",
-        required=False,
-        widget=forms.NumberInput(
-            attrs={"id": "height", "placeholder": 70, "class": "numbers"}
-        ),
-        validators=[MinValueValidator(20.0), MaxValueValidator(120.0)],
-    )
-
-    weight = forms.FloatField(
-        label="Weight (Lbs.)",
-        required=False,
-        widget=forms.NumberInput(
-            attrs={"id": "weight", "placeholder": 160, "class": "numbers"}
-        ),
-        validators=[MinValueValidator(50.0), MaxValueValidator(1000.0)],
-    )
-
-    age = forms.IntegerField(
-        label="Age",
-        required=False,
-        widget=forms.NumberInput(
-            attrs={"id": "age", "placeholder": 30, "class": "numbers"}
-        ),
-        validators=[MinValueValidator(1), MaxValueValidator(120)],
-    )
-
-    class Meta:
-        model = User
-        fields = [
-            "first_name",
-            "last_name",
-            "email",
-            "gender",
-            "height",
-            "weight",
-            "age",
-        ]
-
-
-class RegistrationForm(SettingsForm):
+class UserRegistrationForm(forms.ModelForm):
     username = forms.CharField(
         min_length=2,
         max_length=254,
@@ -169,6 +114,10 @@ class RegistrationForm(SettingsForm):
     )
     password = get_password_field()
     confirm_password = get_password_field(label_prefix="Confirm ", id_prefix="confirm_")
+    email = get_email_field()
+
+    first_name = get_name_field("first")
+    last_name = get_name_field("last")
 
     class Meta:
         model = User
@@ -179,10 +128,6 @@ class RegistrationForm(SettingsForm):
             "first_name",
             "last_name",
             "email",
-            "gender",
-            "height",
-            "weight",
-            "age",
         ]
 
     def clean(self):
@@ -195,13 +140,6 @@ class RegistrationForm(SettingsForm):
         if password != confirm_password:
             self.add_error("confirm_password", "Passwords don't match.")
 
-        # Check if height, weight, and age are not provided
-        if not cleaned_data.get("height"):
-            cleaned_data["height"] = 70  # Set default height
-        if not cleaned_data.get("weight"):
-            cleaned_data["weight"] = 160  # Set default weight
-        if not cleaned_data.get("age"):
-            cleaned_data["age"] = 30  # Set default age
         return cleaned_data
 
     def save(self, commit=True):
@@ -210,3 +148,131 @@ class RegistrationForm(SettingsForm):
         if commit:
             user.save()
         return user
+
+
+class UserBodyCompositionForm(forms.ModelForm):
+    unit_of_measurement = forms.ChoiceField(
+        widget=forms.RadioSelect(attrs={"id": "unit_of_measurement"}),
+        choices=[("Imperial", "Imperial"), ("Metric", "Metric")],
+        label="Unit of Measurement",
+        initial="Imperial",
+        required=False,
+    )
+
+    gender = forms.ChoiceField(
+        widget=forms.RadioSelect(attrs={"id": "gender"}),
+        choices=[("M", "Male"), ("F", "Female")],
+        label="Gender",
+        initial="M",
+        required=False,
+    )
+
+    height = forms.FloatField(
+        label="Height (in.)",
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "id": "height",
+                "placeholder": 70,
+                "class": "numbers",
+                "min": 20,
+                "max": 270,
+            }
+        ),
+        validators=[MinValueValidator(20.0), MaxValueValidator(270.0)],
+    )
+
+    weight = forms.FloatField(
+        label="Weight (lbs)",
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "id": "weight",
+                "placeholder": 160,
+                "class": "numbers",
+                "min": 30,
+                "max": 1000,
+            }
+        ),
+        validators=[MinValueValidator(30.0), MaxValueValidator(1000.0)],
+    )
+
+    bodyfat = forms.FloatField(
+        label="Bodyfat %",
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "id": "bodyfat",
+                "placeholder": 20,
+                "class": "numbers",
+                "min": 5,
+                "max": 60,
+            }
+        ),
+        validators=[MinValueValidator(5.0), MaxValueValidator(60.0)],
+    )
+
+    age = forms.IntegerField(
+        label="Age",
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "id": "age",
+                "placeholder": 30,
+                "class": "numbers",
+                "min": 1,
+                "max": 120,
+            }
+        ),
+        validators=[MinValueValidator(1), MaxValueValidator(120)],
+    )
+
+    class Meta:
+        model = UserBodyCompositionSetting
+        fields = [
+            "unit_of_measurement",
+            "gender",
+            "height",
+            "weight",
+            "bodyfat",
+            "age",
+        ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        measurement = cleaned_data.get("unit_of_measurement")
+
+        # Check if height, weight, and age are not provided
+        if not cleaned_data.get("height"):
+            cleaned_data["height"] = (
+                70 if measurement == "Imperial" else 175
+            )  # Set default height
+        if not cleaned_data.get("weight"):
+            cleaned_data["weight"] = (
+                160 if measurement == "Imperial" else 70
+            )  # Set default weight
+        if not cleaned_data.get("age"):
+            cleaned_data["age"] = 30  # Set default age
+        return cleaned_data
+
+
+class UpdateAccountForm(forms.ModelForm):
+    first_name = get_name_field("first")
+    last_name = get_name_field("last")
+    email = get_email_field()
+    confirm_email = get_email_field(
+        label_prefix="Confirm ", id_prefix="confirm_", required=False
+    )
+
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "email", "confirm_email"]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get("email")
+        confirm_email = cleaned_data.get("confirm_email")
+        if email != confirm_email and confirm_email != "":
+            self.add_error("confirm_email", "Emails don't match.")
+
+        return cleaned_data

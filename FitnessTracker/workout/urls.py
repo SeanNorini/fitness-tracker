@@ -23,6 +23,10 @@ urlpatterns = [
     ),
     path("workout/save_workout", views.SaveWorkoutView.as_view(), name="save_workout"),
     path("workout/add_set", views.AddSetView.as_view(), name="add_set"),
-    path("edit_workouts", views.edit_workouts, name="edit_workouts"),
+    path(
+        "workout/workout_settings",
+        views.EditWorkoutsView.as_view(),
+        name="workout_settings",
+    ),
     path("exit_edit", views.exit_edit, name="exit_edit"),
 ]

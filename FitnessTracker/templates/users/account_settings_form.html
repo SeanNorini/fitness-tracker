@@ -1,0 +1,37 @@
+<h1>Account Settings</h1>
+<form class="form" id="account_settings_form" method="POST">
+  {% csrf_token %}
+  <div class="row" id="name">
+    <div id="first_name" class="col">
+      {{ form.first_name.label_tag }}
+      {{ form.first_name }}
+      {{ form.first_name.errors }}
+    </div>
+    <div id="last_name">
+      {{ form.last_name }}
+      {{ form.last_name.errors }}
+    </div>
+  </div>
+  <div id="email" class="col">
+    {{ form.email.label_tag }}
+    {{ form.email }}
+  </div>
+  <div id="confirm_email" class="col">
+    {{ form.confirm_email.label_tag }}
+    {{ form.confirm_email }}
+    {{ form.confirm_email.errors }}
+  </div>
+  {% if message %}
+    <div class="success_message">{{ message }}</div>
+  {% endif %}
+  <div class="row space_between">
+    <div>
+      <button class="button" id="update_settings" type="button">Update Account</button>
+    </div>
+    <div>
+      <button class="button" id="delete_account" type="button">Delete Account</button>
+    </div>
+  </div>
+  <button class="button" id="change_password" type="button">Change Password</button>
+</form>
+
