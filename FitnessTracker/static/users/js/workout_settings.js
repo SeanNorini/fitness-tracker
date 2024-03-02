@@ -78,7 +78,9 @@ function loadWorkoutsSettingsListeners() {
 
             const addSetButton = exerciseElement.querySelector(".add_set");
             addSetButton.addEventListener("click", (e) =>{
-                addSet(e);
+                const url = `http://${domain}/workout/workout_settings/add_set/${exerciseName}`
+                const addListeners = true;
+                addSet(e, url, addListeners);
                 unsavedChanges = true;
             });
 

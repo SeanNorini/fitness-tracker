@@ -253,6 +253,9 @@ class UserBodyCompositionForm(forms.ModelForm):
             )  # Set default weight
         if not cleaned_data.get("age"):
             cleaned_data["age"] = 30  # Set default age
+        if not cleaned_data.get("bodyfat"):
+            cleaned_data["bodyfat"] = 20  # Set default age
+
         return cleaned_data
 
 

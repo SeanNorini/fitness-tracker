@@ -16,7 +16,7 @@ from .forms import (
     SetPasswordForm,
     UpdateAccountForm,
 )
-from .models import User, UserBodyCompositionSetting, WeightLog
+from .models import User, UserBodyCompositionSetting, WeightLog, WorkoutSetting
 from .utils import send_activation_link, account_token_generator, send_reset_link
 
 
@@ -69,17 +69,21 @@ class RegistrationView(FormView):
 
     def post(self, request, *args, **kwargs):
         user_form = UserRegistrationForm(request.POST)
-        user_settings_form = UserBodyCompositionForm(request.POST)
+        user_body_composition_form = UserBodyCompositionForm(request.POST)
         print(request.POST["height"])
-        if user_form.is_valid() and user_settings_form.is_valid():
+        if user_form.is_valid() and user_body_composition_form.is_valid():
             with transaction.atomic():
                 user = user_form.save(commit=False)
                 user.is_active = False
                 user.save()
 
-                user_settings = user_settings_form.save(commit=False)
-                user_settings.user = user
-                user_settings.save()
+                user_body_composition_settings = user_body_composition_form.save(
+                    commit=False
+                )
+                user_body_composition_settings.user = user
+                user_body_composition_settings.save()
+
+                WorkoutSetting.objects.create(user=user)
 
                 # Send email activation link
                 send_activation_link(self.request, user)
