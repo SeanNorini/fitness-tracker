@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(User)
 admin.site.register(UserBodyCompositionSetting)
 admin.site.register(WeightLog)
+admin.site.register(WorkoutSetting)

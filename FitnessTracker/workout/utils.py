@@ -18,7 +18,7 @@ def save_workout_session(user, workout_form) -> None:
         ((exercise_name, set_info),) = exercise.items()
 
         curr_exercise = Exercise.objects.get_or_create(name=exercise_name, user=user)
-        print(curr_exercise[0])
+
         for i in range(len(set_info["weight"])):
             set_log = WorkoutSet()
             set_log.workout_log = workout_log
@@ -27,27 +27,6 @@ def save_workout_session(user, workout_form) -> None:
             set_log.reps = set_info["reps"][i]
             set_log.save()
     return
-
-
-def save_custom_workout(user, workout_form) -> None:
-    workout_name = workout_form.cleaned_data["name"]
-    config = workout_form.cleaned_data["exercises"]
-
-    Workout.objects.update_or_create(
-        name=workout_name,
-        user=user,
-        defaults={"name": workout_name, "user": user, "config": config},
-    )
-
-    return
-
-
-def get_workouts(user) -> list[Workout]:
-    pass
-
-
-def get_exercises(user) -> list[Exercise]:
-    pass
 
 
 def get_exercise(user, exercise_name) -> Exercise:

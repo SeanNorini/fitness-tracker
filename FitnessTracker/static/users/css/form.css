@@ -52,6 +52,6 @@ ul {
   display: flex;
   align-self: center;
   text-align: center;
-  color: var(--font_success_color);
+  color: var(--green_font);
   margin: 0;
 }

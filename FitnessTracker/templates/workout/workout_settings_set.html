@@ -1,0 +1,51 @@
+<div class="set">
+  <div class="set_number">
+    {% if exercise_set %}
+      Set {{ forloop.counter }}:
+    {% else %}
+      Set 1:
+    {% endif %}
+  </div>
+  <div>
+    <div>
+      {% if exercise_set %}
+        <input type="number" class="round_float amount" value="{{ exercise_set.amount }}">
+      {% else %}
+        <input type="number" class="round_float amount" value="{{ exercise.default_weight }}">
+      {% endif %}
+
+      {% if exercise_set %}
+      <select name="modifier" class="modifier">
+        <option value="exact" {% if exercise_set.modifier == "exact" %} selected {% endif %}>Exact</option>
+        <option value="percentage" {% if exercise_set.modifier == "percentage" %} selected {% endif %}>%</option>
+        <option value="increment" {% if exercise_set.modifier == "increment" %} selected {% endif %}>+</option>
+        <option value="decrement" {% if exercise_set.modifier == "decrement" %} selected {% endif %}>-</option>
+      </select>
+      {% else %}
+        <select name="modifier" class="modifier">
+        <option value="exact" selected>Exact</option>
+        <option value="percentage">%</option>
+        <option value="increment">+</option>
+        <option value="decrement">-</option>
+      </select>
+      {% endif %}
+    </div>
+  </div>
+  <div>
+    <div>
+      {% if exercise_set %}
+        <input type="number" class="reps round_integer" value="{{ exercise_set.reps }}">
+      {% else %}
+        <input type="number" class="reps round_integer" value="{{ exercise.default_reps }}">
+      {% endif %}
+    </div>
+    <div>
+    Reps
+    </div>
+    &nbsp
+    <hr class="vertical">
+    &nbsp
+    <div class="calculate_weight">
+    </div>
+  </div>
+</div>

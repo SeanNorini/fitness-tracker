@@ -3,7 +3,9 @@ const domain = document.querySelector("#domain").value;
 const settingModule = document.querySelector("#settings");
 settingModule.id = "user/settings";
 
-const modules = document.querySelectorAll(".module")
+const modules = document.querySelectorAll(".module");
+
+let unitOfMeasurement = "";
 modules.forEach(module => {
     module.addEventListener("click", e => {
         fetch(`http://${domain}/${module.id}`, {method:"GET", headers: {
@@ -49,6 +51,8 @@ function loadModule(module){
             window.history.pushState({}, "", "/user/settings/");
             addStylesheet("/static/css/button_group.css");
             addStylesheet("/static/users/css/form.css");
+            addStylesheet("/static/users/css/settings.css");
+            addScript("/static/workout/js/workout.js");
             scriptLoaded = addScript("/static/users/js/settings.js");
             if (scriptLoaded){
                 scriptLoaded.onload = function(){loadSettings();};

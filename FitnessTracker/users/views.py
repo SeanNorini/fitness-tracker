@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.db import transaction
 from django.shortcuts import render, redirect, reverse
+from django.utils import timezone
 from django.views.generic import FormView, View, DeleteView, UpdateView
 from django.contrib.auth import login, authenticate, logout
 from django.utils.encoding import force_str
@@ -15,7 +16,7 @@ from .forms import (
     SetPasswordForm,
     UpdateAccountForm,
 )
-from .models import User, UserBodyCompositionSetting
+from .models import User, UserBodyCompositionSetting, WeightLog
 from .utils import send_activation_link, account_token_generator, send_reset_link
 
 
@@ -276,6 +277,14 @@ class UpdateBodyCompositionSettingsView(LoginRequiredMixin, UpdateView):
         user_body_composition_settings = form.save(commit=False)
         user_body_composition_settings.user = self.request.user
         user_body_composition_settings.save()
+
+        weight = user_body_composition_settings.weight
+        bodyfat = user_body_composition_settings.bodyfat
+        WeightLog.objects.update_or_create(
+            user=self.request.user,
+            date=timezone.localdate(),
+            defaults={"weight": weight, "bodyfat": bodyfat},
+        )
 
         message = "Body composition updated successfully"
         return render(

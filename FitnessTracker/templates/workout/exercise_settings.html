@@ -1,0 +1,35 @@
+
+
+<form class="form_container col workout_settings" id="workout_form">
+{% csrf_token %}
+<input type="hidden" id="unit_of_measurement" value="{{ unit_of_measurement }}">
+<div class="controls_container">
+  <div>
+    <div class="select_container">
+      <select class="exercise" id="select_exercise">
+        {% for exercise in exercises %}
+          <option>{{ exercise }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+    
+  <div class="row edit_container">
+    <button class="controls" id="save_exercise" type="button">Save Exercise</button>
+    <span class="material-symbols-outlined workout_help">
+      help
+    </span>
+  </div>
+    
+</div>
+
+<div id="message">Please select or create an exercise to get started.</div>
+<div class="exercises"></div>
+
+<div class="controls_container">
+  <div>
+    <button class="controls" id="new_exercise" type="button">New Exercise</button>
+  </div>
+</div>
+</form>
+

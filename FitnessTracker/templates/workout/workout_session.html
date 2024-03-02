@@ -1,7 +1,8 @@
-<input type="hidden" name="view" id="view" value="workouts" />
+<input type="hidden" id="show_rest_timer" value="{{ show_rest_timer }}">
+<input type="hidden" id="show_workout_timer" value="{{ show_workout_timer }}">
+
 <form class="form_container col" id="workout_form">
 {% csrf_token %}
-  <input type="hidden" id="session" value="True">
   <div class="controls_container row">
       <div class="top_controls">
         <input type="date" id="date">
@@ -19,8 +20,8 @@
       </div>
     </div>
 
-    <div id="exercises">
-      <div id="placeholder">Please select a workout or add an exercise to get started.</div>
+    <div class="exercises">
+      <div id="message">Please select a workout or add an exercise to get started.</div>
     </div>
     <div class="controls_container">
       <div>
@@ -42,3 +43,6 @@
       </div>
     </div>
 </form>
+<div class="clock_popup">
+  {% include 'workout/rest_timer.html' %}
+</div>

@@ -1,0 +1,54 @@
+<form class="form_container col workout_settings" id="workout_form">
+{% csrf_token %}
+<input type="hidden" id="unit_of_measurement" value="{{ unit_of_measurement }}">
+<div class="inner_container" id="workout_settings">
+  <h1>Workout Settings</h1>
+  <div>{{ form.auto_update_five_rep_max }}{{ form.auto_update_five_rep_max.label }}</div>
+  <div>{{ form.show_rest_timer }}{{ form.show_rest_timer.label }}</div>
+  <div>{{ form.show_workout_timer }}{{ form.show_workout_timer.label }}</div>
+  <div class="success_message hidden">Workout settings saved.</div>
+  <div class="centered">
+    <button id="save_workout_settings" class="button" type="button">Save Settings</button>
+  </div>
+</div>
+
+<div class="controls_container">
+  <div>
+    <div class="select_container">
+      <select class="workout" id="select_workout">
+        {% for workout in workouts %}
+          <option value="{{ workout }}">{{ workout }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+    
+  <div class="row edit_container">
+    <button class="controls" id="save_workout" type="button">Save Workout</button>
+    <span class="material-symbols-outlined workout_help">
+      help
+    </span>
+  </div>
+    
+</div>
+
+<div id="message">Please select a workout or add an exercise to get started.</div>
+<div class="exercises"></div>
+
+<div class="controls_container">
+  <div>
+    <div class="select_container">
+      <select class="exercise" id="select_exercise">
+        {% for exercise in exercises %}
+          <option>{{ exercise }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+      
+  <div>
+    <button class="add_exercise controls" type="button">Add Exercise</button>
+  </div>
+</div>
+</form>
+

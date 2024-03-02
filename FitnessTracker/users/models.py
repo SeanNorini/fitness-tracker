@@ -50,6 +50,22 @@ class UserBodyCompositionSetting(models.Model):
         default=30, validators=[MinValueValidator(1), MaxValueValidator(120)]
     )
 
+    @classmethod
+    def get_unit_of_measurement(cls, user):
+        unit_of_measurement = (
+            cls.objects.filter(user=user)
+            .values_list("unit_of_measurement", flat=True)
+            .first()
+        )
+        return unit_of_measurement
+
+
+class WorkoutSetting(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    auto_update_five_rep_max = models.BooleanField(default=False)
+    show_rest_timer = models.BooleanField(default=False)
+    show_workout_timer = models.BooleanField(default=False)
+
 
 class WeightLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -64,16 +80,3 @@ class WeightLog(models.Model):
     class Meta:
         # Ensure only one weight entry per user per date
         unique_together = ("user", "date")
-
-    def save(self, *args, **kwargs):
-        # Check if there's an existing weight entry for the same date and user
-        existing_weight_entry = WeightLog.objects.filter(
-            user=self.user, date=self.date
-        ).first()
-        if existing_weight_entry:
-            # Update the existing weight entry with the new weight
-            existing_weight_entry.weight = self.weight
-            existing_weight_entry.save()
-        else:
-            # No existing weight entry for the same date and user, create a new one
-            super().save(*args, **kwargs)

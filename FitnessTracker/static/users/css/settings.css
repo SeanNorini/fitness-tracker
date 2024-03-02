@@ -1,69 +1,49 @@
-#name {
-  align-items: end;
-  gap: 1rem;
+
+
+.form_container.workout_settings {
+  margin-top: .5rem;
 }
 
-#name div, #name input {
-  flex-grow: 1;
+.edit_container {
+  justify-content: flex-end;
+}
+
+.settings {
   width: 100%;
-}
-
-#settings_form.form {
   display: flex;
   flex-direction: column;
-  margin: 0;
-  gap: 1rem;
+  align-items: center;
 }
 
-#buttons {
+input.amount{
+  max-width: 5rem;
+}
+
+.max_rep {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: .5rem;
+  align-items: center;
+  gap: .25rem;
+  margin-bottom: .25rem;
 }
 
-#buttons button {
-  max-width: 30%;
+.calculate_weight {
   min-width: 10rem;
 }
 
-#id_gender label {
+#workout_form {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: .5rem;
 }
 
-.controls_container {
+#workout_settings div {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  border-radius: 2rem;
-  padding: .4rem .5rem;
-  background-color: #3a414a;
-  flex-grow: 1;
-  align-self: stretch;
   align-items: center;
-  gap: .5rem;
 }
 
-.controls_container.save_exercise {
+.centered {
+  align-items: center;
   justify-content: center;
 }
-
-
-.form_container {
-  padding-top: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  
-}
-
-#exercises {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-

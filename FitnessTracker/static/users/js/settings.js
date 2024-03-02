@@ -1,9 +1,11 @@
 function loadSettings() {
+    let scriptLoaded = null;
     document.querySelectorAll(".button_back").forEach(button => {
         button.addEventListener("click", function() {
             const group = this.getAttribute("data-group");
-            const buttonsInGroup = document.querySelectorAll(`.button_back[data-group="${group}"]`);
-
+            const buttonsInGroup = document.querySelectorAll(
+                `.button_back[data-group="${group}"]`
+            );
 
             if (!this.classList.contains("active")) {
                 buttonsInGroup.forEach(btn => {
@@ -19,7 +21,22 @@ function loadSettings() {
                     loadUserSettings();
                     break;
                 case "workouts":
-                    loadWorkoutsSettings();
+                    scriptLoaded = addScript("/static/users/js/workout_settings.js");
+                    if (scriptLoaded){
+                        scriptLoaded.onload = function(){loadWorkoutsSettings();}
+                    }
+                    else{
+                        loadWorkoutsSettings();
+                    }
+                    break;
+                case "exercises":
+                    scriptLoaded = addScript("/static/users/js/exercise_settings.js");
+                    if (scriptLoaded){
+                        scriptLoaded.onload = function(){loadExerciseSettings();}
+                    }
+                    else{
+                        loadExerciseSettings();
+                    }
                     break;
                 case "routine":
                     break;
@@ -29,17 +46,6 @@ function loadSettings() {
 
     accountSettingsListeners();
     bodyCompositionSettingsListeners();
-}
-
-function loadWorkoutsSettings() {
-    fetch(`http://${domain}/workout/workout_settings`, {method:"GET", headers: {
-        "X-Requested-With": "XMLHttpRequest",
-        }})
-            .then(response => response.text())
-            .then(contentHTML => {
-                const settingsContent = document.querySelector(".settings");
-                settingsContent.innerHTML = contentHTML;
-            });
 }
 
 function changePasswordEventListeners(){

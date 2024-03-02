@@ -21,12 +21,45 @@ urlpatterns = [
         views.SaveWorkoutSessionView.as_view(),
         name="save_workout_session",
     ),
-    path("workout/save_workout", views.SaveWorkoutView.as_view(), name="save_workout"),
     path("workout/add_set", views.AddSetView.as_view(), name="add_set"),
     path(
         "workout/workout_settings",
-        views.EditWorkoutsView.as_view(),
+        views.WorkoutSettingsView.as_view(),
         name="workout_settings",
     ),
-    path("exit_edit", views.exit_edit, name="exit_edit"),
+    path(
+        "workout/workout_settings/select_workout/<str:workout_name>",
+        views.WorkoutSettingsSelectWorkoutView.as_view(),
+        name="workout_settings_select_workout",
+    ),
+    path(
+        "workout/workout_settings/select_exercise/<str:exercise_name>",
+        views.WorkoutSettingsSelectExerciseView.as_view(),
+        name="workout_settings_select_workout",
+    ),
+    path(
+        "workout/workout_settings/add_set/<str:exercise_name>",
+        views.WorkoutSettingsAddSetView.as_view(),
+        name="workout_settings_add_set",
+    ),
+    path(
+        "workout/workout_settings/save_workout/",
+        views.WorkoutSettingsSaveWorkoutView.as_view(),
+        name="workout_settings_save_workout",
+    ),
+    path(
+        "workout/workout_settings/save_workout_settings/",
+        views.WorkoutSettingsSaveWorkoutSettingsView.as_view(),
+        name="workout_settings_save_workout",
+    ),
+    path(
+        "workout/exercise_settings/",
+        views.ExerciseSettingsView.as_view(),
+        name="exercise_settings",
+    ),
+    path(
+        "workout/exercise_settings/edit_exercise/<str:exercise_name>",
+        views.EditExerciseView.as_view(),
+        name="edit_exercise",
+    ),
 ]

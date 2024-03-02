@@ -1,0 +1,47 @@
+<div class="exercise_container">
+  <div class="exercise_name row">
+    <div id="exercise_name">
+      {{ exercise.name }}
+    </div>
+    <div>
+        <span class="material-symbols-outlined delete delete_exercise">
+          delete
+        </span>
+    </div>
+  </div>
+  <div class="row max_rep">
+    5-Rep Max:
+    <input type="number" class="round_float amount" id="five_rep_max" value="{{ exercise.five_rep_max }}">
+    {% if unit_of_measurement == "Imperial" %}
+      Lbs
+    {% else %}
+      Kg
+    {% endif %}
+  </div>
+  <hr class="visible">
+  <div class="sets">
+    <div class="set">
+  <div>
+    <div>
+    <input type="number" class="weight" id="default_weight" step=".5" value="{{ exercise.default_weight }}">
+    </div>
+    <div>
+      {% if unit_of_measurement == 'Imperial' %}
+        Default Lbs
+      {% else %}
+        Default Kg
+      {% endif %}
+    </div>
+  </div>
+  <div>
+    <div>
+    <input type="number" class="reps" id="default_reps" value="{{ exercise.default_reps }}">
+    </div>
+    <div>
+    Default Reps
+    </div>
+  </div>
+</div>
+  </div>
+  <hr class="visible">
+</div>
