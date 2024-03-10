@@ -1,7 +1,10 @@
-<div id="log_popup_header">
-  <div>{{ month_name }} {{ day }}, {{ year }}</div>
+<div class="log_popup_header">
+  <div id="log_popup_date">{{ month_name }} {{ day }}, {{ year }}</div>
   <div>
     <span class="material-symbols-outlined" id="close">close</span>
   </div>
 </div>
-<div>Placeholder</div>
+<div class="calendar">
+  {% include 'log/weight_log.html' %}
+  {% include 'log/workout_log.html' %}
+</div>

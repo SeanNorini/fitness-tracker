@@ -109,7 +109,6 @@ class Workout(models.Model):
     def configure_workout(self) -> dict:
         workout_config = {"exercises": []}
         for exercise in self.config["exercises"]:
-
             exercise_sets = self.configure_exercise(
                 exercise["five_rep_max"], exercise["sets"]
             )
@@ -168,6 +167,28 @@ class WorkoutLog(models.Model):
                     exercise = Exercise.get_exercise(self.user, exercise_name)
 
                     WorkoutSet.save_workout_set(self, exercise, exercise_sets)
+
+    def generate_workout_log(self):
+        workout_log = {
+            "workout_name": self.workout.name,
+            "total_time": self.total_time,
+            "exercises": [],
+        }
+
+        workout_sets = WorkoutSet.objects.filter(workout_log=self).order_by("pk")
+        exercise_summary = {"name": workout_sets[0].exercise.name, "sets": []}
+        for workout_set in workout_sets:
+            if exercise_summary["name"] != workout_set.exercise.name:
+                workout_log["exercises"].append(exercise_summary)
+                exercise_summary = {"name": workout_set.exercise.name, "sets": []}
+            weight = str(workout_set.weight).rstrip("0").rstrip(".")
+            exercise_summary["sets"].append(
+                {"weight": weight, "reps": workout_set.reps}
+            )
+
+        workout_log["exercises"].append(exercise_summary)
+
+        return workout_log
 
 
 class WorkoutSet(models.Model):

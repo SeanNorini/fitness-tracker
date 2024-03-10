@@ -123,10 +123,9 @@ class SelectWorkoutView(LoginRequiredMixin, TemplateView):
         workout = Workout.get_workout(self.request.user, workout_name)
         context["workout"] = workout.configure_workout()
 
-        unit_of_measurement = UserBodyCompositionSetting.get_unit_of_measurement(
-            self.request.user
+        context["unit_of_measurement"] = (
+            UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
         )
-        context["unit_of_measurement"] = unit_of_measurement
         return context
 
 
@@ -181,10 +180,9 @@ class AddExerciseView(LoginRequiredMixin, TemplateView):
 
         context = super().get_context_data(**kwargs)
         context["exercise"] = exercise
-        unit_of_measurement = UserBodyCompositionSetting.get_unit_of_measurement(
-            self.request.user
+        context["unit_of_measurement"] = (
+            UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
         )
-        context["unit_of_measurement"] = unit_of_measurement
         return context
 
 
@@ -193,10 +191,9 @@ class AddSetView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        unit_of_measurement = UserBodyCompositionSetting.get_unit_of_measurement(
-            self.request.user
+        context["unit_of_measurement"] = (
+            UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
         )
-        context["unit_of_measurement"] = unit_of_measurement
         return context
 
 
@@ -234,10 +231,9 @@ class WorkoutSettingsView(LoginRequiredMixin, TemplateView):
         context["workouts"] = workouts
         context["exercises"] = list(exercises)
 
-        unit_of_measurement = UserBodyCompositionSetting.get_unit_of_measurement(
-            self.request.user
+        context["unit_of_measurement"] = (
+            UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
         )
-        context["unit_of_measurement"] = unit_of_measurement
 
         user_workout_settings = WorkoutSetting.objects.filter(
             user=self.request.user
@@ -256,10 +252,9 @@ class WorkoutSettingsSelectWorkoutView(LoginRequiredMixin, TemplateView):
 
         context["workout"] = workout.config
 
-        unit_of_measurement = UserBodyCompositionSetting.get_unit_of_measurement(
-            self.request.user
+        context["unit_of_measurement"] = (
+            UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
         )
-        context["unit_of_measurement"] = unit_of_measurement
         return context
 
 
@@ -273,10 +268,9 @@ class WorkoutSettingsAddSetView(LoginRequiredMixin, TemplateView):
         exercise = Exercise.get_exercise(self.request.user, exercise_name)
         context["exercise"] = exercise
 
-        unit_of_measurement = UserBodyCompositionSetting.get_unit_of_measurement(
-            self.request.user
+        context["unit_of_measurement"] = (
+            UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
         )
-        context["unit_of_measurement"] = unit_of_measurement
         return context
 
 
@@ -291,10 +285,9 @@ class WorkoutSettingsSelectExerciseView(LoginRequiredMixin, TemplateView):
         exercise = Exercise.get_exercise(self.request.user, exercise_name)
         context["exercise"] = exercise
 
-        unit_of_measurement = UserBodyCompositionSetting.get_unit_of_measurement(
-            self.request.user
+        context["unit_of_measurement"] = (
+            UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
         )
-        context["unit_of_measurement"] = unit_of_measurement
 
         return context
 
@@ -362,10 +355,9 @@ class EditExerciseView(LoginRequiredMixin, FormView):
         exercise_name = self.kwargs.get("exercise_name")
         context["exercise"] = Exercise.get_exercise(self.request.user, exercise_name)
 
-        unit_of_measurement = UserBodyCompositionSetting.get_unit_of_measurement(
-            self.request.user
+        context["unit_of_measurement"] = (
+            UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
         )
-        context["unit_of_measurement"] = unit_of_measurement
         return context
 
     def form_valid(self, form):

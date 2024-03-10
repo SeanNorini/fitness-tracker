@@ -82,9 +82,10 @@ function selectWorkoutEventListeners(){
             deleteSet(e);
         });
 
-        const setCompleteCheckbox = exercise.querySelector(".set_complete");
-        addCheckboxListener(setCompleteCheckbox);
-
+        const setCompleteCheckboxes = exercise.querySelectorAll(".set_complete");
+        setCompleteCheckboxes.forEach(function(checkbox){
+            addCheckboxListener(checkbox);
+        })
     });
 }
 
@@ -169,6 +170,15 @@ function loadWorkout(){
                 const exercises = document.querySelector(".exercises");
                 exercises.innerHTML = workoutHTML;
                 selectWorkoutEventListeners();
+
+                const messageContainer = document.querySelector("#message");
+
+                if (workout.value === "Custom Workout") {
+                    messageContainer.style.display = "flex";
+                }
+                else {
+                    messageContainer.style.display = "none";
+                }
             });
         }
     });
@@ -180,7 +190,7 @@ function loadWorkout(){
         const exercise = document.querySelector(".exercise").value;
         const exercises = document.querySelector(".exercises");
 
-        fetch(("add_exercise/") + exercise, {method: "GET"})
+        fetch(`http://${domain}/workout/add_exercise/${exercise}`, {method: "GET"})
         .then(response => response.text())
         .then(template => {
             const exerciseTemplate = document.createElement("template");
@@ -272,9 +282,9 @@ function loadWorkout(){
         const dateInput = document.getElementById("date");
         if (dateInput !== null) {
             workout.append("date", dateInput.value)
-            url = "save_workout_session"
+            url = `http://${domain}/workout/save_workout_session`
         }
-        else {url = "save_workout"}
+        else {url = `http://${domain}/workout/save_workout`}
 
 
         // Send workout data and display response

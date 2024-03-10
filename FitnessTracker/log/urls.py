@@ -1,4 +1,4 @@
-from django.urls import re_path
+from django.urls import re_path, path
 from . import views
 
 
@@ -13,4 +13,5 @@ urlpatterns = [
         views.DailyLogView.as_view(),
         name="daily_log",
     ),
+    path("save_weight_log/", views.SaveWeightLogView.as_view(), name="save_weight_log"),
 ]

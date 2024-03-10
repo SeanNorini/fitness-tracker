@@ -1,11 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from django.views.generic import TemplateView
-from calendar import HTMLCalendar, month_name, SUNDAY
+from django.views import View
+from django.views.generic import TemplateView, FormView
+from calendar import HTMLCalendar, month_name
 from datetime import datetime
 
-from users.models import WeightLog
+from users.models import WeightLog, UserBodyCompositionSetting
 from workout.models import WorkoutLog
 
 
@@ -69,16 +70,11 @@ class LogHTMLCalendar(HTMLCalendar):
                 '<td class="noday">&nbsp;</td>'  # If day is 0, display an empty cell
             )
         else:
-            if workout or weight:
-                day_format = f'<td class="{self.cssclasses[weekday]} log" data-day="{day}"><div>{day}</div>'
-            else:
-                day_format = f'<td class="{self.cssclasses[weekday]}"><div>{day}</div>'
+            day_format = f'<td class="{self.cssclasses[weekday]} day" data-day="{day}"><div>{day}</div>'
             if workout is not None:
-                day_format += (
-                    '<div><span class="material-symbols-outlined">exercise</span></div>'
-                )
+                day_format += '<div><span class="material-symbols-outlined exercise_icon">exercise</span></div>'
             if weight is not None:
-                day_format += '<div><span class="material-symbols-outlined">monitor_weight</span></div>'
+                day_format += '<div><span class="material-symbols-outlined weight_icon">monitor_weight</span></div>'
             day_format += "</td>"
         return day_format
 
@@ -116,8 +112,48 @@ class DailyLogView(TemplateView):
         date = f"{year}-{month}-{day}"
 
         workout_logs = WorkoutLog.objects.filter(user=self.request.user, date=date)
-        context["workout_logs"] = workout_logs
+        context["workout_logs"] = [
+            workout_log.generate_workout_log() for workout_log in workout_logs
+        ]
 
-        weight_log = WeightLog.objects.filter(user=self.request.user, date=date)
+        weight_log = WeightLog.objects.filter(user=self.request.user, date=date).first()
         context["weight_log"] = weight_log
+
+        context["unit_of_measurement"] = (
+            UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
+        )
+
         return context
+
+
+class SaveWeightLogView(TemplateView):
+    template_name = "log/save_weight_log.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_body_composition_settings = (
+            UserBodyCompositionSetting.objects.filter(user=self.request.user)
+            .order_by("-pk")
+            .first()
+        )
+
+        context["user_body_composition_settings"] = user_body_composition_settings
+
+        context["unit_of_measurement"] = (
+            UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
+        )
+        return context
+
+    def post(self, request, *args, **kwargs):
+        weight = request.POST.get("bodyweight")
+        bodyfat = request.POST.get("bodyfat")
+        date = request.POST.get("date")
+        date = datetime.strptime(date, "%B %d, %Y")
+
+        WeightLog.objects.update_or_create(
+            user=self.request.user,
+            date=date,
+            defaults={"weight": weight, "bodyfat": bodyfat},
+        )
+
+        return JsonResponse({"success": True})

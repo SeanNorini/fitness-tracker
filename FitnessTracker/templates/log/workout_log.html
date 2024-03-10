@@ -1,0 +1,33 @@
+{% if workout_logs %}
+  <div><span class="material-symbols-outlined">exercise</span></div>
+  {% for workout_log in workout_logs %}
+    <div>{{ workout_log.workout_name }}</div>
+    <hr class="horizontal">
+    {% if workout_log.total_time != 0 %}
+    <div>Total time: {{ workout_log.total_time }}</div>
+    {% endif %}
+    {% for exercise in workout_log.exercises %}
+      <div>{{ exercise.name }}</div>
+      <hr class="horizontal">
+      {% for set in exercise.sets %}
+        <div>
+          {{ set.weight }}
+          {% if unit_of_measurement == 'Imperial' %}
+          Lbs
+          {% else %}
+          Kg
+          {% endif %}
+          &nbsp;x&nbsp;
+          {{ set.reps }}
+        </div>
+      {% endfor %}
+      {% if not forloop.last %}
+        <br>
+      {% endif %}
+    {% endfor %}
+    {% if not forloop.last %}
+      <br>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+<button type="button" class="button add_workout_log">Add Workout Log</button>

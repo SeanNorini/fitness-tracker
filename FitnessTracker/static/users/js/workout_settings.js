@@ -241,11 +241,11 @@ function saveWorkout(){
     const workoutSelect = document.getElementById("select_workout");
     let workoutName = workoutSelect.value.trim();
     if (workoutName !== "Custom Workout"){
-        window.confirm(`This will save new settings to workout "${workoutName}." Are you sure?`);
-            if (!confirm) {
-                workoutName = window.prompt(`Please enter a name for the new workout or close this window to cancel.`);
-                newWorkout = true;
-            }
+        const confirm = window.confirm(`This will save new settings to workout "${workoutName}." Are you sure?`);
+        if (!confirm) {
+            workoutName = window.prompt(`Please enter a name for the new workout or close this window to cancel.`);
+            newWorkout = true;
+        }
     }
     else {
         workoutName = window.prompt(`Please enter a name for the new workout or close this window to cancel.`);

@@ -51,15 +51,15 @@ tr {
     width: 100%;
 }
 
-.calendar span, #close {
+.calendar span, #close, #add_log_close {
     font-size:2rem;
 }
 
-#close:hover {
+#close:hover, #add_log_close:hover {
     cursor: pointer;
 }
 
-.log:hover {
+.day:hover {
     background-color: var(--medgray);
     cursor: pointer;
     transition: all .3s ease-in;
@@ -79,12 +79,12 @@ tr {
     cursor: pointer;
 }
 
-#log_popup_header {
+.log_popup_header {
     display: flex;
     justify-content: space-between;
 }
 
-#log_popup {
+#daily_log_popup, #add_log_popup {
   position: fixed;
   top: 40%;
   left: 50%;
@@ -96,4 +96,13 @@ tr {
   z-index: 2;
   min-width: 25rem;
   min-height: 10rem;
+  border-radius: .3rem;
+  max-height: 50%;
+  overflow-y: auto;
+  display: none;
+  max-width: 40rem;
+}
+
+#add_log_popup input:not(#workout_form input) {
+    max-width: 4rem;
 }

@@ -1,0 +1,16 @@
+{% if weight_log %}
+  <div><span class="material-symbols-outlined">monitor_weight</span></div>
+  <div>
+    Bodyweight - {{ weight_log.weight }}
+    {% if unit_of_measurement == 'Imperial' %}
+    Lbs
+    {% else %}
+    Kg
+    {% endif %}
+  </div>
+  <div>Bodyfat - {{ weight_log.bodyfat }}%</div>
+  <button type="button" class="button add_weight_log">Edit Weight Log</button>
+{% else %}
+  <button type="button" class="button add_weight_log">Add Weight Log</button>
+{% endif %}
+<br><br>
