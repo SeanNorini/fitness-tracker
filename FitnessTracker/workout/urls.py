@@ -21,7 +21,11 @@ urlpatterns = [
         views.SaveWorkoutSessionView.as_view(),
         name="save_workout_session",
     ),
-    path("workout/add_set", views.AddSetView.as_view(), name="add_set"),
+    path(
+        "workout/add_set/<str:exercise_name>",
+        views.AddSetView.as_view(),
+        name="add_set",
+    ),
     path(
         "workout/workout_settings",
         views.WorkoutSettingsView.as_view(),
@@ -33,9 +37,9 @@ urlpatterns = [
         name="workout_settings_select_workout",
     ),
     path(
-        "workout/workout_settings/select_exercise/<str:exercise_name>",
-        views.WorkoutSettingsSelectExerciseView.as_view(),
-        name="workout_settings_select_workout",
+        "workout/workout_settings/add_exercise/<str:exercise_name>",
+        views.WorkoutSettingsAddExerciseView.as_view(),
+        name="workout_settings_add_exercise",
     ),
     path(
         "workout/workout_settings/add_set/<str:exercise_name>",

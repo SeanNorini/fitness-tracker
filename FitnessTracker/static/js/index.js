@@ -4,8 +4,6 @@ const settingModule = document.querySelector("#settings");
 settingModule.id = "user/settings";
 
 const modules = document.querySelectorAll(".module");
-
-let unitOfMeasurement = "";
 modules.forEach((module) => {
   module.addEventListener("click", (e) => {
     fetch(`http://${domain}/${module.id}`, {
@@ -30,7 +28,11 @@ function loadModule(module) {
       document.title = "Fitness Tracker - Workout";
       window.history.pushState({}, "", "/workout/");
       scriptLoaded = addScript("/static/workout/js/workout.js");
-      if (!scriptLoaded) {
+      if (scriptLoaded) {
+        scriptLoaded.onload = function () {
+          workoutManager.initialize();
+        };
+      } else {
         workoutManager.initialize();
       }
       break;
@@ -52,7 +54,6 @@ function loadModule(module) {
       addStylesheet("/static/css/button_group.css");
       addStylesheet("/static/users/css/form.css");
       addStylesheet("/static/users/css/settings.css");
-      addScript("/static/workout/js/workout.js");
       scriptLoaded = addScript("/static/users/js/settings.js");
       if (scriptLoaded) {
         scriptLoaded.onload = function () {

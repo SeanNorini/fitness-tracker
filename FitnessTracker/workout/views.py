@@ -274,7 +274,7 @@ class WorkoutSettingsAddSetView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class WorkoutSettingsSelectExerciseView(LoginRequiredMixin, TemplateView):
+class WorkoutSettingsAddExerciseView(LoginRequiredMixin, TemplateView):
 
     template_name = "workout/workout_settings_exercise.html"
 

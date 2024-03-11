@@ -2,33 +2,41 @@ class WorkoutManager {
   constructor() {
     this.unsavedChanges = false;
     this.restTimerRunning = false;
-    this.initialize();
+    this.url = `http://${domain}/workout`;
   }
   addSelectWorkoutListener() {
-    const selectWorkoutMenu = document.querySelector(".workout");
+    // Add listener to select workout menu
+    const selectWorkoutMenu = document.getElementById("select_workout");
     selectWorkoutMenu.addEventListener("change", (e) => {
+      // Confirm select workout if unsaved changes
       let confirm = true;
       if (this.unsavedChanges) {
         confirm = window.confirm(
           "This will erase the current workout session, are you sure?",
         );
       }
+
+      // Load workout on confirmation else change menu option back to previous workout
+      const currentWorkout = selectWorkoutMenu.value;
       if (confirm) {
-        this.fetchWorkout(selectWorkoutMenu.value);
+        this.fetchWorkout(currentWorkout);
         this.unsavedChanges = false;
+        this.previousWorkoutSelectValue = currentWorkout;
+      } else {
+        selectWorkoutMenu.value = this.previousWorkoutSelectValue;
       }
     });
   }
 
   fetchWorkout(workoutName) {
-    fetch(`http://${domain}/workout/select_workout/${workoutName}`, {
+    fetch(`${this.url}/select_workout/${workoutName}`, {
       method: "GET",
     })
       .then((response) => response.text())
       .then((workoutHTML) => {
         // Add workout to page
-        const exercises = document.querySelector(".exercises");
-        exercises.innerHTML = workoutHTML;
+        const exerciseContainers = document.querySelector(".exercises");
+        exerciseContainers.innerHTML = workoutHTML;
 
         // Add event listeners to current workout
         this.addWorkoutListeners();
@@ -56,7 +64,7 @@ class WorkoutManager {
       const exerciseName = document.querySelector(".exercise").value;
       const exercisesContainer = document.querySelector(".exercises");
 
-      fetch(`http://${domain}/workout/add_exercise/${exerciseName}`, {
+      fetch(`${this.url}/add_exercise/${exerciseName}`, {
         method: "GET",
       })
         .then((response) => response.text())
@@ -91,9 +99,7 @@ class WorkoutManager {
     exerciseContainer
       .querySelector(".add_set")
       .addEventListener("click", (e) => {
-        const url = "add_set";
-        const addListeners = false;
-        this.addSet(e, url, addListeners);
+        this.addSet(e);
       });
 
     // Add listener to delete button
@@ -126,8 +132,9 @@ class WorkoutManager {
     this.unsavedChanges = true;
   }
 
-  addSet(e, url, addListeners) {
-    fetch(`${url}`, { method: "GET" })
+  addSet(e) {
+    const exerciseName = document.querySelector(".exercise").value;
+    fetch(`${this.url}/add_set/${exerciseName}`, { method: "GET" })
       .then((response) => response.text())
       .then((setHTML) => {
         // Add new set to exercise
@@ -138,18 +145,18 @@ class WorkoutManager {
         exerciseContainer.querySelector(".sets").appendChild(newSet);
         this.updateSetNumber(exerciseContainer);
 
-        if (addListeners) {
-          // Add input listeners for workout settings
-          addInputListeners(newSet);
-        } else {
-          // Add set complete checkbox for workout session
-          const setCompleteCheckbox = newSet.querySelector(".set_complete");
-          setCompleteCheckbox.addEventListener("click", (e) => {
-            this.setComplete(e);
-          });
-        }
+        this.addSetPostFetch(newSet);
+
         this.unsavedChanges = true;
       });
+  }
+
+  addSetPostFetch(newSet) {
+    // Add listener to set checkbox
+    const setCompleteCheckbox = newSet.querySelector(".set_complete");
+    setCompleteCheckbox.addEventListener("click", (e) => {
+      this.setComplete(e);
+    });
   }
 
   deleteSet(e) {
@@ -272,13 +279,13 @@ class WorkoutManager {
   }
 
   addSaveWorkoutBtnListener() {
-    const saveWorkoutBtn = document.querySelector(".save_workout");
+    const saveWorkoutBtn = document.querySelector("#save_workout");
     saveWorkoutBtn.addEventListener("click", (e) => {
-      this.saveWorkoutSession();
+      this.saveWorkout();
     });
   }
 
-  saveWorkoutSession() {
+  saveWorkout() {
     // Check for workout to save
     const exercises = document.querySelectorAll(".exercise_container");
     if (exercises.length === 0) {
@@ -289,10 +296,10 @@ class WorkoutManager {
     }
 
     // Gather form data
-    const workoutFormData = this.readWorkoutSession(exercises);
+    const workoutFormData = this.readCurrentWorkout(exercises);
 
     // Send workout data and display response
-    fetch(`http://${domain}/workout/save_workout_session`, {
+    fetch(`${this.url}/save_workout_session`, {
       method: "POST",
       body: workoutFormData,
     })
@@ -309,7 +316,7 @@ class WorkoutManager {
       });
   }
 
-  readWorkoutSession(exercises) {
+  readCurrentWorkout(exercises) {
     const workoutFormData = new FormData();
 
     // Add workout name
@@ -366,6 +373,8 @@ class WorkoutManager {
     this.addExerciseBtnListener();
     this.setDate();
     this.addSaveWorkoutBtnListener();
+    this.previousWorkoutSelectValue =
+      document.getElementById("select_workout").value;
   }
 }
 
