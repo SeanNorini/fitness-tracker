@@ -160,13 +160,17 @@ class WorkoutLog(models.Model):
     total_time = models.IntegerField(default=0)
 
     def save_workout_session(self, exercises):
-        with transaction.atomic():
-            self.save()
-            for exercise in exercises:
-                for exercise_name, exercise_sets in exercise.items():
-                    exercise = Exercise.get_exercise(self.user, exercise_name)
+        try:
+            with transaction.atomic():
+                self.save()
+                for exercise in exercises:
+                    for exercise_name, exercise_sets in exercise.items():
+                        exercise = Exercise.get_exercise(self.user, exercise_name)
 
-                    WorkoutSet.save_workout_set(self, exercise, exercise_sets)
+                        WorkoutSet.save_workout_set(self, exercise, exercise_sets)
+            return True
+        except Exception as e:
+            return False
 
     def generate_workout_log(self):
         workout_log = {
@@ -210,7 +214,7 @@ class WorkoutSet(models.Model):
             weight = float(exercise_sets["weight"][i])
             reps = int(exercise_sets["reps"][i])
 
-            cls.objects.create(
+            obj = cls.objects.create(
                 workout_log=workout_log,
                 exercise=exercise,
                 weight=weight,
