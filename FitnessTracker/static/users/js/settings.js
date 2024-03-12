@@ -24,21 +24,10 @@ function loadSettings() {
           scriptLoaded = addScript("/static/workout/js/workout.js");
           if (scriptLoaded) {
             scriptLoaded.onload = function () {
-              scriptLoaded = addScript("/static/users/js/workout_settings.js");
-
-              scriptLoaded.onload = function () {
-                workoutSettingsManager.initialize();
-              };
+              workoutSettingsManager.initialize();
             };
           } else {
-            scriptLoaded = addScript("/static/users/js/workout_settings.js");
-            if (scriptLoaded) {
-              scriptLoaded.onload = function () {
-                workoutSettingsManager.initialize();
-              };
-            } else {
-              workoutSettingsManager.initialize();
-            }
+            workoutSettingsManager.initialize();
           }
           break;
         case "exercises":
