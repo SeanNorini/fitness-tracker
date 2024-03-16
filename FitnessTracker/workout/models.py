@@ -18,9 +18,29 @@ def validate_date(date):
         raise ValidationError("Date cannot be earlier than one year ago.")
 
 
+def get_attribute_list(model_class, user, attribute_name):
+    objects = model_class.objects.filter(
+        Q(user=user) | Q(user=model_class.default_user)
+    )
+
+    for value in objects.values_list(attribute_name, flat=True).distinct():
+        if model_class.objects.filter(name=value, user=user).exists():
+            objects = objects.exclude(name=value, user=model_class.default_user)
+
+    attribute_values = objects.values_list(attribute_name, flat=True)
+    return attribute_values
+
+
 # Create your models here.
 class Exercise(models.Model):
-    DEFAULT_USER = User.objects.get(username="default")
+    DEFAULT_MODIFIER_CHOICES = [
+        ("add", "Add"),
+        ("subtract", "Subtract"),
+        ("percentage", "Percentage"),
+        ("exact", "Exact"),
+    ]
+
+    default_user = User.objects.get(username="default")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, null=False, blank=False)
     five_rep_max = models.DecimalField(
@@ -41,19 +61,32 @@ class Exercise(models.Model):
         default=8, validators=[MaxValueValidator(100), MinValueValidator(0)]
     )
 
+    default_modifier = models.CharField(
+        max_length=20,
+        choices=DEFAULT_MODIFIER_CHOICES,
+        default="percentage",
+    )
+
+    def save(self, *args, **kwargs):
+        self.name = self.name.capitalize()
+        super().save(*args, **kwargs)
+
+    def sets(self):
+        return [
+            {
+                "weight": self.default_weight,
+                "reps": self.default_reps,
+                "amount": self.default_weight,
+                "modifier": self.default_modifier,
+            }
+        ]
+
     def __str__(self) -> str:
         return self.name
 
     @classmethod
     def get_exercise_list(cls, user):
-        exercises = Exercise.objects.filter(Q(user=user) | Q(user=cls.DEFAULT_USER))
-
-        for exercise_name in exercises.values_list("name", flat=True).distinct():
-            if Exercise.objects.filter(name=exercise_name, user=user).exists():
-                exercises = exercises.exclude(name=exercise_name, user=cls.DEFAULT_USER)
-
-        exercise_names = exercises.values_list("name", flat=True)
-        return exercise_names
+        return get_attribute_list(Exercise, user, "name")
 
     @classmethod
     def get_exercise(cls, user, exercise_name):
@@ -77,33 +110,26 @@ class Workout(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
     exercises = models.ManyToManyField(Exercise, blank=True)
     config = models.JSONField(default=dict)
-    DEFAULT_USER = User.objects.get(username="default")
+    default_user = User.objects.get(username="default")
 
     def __str__(self) -> str:
         return self.name
 
+    def save(self, *args, **kwargs):
+        self.name = self.name.capitalize()
+        super().save(*args, **kwargs)
+
     @classmethod
     def get_workout_list(cls, user):
-        # Filter workouts for the current user and default user
-        workouts = Workout.objects.filter(Q(user=user) | Q(user=cls.DEFAULT_USER))
-
-        # If a user-specific workout with the same name as a default user's workout exists,
-        # exclude the default user's workout from the queryset
-        for workout_name in workouts.values_list("name", flat=True).distinct():
-            if Workout.objects.filter(name=workout_name, user=user).exists():
-                workouts = workouts.exclude(name=workout_name, user=cls.DEFAULT_USER)
-
-        # Retrieve only the names of the workouts
-        workout_names = workouts.values_list("name", flat=True)
-        return workout_names
+        return get_attribute_list(Workout, user, "name")
 
     @classmethod
     def get_workout(cls, user, workout_name) -> Type["Workout"]:
-        DEFAULT_USER = User.objects.get(username="default")
+        default_user = User.objects.get(username="default")
         try:
             workout = cls.objects.get(name=workout_name, user=user)
         except ObjectDoesNotExist:
-            workout = cls.objects.get(name=workout_name, user=DEFAULT_USER)
+            workout = cls.objects.get(name=workout_name, user=default_user)
         return workout
 
     def configure_workout(self) -> dict:
@@ -121,28 +147,35 @@ class Workout(models.Model):
 
         return workout_config
 
-    def configure_exercise(self, five_rep_max, exercise_sets):
+    @staticmethod
+    def configure_exercise(five_rep_max, exercise_sets):
         configured_sets = []
         for exercise_set in exercise_sets:
             match exercise_set["modifier"]:
                 case "exact":
                     configured_sets.append(
-                        (exercise_set["amount"], exercise_set["reps"])
+                        {"weight": exercise_set["amount"], "reps": exercise_set["reps"]}
                     )
                 case "percentage":
                     configured_sets.append(
-                        (
-                            ((exercise_set["amount"] / 100) * five_rep_max),
-                            exercise_set["reps"],
-                        )
+                        {
+                            "weight": (exercise_set["amount"] / 100) * five_rep_max,
+                            "reps": exercise_set["reps"],
+                        }
                     )
                 case "increment":
                     configured_sets.append(
-                        (five_rep_max + exercise_set["amount"], exercise_set["reps"])
+                        {
+                            "weight": five_rep_max + exercise_set["amount"],
+                            "reps": exercise_set["reps"],
+                        }
                     )
                 case "decrement":
                     configured_sets.append(
-                        (five_rep_max - exercise_set["amount"], exercise_set["reps"])
+                        {
+                            "weight": five_rep_max - exercise_set["amount"],
+                            "reps": exercise_set["reps"],
+                        }
                     )
         return configured_sets
 
@@ -172,8 +205,17 @@ class WorkoutLog(models.Model):
         except Exception as e:
             return False
 
+    def update_workout_session(self, exercises):
+        self.exercises = None
+        workout_sets = WorkoutSet.objects.filter(workout_log=self)
+        for workout_set in workout_sets:
+            workout_set.delete()
+
+        return self.save_workout_session(exercises)
+
     def generate_workout_log(self):
         workout_log = {
+            "pk": self.pk,
             "workout_name": self.workout.name,
             "total_time": self.total_time,
             "exercises": [],
@@ -214,7 +256,7 @@ class WorkoutSet(models.Model):
             weight = float(exercise_sets["weight"][i])
             reps = int(exercise_sets["reps"][i])
 
-            obj = cls.objects.create(
+            cls.objects.create(
                 workout_log=workout_log,
                 exercise=exercise,
                 weight=weight,

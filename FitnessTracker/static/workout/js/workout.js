@@ -4,6 +4,16 @@ class WorkoutManager {
     this.restTimerRunning = false;
     this.baseURL = pageManager.baseURL + "/workout";
   }
+
+  initialize() {
+    this.addSelectWorkoutListener();
+    this.addExerciseBtnListener();
+    this.setDate();
+    this.addSaveWorkoutBtnListener();
+    this.previousWorkoutSelectValue =
+      document.getElementById("select_workout").value;
+  }
+
   addSelectWorkoutListener() {
     // Add listener to select workout menu
     const selectWorkoutMenu = document.getElementById("select_workout");
@@ -61,7 +71,7 @@ class WorkoutManager {
   addExerciseBtnListener() {
     const addExerciseBtn = document.querySelector(".add_exercise");
     addExerciseBtn.addEventListener("click", (e) => {
-      const exerciseName = document.querySelector(".exercise").value;
+      const exerciseName = document.getElementById("select_exercise").value;
       const exercisesContainer = document.querySelector(".exercises");
 
       fetch(`${this.baseURL}/add_exercise/${exerciseName}`, {
@@ -92,6 +102,7 @@ class WorkoutManager {
     exerciseContainer
       .querySelector(".delete_exercise")
       .addEventListener("click", (e) => {
+        e.stopPropagation();
         this.deleteExercise(e);
       });
 
@@ -193,20 +204,8 @@ class WorkoutManager {
     }
   }
 
-  showPopupMessage(message, duration) {
-    // Display popup message
-    const popup = document.getElementById("popup");
-    popup.textContent = message;
-    popup.style.display = "block";
-
-    // Close message after duration
-    setTimeout(function () {
-      popup.style.display = "none";
-    }, duration);
-  }
-
   restTimer() {
-    const clockElement = document.getElementById("clock");
+    const restTimerElement = document.getElementById("rest_timer");
     let minutes = 0;
     let seconds = 0;
 
@@ -222,7 +221,7 @@ class WorkoutManager {
       const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
       const formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
 
-      clockElement.textContent = formattedMinutes + ":" + formattedSeconds;
+      restTimerElement.textContent = formattedMinutes + ":" + formattedSeconds;
 
       if (this.restTimerRunning) {
         setTimeout(updateRestTimer, 1000);
@@ -235,7 +234,7 @@ class WorkoutManager {
         this.restTimerRunning = false;
         minutes = 0;
         seconds = 0;
-        clockElement.textContent = "00:00";
+        restTimerElement.textContent = "00:00";
       },
       start: () => {
         // Start timer
@@ -246,24 +245,11 @@ class WorkoutManager {
   }
 
   showRestTimer() {
-    const popup = document.querySelector(".clock_popup");
-    popup.style.display = "block";
-
-    pageManager.disablePageExcept(popup);
-
-    const closePopup = document.getElementById("close");
-    closePopup.addEventListener("click", (e) => {
-      popup.style.display = "none";
-      restTimerInstance.stop(); // Stop the timer when closing the popup
-      pageManager.enablePage(popup);
-    });
-
-    pageManager.addReEnablePageListener(popup, closePopup);
-
     const restTimerInstance = this.restTimer();
     if (!this.restTimerRunning) {
       restTimerInstance.start(); // Start the timer when showing the popup
     }
+    pageManager.openPopup("rest_timer_popup", restTimerInstance.stop);
   }
 
   setDate(date) {
@@ -280,39 +266,57 @@ class WorkoutManager {
 
   addSaveWorkoutBtnListener() {
     const saveWorkoutBtn = document.querySelector("#save_workout");
-    saveWorkoutBtn.addEventListener("click", (e) => {
-      this.saveWorkout();
+    saveWorkoutBtn.addEventListener("click", () => {
+      this.saveWorkout().then((workoutSaved) => {
+        if (workoutSaved.formEmpty) {
+          return;
+        }
+
+        if (workoutSaved) {
+          pageManager.showTempPopupMessage("Workout saved.", 2500);
+        } else if (!workoutSaved.formEmpty) {
+          pageManager.showTempPopupMessage(
+            "Problem saving workout, please try again.",
+            2500,
+          );
+        }
+      });
     });
   }
 
-  saveWorkout() {
+  validateWorkoutForm() {
     // Check for workout to save
     const exercises = document.querySelectorAll(".exercise_container");
     if (exercises.length === 0) {
       this.setMessage(
         "You must add at least one exercise before saving a workout session.",
       );
-      return;
     }
+    return exercises;
+  }
+
+  saveWorkout() {
+    // Verify form has exercises to save
+    const exercises = this.validateWorkoutForm();
 
     // Gather form data
-    const workoutFormData = this.readCurrentWorkout(exercises);
+    const formData = this.readCurrentWorkout(exercises);
+
+    if (exercises.length === 0) {
+      return Promise.resolve({ formEmpty: true });
+    }
 
     // Send workout data and display response
-    fetch(`${this.baseURL}/save_workout_session`, {
-      method: "POST",
-      body: workoutFormData,
-    })
-      .then((response) => response.json())
+    const url = `${this.baseURL}/save_workout_session`;
+    return pageManager
+      .fetchData({
+        url: url,
+        method: "POST",
+        responseType: "json",
+        body: formData,
+      })
       .then((response) => {
-        if (response.success === true) {
-          this.showPopupMessage("Workout saved.", 2500);
-        } else {
-          this.showPopupMessage(
-            "Problem saving workout, please try again.",
-            2500,
-          );
-        }
+        return response;
       });
   }
 
@@ -320,7 +324,7 @@ class WorkoutManager {
     const workoutFormData = new FormData();
 
     // Add workout name
-    const workoutName = document.querySelector(".workout").value;
+    const workoutName = document.getElementById("select_workout").value;
     workoutFormData.append("workout_name", workoutName);
 
     // Add exercise sets
@@ -366,15 +370,6 @@ class WorkoutManager {
     workoutFormData.append("csrfmiddlewaretoken", csrftoken);
 
     return workoutFormData;
-  }
-
-  initialize() {
-    this.addSelectWorkoutListener();
-    this.addExerciseBtnListener();
-    this.setDate();
-    this.addSaveWorkoutBtnListener();
-    this.previousWorkoutSelectValue =
-      document.getElementById("select_workout").value;
   }
 }
 
@@ -533,7 +528,7 @@ class WorkoutSettingsManager extends WorkoutManager {
     fetch(`${this.baseURL}`, {
       method: "GET",
       headers: {
-        "X-Requested-With": "XMLHttpRequest",
+        Fetch: "True",
       },
     })
       .then((response) => response.text())
@@ -608,7 +603,7 @@ class WorkoutSettingsManager extends WorkoutManager {
       .then((response) => response.json())
       .then((response) => {
         if (response.success) {
-          this.showPopupMessage("Workout saved.", 2500);
+          pageManager.showTempPopupMessage("Workout saved.", 2500);
 
           // Update workout menu if new workout
           if (this.newWorkout) {
@@ -674,25 +669,68 @@ class WorkoutSettingsManager extends WorkoutManager {
 
   saveWorkoutConfirmation(workoutSelect) {
     let workoutName = workoutSelect.value.trim();
+    let confirm = null;
     if (workoutName !== "Custom Workout") {
-      const confirm = window.confirm(
+      confirm = window.confirm(
         `This will save new settings to workout "${workoutName}." Are you sure?`,
       );
-      if (!confirm) {
-        workoutName = window.prompt(
-          `Please enter a name for the new workout or close this window to cancel.`,
-        );
-        this.newWorkout = true;
-      }
-    } else {
+    }
+
+    if (!confirm) {
       workoutName = window.prompt(
         `Please enter a name for the new workout or close this window to cancel.`,
       );
       this.newWorkout = true;
     }
+
     return workoutName;
   }
 }
 
-const workoutManager = new WorkoutManager();
-const workoutSettingsManager = new WorkoutSettingsManager();
+class WorkoutLogManager extends WorkoutManager {
+  initialize() {
+    this.addSelectWorkoutListener();
+    this.addExerciseBtnListener();
+    this.addWorkoutListeners();
+    this.setDate();
+    this.previousWorkoutSelectValue =
+      document.getElementById("select_workout").value;
+  }
+  setDate() {
+    const monthAndYear = document.querySelector("#month_name");
+    const month = parseInt(monthAndYear.dataset.month) - 1;
+    const year = parseInt(monthAndYear.dataset.year);
+    const day = parseInt(logManager.currentLog.dataset.day);
+    document.getElementById("date").valueAsDate = new Date(year, month, day);
+  }
+
+  updateWorkoutLog(workoutLogPK) {
+    // Verify form has exercises to save
+    const exercises = this.validateWorkoutForm();
+
+    // Gather form data
+    const formData = this.readCurrentWorkout(exercises);
+
+    formData.append("pk", document.querySelector(".workout_log_pk").value);
+
+    if (exercises.length === 0) {
+      return Promise.resolve({ formEmpty: true });
+    }
+
+    // Send workout data and display response
+    const url = `${pageManager.baseURL}/log/update_workout_log/${workoutLogPK}/`;
+    return pageManager
+      .fetchData({
+        url: url,
+        method: "POST",
+        responseType: "json",
+        body: formData,
+      })
+      .then((response) => {
+        return response;
+      });
+  }
+}
+
+window.workoutManager = new WorkoutManager();
+window.workoutSettingsManager = new WorkoutSettingsManager();

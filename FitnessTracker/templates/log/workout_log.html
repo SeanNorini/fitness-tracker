@@ -1,8 +1,8 @@
-{% if workout_logs %}
-  <div><span class="material-symbols-outlined">exercise</span></div>
-  {% for workout_log in workout_logs %}
-    <div>{{ workout_log.workout_name }}</div>
-    <hr class="horizontal">
+<div class="workout">
+  <input type="hidden" class="workout_log_pk" value="{{ workout_log.pk|default:"0" }}">
+  <div class="workout_name">{{ workout_log.workout_name }}</div>
+  <hr class="horizontal">
+  <div class="workout_info hidden">
     {% if workout_log.total_time != 0 %}
     <div>Total time: {{ workout_log.total_time }}</div>
     {% endif %}
@@ -25,9 +25,12 @@
         <br>
       {% endif %}
     {% endfor %}
-    {% if not forloop.last %}
-      <br>
-    {% endif %}
-  {% endfor %}
-{% endif %}
-<button type="button" class="button add_workout_log">Add Workout Log</button>
+  </div>
+  <div class="row">
+    <button type="button" class="button edit_workout_log">Edit Workout Entry</button>
+  
+    <button type="button" class="button delete_workout_log">Delete Workout Entry</button>
+  </div>
+</div>
+
+

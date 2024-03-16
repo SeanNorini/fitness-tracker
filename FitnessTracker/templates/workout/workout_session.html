@@ -7,9 +7,10 @@
       <div class="top_controls">
         <input type="date" id="date">
         <div class="select_container">
-          <select class="workout" id="select_workout">
-            {% for workout in workouts %}
-              <option value="{{ workout }}">{{ workout }}</option>
+          <select id="select_workout">
+            {% for workout_name in workouts %}
+              <option value="{{ workout_name }}" {% if workout.workout_name == workout_name %}selected{% endif %}>
+                {{ workout_name }}</option>
             {% endfor %}
           </select>
         </div>
@@ -20,8 +21,13 @@
       </div>
     </div>
 
-    <div id="message">Please select a workout or add an exercise to get started.</div>
+    <div id="message" {% if workout %}style="display: none;" {% endif %}>
+      Please select a workout or add an exercise to get started.</div>
     <div class="exercises">
+      {% if workout %}
+        <input type="hidden" class="workout_log_pk" value="{{ workout.pk }}">
+        {% include "workout/workout.html" %}
+      {% endif %}
     </div>
     <div class="controls_container">
       <div>
@@ -43,6 +49,6 @@
       </div>
     </div>
 </form>
-<div class="clock_popup">
+<div id="rest_timer_popup">
   {% include 'workout/rest_timer.html' %}
 </div>

@@ -100,18 +100,6 @@ span {
   font-size: 2.2rem;
 }
 
-.popup {
-  position: fixed;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: var(--darkgray);
-  border: 1px solid #ccc;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  z-index: 2;
-}
-
 hr.horizontal  {
   border: none;
   height: 1px;
@@ -157,9 +145,6 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-.workout {
-  max-width: 15rem;
-}
 
 .workout_tooltip {
   position: relative;
@@ -454,29 +439,25 @@ button.controls:hover {
   }
 }
 
-#clock {
+#rest_timer {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-self: center;
   font-size: 6rem;
   margin-top: -2.5rem;
+  height: 100%;
 }
 
-#clock_popup {
+#rest_timer_header {
   display: flex;
   justify-content: flex-end;
 }
 
-#clock_popup span {
-  font-size: 3rem;
-}
-
-.clock_popup {
-  display: none;
+#rest_timer_popup, #daily_log_popup, #add_log_popup {
   position: fixed;
-  top: 40%;
+  top: 0;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, 0%);
   background-color: var(--darkgray);
   border: 1px solid #ccc;
   padding: .5rem;
@@ -484,4 +465,43 @@ button.controls:hover {
   z-index: 2;
   min-width: 25rem;
   min-height: 10rem;
+  border-radius: .3rem;
+  overflow-y: visible;
+  display: none;
+  max-width: 40rem;
+  max-height: 60%;
+  margin-top: 20rem;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#rest_timer_popup .close_popup_container {
+  top: -3.8rem;
+}
+
+.dark_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 2;
+}
+
+#temp_popup{
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--darkgray);
+  border: 1px solid #ccc;
+  border-radius: 1rem;
+  font-size: 3rem;
+  padding: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: none;
 }

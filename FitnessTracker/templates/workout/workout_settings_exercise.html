@@ -20,13 +20,9 @@
   </div>
   <hr class="horizontal">
   <div class="sets">
-    {% if exercise.sets %}
-      {% for exercise_set in exercise.sets %}
-        {% include 'workout/workout_settings_set.html' %}
-      {% endfor %}
-    {% else %}
+    {% for exercise_set in exercise.sets %}
       {% include 'workout/workout_settings_set.html' %}
-    {% endif %}
+    {% endfor %}
   </div>
   <hr class="horizontal">
   <div id="set_controls">

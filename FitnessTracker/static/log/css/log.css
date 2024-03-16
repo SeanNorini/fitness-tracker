@@ -84,25 +84,57 @@ tr {
     justify-content: space-between;
 }
 
-#daily_log_popup, #add_log_popup {
-  position: fixed;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: var(--darkgray);
-  border: 1px solid #ccc;
-  padding: .5rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  z-index: 2;
-  min-width: 25rem;
-  min-height: 10rem;
-  border-radius: .3rem;
-  max-height: 50%;
-  overflow-y: auto;
-  display: none;
-  max-width: 40rem;
+#log_popup_content, #add_log_content{
+    overflow-y: auto;
+    margin-top: -1.8rem;
+}
+
+#add_log_popup{
+    margin-top:25rem;
 }
 
 #add_log_popup input:not(#workout_form input) {
-    max-width: 4rem;
+  max-width: 4rem;
+}
+
+.calendar button {
+  font-size: 1rem;
+  min-width: 10rem;
+  margin: 0;
+}
+
+#weight_log_container, #workout_log_container {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.daily_log_container {
+  display: flex;
+  flex-direction: column;
+  gap:.5rem;
+}
+
+#workout_log, #weight_log {
+    flex-grow: 1;
+    align-self: center;
+}
+
+.workout_name{
+    cursor: pointer;
+}
+
+#add_log_popup .checkbox-wrapper-44{
+    visibility: hidden !important;
+}
+
+.workout:not(:last-child) .add_workout_log,
+.workout:not(:last-child) .workout_info.hidden + div{
+  display: none ;
+}
+
+#workout_log_info{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }

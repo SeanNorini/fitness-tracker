@@ -4,7 +4,7 @@
   </div>
   <div>
     <div>
-    <input type="number" class="weight" step=".5" value="{{ set.0 }}">
+    <input type="number" class="weight" step=".5" value="{{ set.weight|default:"0" }}">
     </div>
     <div>
       {% if unit_of_measurement == 'Imperial' %}
@@ -16,7 +16,7 @@
   </div>
   <div>
     <div>
-    <input type="number" class="reps" value="{{ set.1 }}">
+    <input type="number" class="reps" value="{{ set.reps|default:"0" }}">
     </div>
     <div>
     Reps

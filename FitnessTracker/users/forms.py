@@ -182,12 +182,12 @@ class UserBodyCompositionForm(forms.ModelForm):
         validators=[MinValueValidator(20.0), MaxValueValidator(270.0)],
     )
 
-    weight = forms.FloatField(
-        label="Weight (lbs)",
+    body_weight = forms.FloatField(
+        label="Body Weight (lbs)",
         required=False,
         widget=forms.NumberInput(
             attrs={
-                "id": "weight",
+                "id": "body_weight",
                 "placeholder": 160,
                 "class": "numbers",
                 "min": 30,
@@ -197,12 +197,12 @@ class UserBodyCompositionForm(forms.ModelForm):
         validators=[MinValueValidator(30.0), MaxValueValidator(1000.0)],
     )
 
-    bodyfat = forms.FloatField(
-        label="Bodyfat %",
+    body_fat = forms.FloatField(
+        label="Body Fat %",
         required=False,
         widget=forms.NumberInput(
             attrs={
-                "id": "bodyfat",
+                "id": "body_fat",
                 "placeholder": 20,
                 "class": "numbers",
                 "min": 5,
@@ -233,8 +233,8 @@ class UserBodyCompositionForm(forms.ModelForm):
             "unit_of_measurement",
             "gender",
             "height",
-            "weight",
-            "bodyfat",
+            "body_weight",
+            "body_fat",
             "age",
         ]
 
@@ -247,14 +247,14 @@ class UserBodyCompositionForm(forms.ModelForm):
             cleaned_data["height"] = (
                 70 if measurement == "Imperial" else 175
             )  # Set default height
-        if not cleaned_data.get("weight"):
-            cleaned_data["weight"] = (
+        if not cleaned_data.get("body_weight"):
+            cleaned_data["body_weight"] = (
                 160 if measurement == "Imperial" else 70
             )  # Set default weight
         if not cleaned_data.get("age"):
             cleaned_data["age"] = 30  # Set default age
-        if not cleaned_data.get("bodyfat"):
-            cleaned_data["bodyfat"] = 20  # Set default age
+        if not cleaned_data.get("body_fat"):
+            cleaned_data["body_fat"] = 20  # Set default age
 
         return cleaned_data
 

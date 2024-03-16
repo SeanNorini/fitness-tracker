@@ -220,7 +220,7 @@ class UserSettingsView(LoginRequiredMixin, FormView):
             instance=user_settings_instance
         )
 
-        if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        if request.headers.get("Fetch") == "True":
             return render(
                 request,
                 "users/settings.html",
@@ -282,12 +282,12 @@ class UpdateBodyCompositionSettingsView(LoginRequiredMixin, UpdateView):
         user_body_composition_settings.user = self.request.user
         user_body_composition_settings.save()
 
-        weight = user_body_composition_settings.weight
-        bodyfat = user_body_composition_settings.bodyfat
+        body_weight = user_body_composition_settings.body_weight
+        body_fat = user_body_composition_settings.body_fat
         WeightLog.objects.update_or_create(
             user=self.request.user,
             date=timezone.localdate(),
-            defaults={"weight": weight, "bodyfat": bodyfat},
+            defaults={"body_weight": body_weight, "body_fat": body_fat},
         )
 
         message = "Body composition updated successfully"

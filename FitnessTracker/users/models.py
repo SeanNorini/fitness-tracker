@@ -40,15 +40,26 @@ class UserBodyCompositionSetting(models.Model):
     height = models.FloatField(
         default=70, validators=[MinValueValidator(20.0), MaxValueValidator(270.0)]
     )
-    weight = models.FloatField(
+    body_weight = models.FloatField(
         default=160, validators=[MinValueValidator(30.0), MaxValueValidator(1000.0)]
     )
-    bodyfat = models.FloatField(
+    body_fat = models.FloatField(
         default=20, validators=[MinValueValidator(5.0), MaxValueValidator(60.0)]
     )
     age = models.PositiveIntegerField(
         default=30, validators=[MinValueValidator(1), MaxValueValidator(120)]
     )
+
+    @classmethod
+    def update(cls, user):
+        user_body_composition_settings = cls.objects.filter(user=user).first()
+        most_recent_weight = (
+            WeightLog.objects.filter(user=user).order_by("-date").first()
+        )
+
+        user_body_composition_settings.body_weight = most_recent_weight.body_weight
+        user_body_composition_settings.body_fat = most_recent_weight.body_fat
+        user_body_composition_settings.save()
 
     @classmethod
     def get_unit_of_measurement(cls, user):
@@ -69,13 +80,17 @@ class WorkoutSetting(models.Model):
 
 class WeightLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    weight = models.FloatField(
+    body_weight = models.FloatField(
         validators=[MinValueValidator(30.0), MaxValueValidator(1000.0)],
     )
-    bodyfat = models.FloatField(
+    body_fat = models.FloatField(
         validators=[MinValueValidator(5.0), MaxValueValidator(60.0)],
     )
     date = models.DateField()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        UserBodyCompositionSetting.update(self.user)
 
     class Meta:
         # Ensure only one weight entry per user per date

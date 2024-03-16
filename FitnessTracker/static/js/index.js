@@ -1,7 +1,9 @@
 class PageManager {
   constructor() {
     this.baseURL = window.location.origin;
-
+    this.overlay = document.getElementById("overlay");
+    this.popupStack = [];
+    this.currentPopup = null;
     this.addModuleLinkListeners();
     this.loadStartingModule();
   }
@@ -28,11 +30,11 @@ class PageManager {
     // Create listeners for module navigation
     const modules = document.querySelectorAll(".module");
     modules.forEach((module) => {
-      module.addEventListener("click", (e) => {
+      module.addEventListener("click", () => {
         fetch(`${this.baseURL}/${module.id}`, {
           method: "GET",
           headers: {
-            "X-Requested-With": "XMLHttpRequest",
+            Fetch: "True",
           },
         })
           .then((response) => response.text())
@@ -44,6 +46,7 @@ class PageManager {
       });
     });
   }
+
   loadModule(module) {
     switch (module) {
       case "workout":
@@ -65,62 +68,49 @@ class PageManager {
   }
 
   loadWorkoutModule() {
-    document.title = "Fitness Tracker - Workout";
-    window.history.pushState({}, "", "/workout/");
-    const scriptLoaded = this.addScript("/static/workout/js/workout.js");
-    if (scriptLoaded) {
-      scriptLoaded.onload = () => {
-        workoutManager.initialize();
-      };
-    } else {
-      workoutManager.initialize();
-    }
+    this.updateModuleWindow("Fitness Tracker - Workout", "/workout");
+    this.loadModuleScript("/static/workout/js/workout.js", "workoutManager");
   }
 
   loadStatsModule() {
-    window.history.pushState({}, "", "/stats/");
-    this.addStylesheet("/static/workout/css/stats.css");
-    this.addStylesheet("/static/css/button_group.css");
-    const scriptLoaded = this.addScript("/static/workout/js/stats.js");
-    if (scriptLoaded) {
-      scriptLoaded.onload = () => {
-        loadStats();
-      };
-    } else {
-      loadStats();
-    }
+    this.updateModuleWindow("Fitness Tracker - Stats", "/stats");
+    this.loadModuleScript("/static/workout/js/stats.js", "statsManager");
+    this.loadModuleStylesheets([
+      "/static/workout/css/stats.css",
+      "/static/css/button_group.css",
+    ]);
   }
 
   loadSettingsModule() {
-    window.history.pushState({}, "", "/user/settings/");
-    this.addStylesheet("/static/css/button_group.css");
-    this.addStylesheet("/static/users/css/form.css");
-    this.addStylesheet("/static/users/css/settings.css");
-    const scriptLoaded = this.addScript("/static/users/js/settings.js");
-    if (scriptLoaded) {
-      scriptLoaded.onload = () => {
-        loadSettings();
-      };
-    } else {
-      loadSettings();
-    }
+    this.updateModuleWindow("Fitness Tracker - Settings", "/user/settings");
+    this.loadModuleScript("/static/users/js/settings.js", "settingsManager");
+    this.loadModuleStylesheets([
+      "/static/css/button_group.css",
+      "/static/users/css/form.css",
+      "/static/users/css/settings.css",
+    ]);
   }
 
   loadLogModule() {
-    window.history.pushState({}, "", "/log/");
-    this.addStylesheet("/static/log/css/log.css");
-    const scriptLoaded = this.addScript("/static/log/js/log.js");
-    if (scriptLoaded) {
-      scriptLoaded.onload = () => {
-        loadLog();
-      };
-    } else {
-      loadLog();
-    }
+    this.updateModuleWindow("Fitness Tracker - Log", "/log");
+    this.loadModuleScript("/static/log/js/log.js", "logManager");
+    this.loadModuleStylesheets(["/static/log/css/log.css"]);
   }
 
   loadCardioModule() {
     window.history.pushState({}, "", "/cardio/");
+  }
+
+  loadModuleScript(scriptURL, moduleManager) {
+    // Load javascript if necessary, then run method to initialize page
+    const scriptLoaded = this.addScript(scriptURL);
+    if (scriptLoaded) {
+      scriptLoaded.onload = () => {
+        window[moduleManager].initialize();
+      };
+    } else {
+      window[moduleManager].initialize();
+    }
   }
 
   addScript(src) {
@@ -129,15 +119,6 @@ class PageManager {
       script.src = src;
       document.head.appendChild(script);
       return script;
-    }
-  }
-
-  addStylesheet(href) {
-    if (!this.isStylesheetLoaded(href)) {
-      let link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = href;
-      document.head.appendChild(link);
     }
   }
 
@@ -151,6 +132,22 @@ class PageManager {
     return false;
   }
 
+  updateModuleWindow(title, pageURL) {
+    document.title = title;
+    window.history.pushState({}, "", pageURL);
+  }
+
+  loadModuleStylesheets(hrefs) {
+    hrefs.forEach((href) => {
+      if (!this.isStylesheetLoaded(href)) {
+        let link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = href;
+        document.head.appendChild(link);
+      }
+    });
+  }
+
   isStylesheetLoaded(href) {
     let links = document.getElementsByTagName("link");
     for (let i = 0; i < links.length; i++) {
@@ -161,39 +158,140 @@ class PageManager {
     return false;
   }
 
-  disablePageExcept(element) {
-    // Disable pointer events on page except for given element
-    document.body.classList.add("disabled");
-    element.classList.add("enabled");
+  openPopup(popupElementID, cleanupCallback = null) {
+    const popupElement = document.getElementById(popupElementID);
+    this.popupStack.push(popupElement);
+    this.currentPopup = popupElement;
+
+    this.enableTopPopup(popupElement);
+    this.disablePage();
+    this.addClosePopupHandler(popupElement, cleanupCallback);
   }
 
-  enablePage(element) {
-    // Enable pointer events on page
-    document.body.classList.remove("disabled");
-    element.classList.remove("enabled");
+  enableTopPopup(popupElement) {
+    popupElement.style.display = "flex";
+    popupElement.classList.add("enabled");
+    popupElement.style.zIndex = (this.popupStack.length + 1).toString();
+
+    if (this.popupStack.length > 1) {
+      const previousPopup = this.popupStack[this.popupStack.length - 2];
+      previousPopup.classList.remove("enabled");
+      this.overlay.style.zIndex = (this.popupStack.length + 1).toString();
+    }
   }
 
-  addReEnablePageListener(enabledElement, closeBtn) {
-    const reEnablePageHandler = (e) => {
-      // If user clicks outside enabled element, close element and remove listener
-      if (
-        !enabledElement.contains(e.target) &&
-        enabledElement.style.display === "block"
-      ) {
-        closeBtn.click();
-        document.removeEventListener("click", reEnablePageHandler);
+  addClosePopupHandler(popupElement, cleanupCallback) {
+    const closePopupHandler = (e) => {
+      e.stopPropagation();
+      popupElement.style.display = "none";
+      this.popupStack.pop();
+      this.overlay.style.zIndex = (this.popupStack.length + 1).toString();
+
+      // Run extra cleanup if necessary
+      if (cleanupCallback) {
+        cleanupCallback();
       }
 
-      // If user clicks close button manually, trigger normal event and remove listener
-      if (e.target === closeBtn) {
-        document.removeEventListener("click", reEnablePageHandler);
+      if (!this.popupStack.length) {
+        this.enablePage();
+        this.currentPopup = null;
+      } else {
+        this.currentPopup = this.popupStack[this.popupStack.length - 1];
+        this.currentPopup.classList.add("enabled");
+      }
+      document.removeEventListener("click", closePopupOutsideHandler);
+    };
+
+    const closePopupBtn = popupElement.querySelector(".close_popup_container");
+    closePopupBtn.addEventListener("click", closePopupHandler, { once: true });
+
+    const closePopupOutsideHandler = (e) => {
+      // Close element if user clicks outside of it
+      if (
+        !popupElement.contains(e.target) &&
+        popupElement === this.currentPopup
+      ) {
+        closePopupBtn.click();
+        document.removeEventListener("click", closePopupOutsideHandler);
       }
     };
 
     // Add listener with slight delay to prevent first click from triggering event
     setTimeout(() => {
-      document.addEventListener("click", reEnablePageHandler);
+      document.addEventListener("click", closePopupOutsideHandler);
     }, 0);
+  }
+
+  disablePage() {
+    // Disable pointer events on page and add dark overlay
+    document.body.classList.add("disabled");
+    this.overlay.classList.add("dark_overlay");
+  }
+
+  enablePage() {
+    // Enable pointer events on page
+    document.body.classList.remove("disabled");
+    this.overlay.classList.remove("dark_overlay");
+  }
+
+  buttonGroupToggle(btnElement) {
+    const group = btnElement.getAttribute("data-group");
+    const btnGroup = document.querySelectorAll(
+      `.button_back[data-group="${group}"]`,
+    );
+
+    if (!btnElement.classList.contains("active")) {
+      btnGroup.forEach((btn) => {
+        if (btn !== btnElement) {
+          btn.classList.remove("active");
+        }
+      });
+
+      btnElement.classList.toggle("active");
+    }
+  }
+  addButtonGroupToggleListeners(btnGroupHandler) {
+    document.querySelectorAll(".button_back").forEach((groupBtn) => {
+      groupBtn.addEventListener("click", (e) => {
+        pageManager.buttonGroupToggle(groupBtn);
+        btnGroupHandler(e);
+      });
+    });
+  }
+
+  fetchData(args) {
+    return fetch(args["url"], {
+      method: args["method"],
+      headers: { Fetch: "True" },
+      body: args["body"],
+    }).then((response) => {
+      return response[args["responseType"]]();
+    });
+  }
+
+  updateContent(content, contentContainerID) {
+    const contentContainer = document.getElementById(contentContainerID);
+    contentContainer.innerHTML = content;
+  }
+
+  showTempPopupMessage(message, duration) {
+    // Display popup message
+    const popupElement = document.getElementById("temp_popup");
+    popupElement.textContent = message;
+    popupElement.style.display = "flex";
+
+    // Close message after duration
+    setTimeout(function () {
+      popupElement.style.display = "none";
+    }, duration);
+  }
+
+  addCollapsibleListener(element, controllerSelector, collapsibleSelector) {
+    const controllerElement = element.querySelector(controllerSelector);
+    controllerElement.addEventListener("click", (e) => {
+      const collapsibleElement = element.querySelector(collapsibleSelector);
+      collapsibleElement.classList.toggle("hidden");
+    });
   }
 }
 

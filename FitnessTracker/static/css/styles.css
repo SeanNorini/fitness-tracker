@@ -170,7 +170,7 @@ label {
   flex-direction: row;
   gap: .5rem;
   margin: .25rem 0;
-  text-wrap: nowrap;
+  text-wrap: none;
   text-align: center;
   justify-content: center;
   width: 100%;
@@ -181,14 +181,14 @@ label {
   flex-direction: column;
   text-decoration: underline;
   color: var(--blue_font);
-  text-shadow: 1px 0px 8px rgb(0, 0, 0);
+  text-shadow: 1px 0 8px rgb(0, 0, 0);
 }
 
 .bold_link a:hover {
   transition: .3s all ease-in;
   font-weight: var(--bold);
   color: var(--red_font);
-  text-shadow: 1px 0px 8px rgb(0, 0, 0);
+  text-shadow: 1px 0 8px rgb(0, 0, 0);
   cursor: pointer;
 }
 
@@ -253,6 +253,7 @@ label {
   z-index: 2;
   min-width: 25rem;
   min-height: 10rem;
+  overflow-y: visible;
 }
 
 .disabled {
@@ -261,4 +262,33 @@ label {
 
 .enabled {
   pointer-events: auto !important;
+}
+
+.close_popup_container{
+  position: relative;
+  top: -2.3rem;
+  left: .5rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: .2rem;
+  cursor: pointer;
+}
+
+.outline{
+  text-shadow:
+      -1px -1px 0 #000,
+       1px -1px 0 #000,
+       -1px 1px 0 #000,
+        1px 1px 0 #000;
+}
+
+.close_popup_container span{
+  background-color: var(--font_color);
+  color: var(--darkgray);
+  border-radius: .3rem;
+}
+
+.center {
+  align-self: center;
 }

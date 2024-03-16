@@ -1,10 +1,30 @@
 <div class="log_popup_header">
   <div id="log_popup_date">{{ month_name }} {{ day }}, {{ year }}</div>
-  <div>
-    <span class="material-symbols-outlined" id="close">close</span>
+</div>
+<div class="calendar daily_log_container">
+  <div id="weight_log_container">
+    <div><span class="material-symbols-outlined">monitor_weight</span></div>
+    <div id="weight_log">
+      {% include 'log/weight_log.html' %}
+    </div>
   </div>
-</div>
-<div class="calendar">
-  {% include 'log/weight_log.html' %}
-  {% include 'log/workout_log.html' %}
-</div>
+
+
+  
+  <div id="workout_log_container">
+    <div><span class="material-symbols-outlined">exercise</span></div>
+    <div id="workout_log_info">
+      {% if workout_logs %}
+        {% for workout_log in workout_logs %}
+          {% include 'log/workout_log.html' %}
+        {% endfor %}
+      {% endif %}
+      <div class="workout_log_placeholder{% if workout_logs %} hidden{% endif %}">
+        No workout entries found.
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="button add_workout_log center">Add Workout Entry</button>
+</div> 
+  

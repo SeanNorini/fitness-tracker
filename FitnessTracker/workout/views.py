@@ -5,9 +5,8 @@ from dateutil.relativedelta import relativedelta
 from matplotlib.ticker import MaxNLocator
 from django.db.models import Max
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
-from django.views.generic import TemplateView, FormView, View, UpdateView
+from django.views.generic import TemplateView, FormView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 from users.models import User, UserBodyCompositionSetting, WeightLog, WorkoutSetting
@@ -52,6 +51,8 @@ def plot_graph(stat_name, values, dates):
 
 
 # Create your views here.
+
+
 class StatsView(LoginRequiredMixin, TemplateView):
     template_name = "base/index.html"
 
@@ -63,8 +64,6 @@ class StatsView(LoginRequiredMixin, TemplateView):
         modules = ["workout", "cardio", "log", "stats", "settings"]
         context["modules"] = modules
         context["template_content"] = "workout/stats.html"
-        context["css_file"] = "workout/css/stats.css"
-        context["js_file"] = "workout/js/stats.js"
         return context
 
     def post(self, request, *args, **kwargs):
@@ -99,15 +98,15 @@ class StatsView(LoginRequiredMixin, TemplateView):
         else:
             weight_info = WeightLog.objects.filter(
                 user=user, date__range=[start_date, end_date]
-            ).values("date", "weight")
+            ).values("date", "body_weight")
             for entry in weight_info:
                 dates.append(entry["date"].strftime("%#d/%#m"))
-                weights.append(entry["weight"])
-            graph = plot_graph("Bodyweight", weights, dates)
+                weights.append(entry["body_weight"])
+            graph = plot_graph("Body Weight", weights, dates)
             return HttpResponse(graph, content_type="image/png")
 
     def get(self, request, *args, **kwargs):
-        if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        if request.headers.get("Fetch") == "True":
             return render(
                 request, "workout/stats.html", self.get_context_data(**kwargs)
             )
@@ -119,9 +118,8 @@ class SelectWorkoutView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        workout_name = self.kwargs["workout_name"].replace("%20", " ")
-        workout = Workout.get_workout(self.request.user, workout_name)
-        context["workout"] = workout.configure_workout()
+        workout = Workout.get_workout(self.request.user, self.kwargs["workout_name"])
+        context["workout"] = workout.configure_workout
 
         context["unit_of_measurement"] = (
             UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
@@ -133,12 +131,7 @@ class WorkoutView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        DEFAULT_USER = User.objects.get(username="default")
-        exercises = list(
-            Exercise.objects.filter(user=DEFAULT_USER).values_list("name", flat=True)
-        )
-        context["exercises"] = exercises
-
+        context["exercises"] = Exercise.get_exercise_list(self.request.user)
         context["workouts"] = Workout.get_workout_list(self.request.user)
 
         modules = ["workout", "cardio", "log", "stats", "settings"]
@@ -155,7 +148,7 @@ class WorkoutView(LoginRequiredMixin, TemplateView):
         return context
 
     def get(self, request, *args, **kwargs):
-        if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        if request.headers.get("Fetch") == "True":
             return render(
                 request,
                 "workout/workout_session.html",
@@ -170,13 +163,7 @@ class AddExerciseView(LoginRequiredMixin, TemplateView):
     template_name = "workout/exercise.html"
 
     def get_context_data(self, **kwargs):
-        exercise_name = self.kwargs["exercise"].replace("%20", " ")
-        sets = self.kwargs.get("sets")
-        exercise = {"name": exercise_name}
-        if sets is None:
-            exercise["sets"] = [{"weight": "", "reps": ""}]
-        else:
-            exercise["sets"] = sets
+        exercise = Exercise.get_exercise(self.request.user, self.kwargs["exercise"])
 
         context = super().get_context_data(**kwargs)
         context["exercise"] = exercise
@@ -191,9 +178,15 @@ class AddSetView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        exercise_name = self.kwargs.get("exercise_name")
+        exercise = Exercise.get_exercise(self.request.user, exercise_name)
+
+        context["set"] = exercise.sets()[0]
         context["unit_of_measurement"] = (
             UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
         )
+
         return context
 
 
@@ -210,7 +203,7 @@ class SaveWorkoutSessionView(LoginRequiredMixin, FormView):
         success = workout_log.save_workout_session(form.cleaned_data["exercises"])
 
         if success:
-            return JsonResponse({"success": True})
+            return JsonResponse({"success": True, "pk": workout_log.pk})
         else:
             return JsonResponse({"success": False})
 
@@ -247,11 +240,8 @@ class WorkoutSettingsSelectWorkoutView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        workout_name = self.kwargs["workout_name"].replace("%20", " ")
-        workout = Workout.get_workout(self.request.user, workout_name)
-
+        workout = Workout.get_workout(self.request.user, self.kwargs["workout_name"])
         context["workout"] = workout.config
-
         context["unit_of_measurement"] = (
             UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
         )
@@ -263,10 +253,14 @@ class WorkoutSettingsAddSetView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        exercise_name = self.kwargs["exercise_name"].replace("%20", " ")
-        exercise = Exercise.get_exercise(self.request.user, exercise_name)
-        context["exercise"] = exercise
+        exercise = Exercise.get_exercise(
+            self.request.user, self.kwargs["exercise_name"]
+        )
+        context["exercise_set"] = {
+            "amount": exercise.default_weight,
+            "reps": exercise.default_reps,
+            "modifier": exercise.default_modifier,
+        }
 
         context["unit_of_measurement"] = (
             UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
@@ -280,9 +274,9 @@ class WorkoutSettingsAddExerciseView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        exercise_name = self.kwargs["exercise_name"].replace("%20", " ")
-        exercise = Exercise.get_exercise(self.request.user, exercise_name)
+        exercise = Exercise.get_exercise(
+            self.request.user, self.kwargs["exercise_name"]
+        )
         context["exercise"] = exercise
 
         context["unit_of_measurement"] = (
