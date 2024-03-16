@@ -292,3 +292,7 @@ label {
 .center {
   align-self: center;
 }
+
+#message:not(:last-child){
+  display: none;
+}
