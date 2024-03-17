@@ -6,7 +6,7 @@ from matplotlib.ticker import MaxNLocator
 from django.db.models import Max
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-from django.views.generic import TemplateView, FormView, UpdateView
+from django.views.generic import TemplateView, FormView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 from users.models import User, UserBodyCompositionSetting, WeightLog, WorkoutSetting
@@ -290,10 +290,10 @@ class WorkoutSettingsSaveWorkoutView(LoginRequiredMixin, UpdateView):
     model = Workout
 
     def post(self, request, *args, **kwargs):
-        workout_name = request.POST.get("workout_name")
-        workout = Workout.objects.get_or_create(
+        workout_name = request.POST.get("workout_name").title()
+        workout, created = Workout.objects.get_or_create(
             user=self.request.user, name=workout_name
-        )[0]
+        )
 
         exercise_list = [
             json.loads(exercise) for exercise in request.POST.getlist("exercises")
@@ -302,11 +302,13 @@ class WorkoutSettingsSaveWorkoutView(LoginRequiredMixin, UpdateView):
         workout.config = {"exercises": exercise_list}
 
         for exercise in exercise_list:
-            exercise_name = list(exercise.keys())[0]
-            exercise = Exercise.objects.get_or_create(
-                user=self.request.user, name=exercise_name
-            )[0]
-            workout.exercises.add(exercise)
+
+            print(Exercise.objects.get(user=self.request.user, name=exercise["name"]))
+            exercise, created = Exercise.objects.get_or_create(
+                user=self.request.user, name=exercise["name"]
+            )
+            if created or exercise not in workout.exercises.all():
+                workout.exercises.add(exercise)
 
         workout.save()
 
@@ -356,10 +358,28 @@ class EditExerciseView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         exercise = Exercise.get_exercise(
-            user=self.request.user, exercise_name=form.cleaned_data["name"]
+            user=self.request.user, exercise_name=form.cleaned_data["name"].title()
         )
+
         exercise.default_reps = form.cleaned_data["default_reps"]
         exercise.default_weight = form.cleaned_data["default_weight"]
         exercise.five_rep_max = form.cleaned_data["five_rep_max"]
         exercise.save()
         return JsonResponse({"success": True}, safe=False)
+
+
+class ExerciseSettingsDeleteExerciseView(LoginRequiredMixin, DeleteView):
+    model = Exercise
+
+    def get_object(self, queryset=None):
+        exercise_name = self.kwargs.get("exercise_name")
+        pk = self.kwargs.get("pk")
+        exercise = Exercise.objects.filter(
+            user=self.request.user, pk=pk, name=exercise_name
+        ).first()
+        return exercise
+
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        obj.delete()
+        return JsonResponse({"success": True})

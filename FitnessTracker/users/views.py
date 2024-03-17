@@ -1,9 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.db import transaction
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, reverse
 from django.utils import timezone
-from django.views.generic import FormView, View, DeleteView, UpdateView
+from django.views.generic import FormView, View, DeleteView, UpdateView, TemplateView
 from django.contrib.auth import login, authenticate, logout
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
@@ -145,7 +146,13 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
             user.set_password(form.cleaned_data["new_password"])
             user.save()
             login(self.request, user)
-            return render(self.request, "users/change_password_done.html")
+
+            if self.request.headers.get("Fetch") == "True":
+                return HttpResponseRedirect(
+                    reverse("user_settings"), headers={"Fetch": "True"}
+                )
+            else:
+                return render(self.request, "users/change_password_done.html")
         else:
             return super().form_invalid(form)
 
@@ -173,13 +180,13 @@ class ResetPasswordView(FormView):
 class ResetPasswordConfirmView(FormView):
     template_name = "users/reset_password_change_password.html"
     form_class = SetPasswordForm
-    success_url = "/users/change_password_done/"
+    success_url = "/users/reset_password_done/"
 
     def form_valid(self, form):
         self.request.user.set_password(form.cleaned_data["new_password"])
         self.request.user.save()
         login(self.request, self.request.user)
-        return render(self.request, "users/change_password_done.html")
+        return render(self.request, "users/reset_password_done.html")
 
     def get(self, request, *args, **kwargs):
         uidb64 = self.kwargs.get("uidb64")

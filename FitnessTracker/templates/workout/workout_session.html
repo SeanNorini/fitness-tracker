@@ -21,13 +21,9 @@
       </div>
     </div>
 
-    <div id="message" {% if workout %}style="display: none;" {% endif %}>
-      Please select a workout or add an exercise to get started.</div>
-    <div class="exercises">
-      {% if workout %}
-        <input type="hidden" class="workout_log_pk" value="{{ workout.pk }}">
-        {% include "workout/workout.html" %}
-      {% endif %}
+    
+    <div class="exercises" id="workout_container">
+      {% include "workout/workout.html" %}
     </div>
     <div class="controls_container">
       <div>

@@ -7,8 +7,9 @@
   <div>
     <div class="select_container">
       <select class="exercise" id="select_exercise">
-        {% for exercise in exercises %}
-          <option>{{ exercise }}</option>
+          <option disabled selected>Select an exercise</option>
+        {% for exercise_name in exercises %}
+          <option>{{ exercise_name }}</option>
         {% endfor %}
       </select>
     </div>
@@ -28,9 +29,8 @@
 </div>
 
 <div class="controls_container">
-  <div>
-    <button class="controls" id="new_exercise" type="button">New Exercise</button>
-  </div>
+  <button class="controls" id="new_exercise" type="button">New Exercise</button>
+  <button class="controls" id="delete_exercise" type="button">Delete Exercise</button>
 </div>
 </form>
 

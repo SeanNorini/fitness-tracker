@@ -1,6 +1,8 @@
+<div id="message">Please select or create an exercise to get started.</div>
 <div class="exercise_container">
   <div class="exercise_name row">
     <div id="exercise_name">
+      <input type="hidden" id="exercise_pk" value="{{ exercise.pk }}">
       {{ exercise.name }}
     </div>
   </div>

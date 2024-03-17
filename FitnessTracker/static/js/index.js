@@ -6,6 +6,7 @@ class PageManager {
     this.currentPopup = null;
     this.addModuleLinkListeners();
     this.loadStartingModule();
+    this.csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
   }
 
   loadStartingModule() {
@@ -260,12 +261,16 @@ class PageManager {
   }
 
   fetchData(args) {
-    return fetch(args["url"], {
-      method: args["method"],
-      headers: { Fetch: "True" },
-      body: args["body"],
+    return fetch(args.url, {
+      method: args.method,
+      headers: {
+        Fetch: "True",
+        "X-CSRFTOKEN": pageManager.csrftoken,
+        ...args.headers,
+      },
+      body: args.body,
     }).then((response) => {
-      return response[args["responseType"]]();
+      return response[args.responseType]();
     });
   }
 
@@ -292,6 +297,32 @@ class PageManager {
       const collapsibleElement = element.querySelector(collapsibleSelector);
       collapsibleElement.classList.toggle("hidden");
     });
+  }
+
+  createElementFromHTMLText(contentHTML) {
+    const elementTemplate = document.createElement("template");
+    elementTemplate.innerHTML = contentHTML.trim();
+    return elementTemplate.content.firstChild;
+  }
+
+  updateDropdownMenu(options) {
+    const { option, action, selector, placeholderOption = "" } = options;
+    const newOption = document.createElement("option");
+    newOption.textContent = option;
+
+    const dropdownMenu = document.querySelector(selector);
+    if (action === "add") {
+      dropdownMenu.appendChild(newOption);
+      newOption.selected = true;
+    } else {
+      const menuOptions = dropdownMenu.querySelectorAll("option");
+      menuOptions.forEach((menuOption) => {
+        if (menuOption.textContent === option) {
+          menuOption.remove();
+          dropdownMenu.value = placeholderOption;
+        }
+      });
+    }
   }
 }
 

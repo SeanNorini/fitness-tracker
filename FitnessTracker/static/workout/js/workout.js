@@ -12,52 +12,52 @@ class WorkoutManager {
     this.addSaveWorkoutBtnListener();
     this.previousWorkoutSelectValue =
       document.getElementById("select_workout").value;
+
+    this.showRestTimerSetting =
+      document.getElementById("show_rest_timer").value;
+    this.showWorkoutTimerSetting =
+      document.getElementById("show_workout_timer").value;
   }
 
   addSelectWorkoutListener() {
     // Add listener to select workout menu
     const selectWorkoutMenu = document.getElementById("select_workout");
     selectWorkoutMenu.addEventListener("change", (e) => {
-      // Confirm select workout if unsaved changes
-      let confirm = true;
-      if (this.unsavedChanges) {
-        confirm = window.confirm(
-          "This will erase the current workout session, are you sure?",
-        );
-      }
-
-      // Load workout on confirmation else change menu option back to previous workout
-      const currentWorkout = selectWorkoutMenu.value;
-      if (confirm) {
-        this.fetchWorkout(currentWorkout);
-        this.unsavedChanges = false;
-        this.previousWorkoutSelectValue = currentWorkout;
-      } else {
-        selectWorkoutMenu.value = this.previousWorkoutSelectValue;
-      }
+      this.selectWorkout(selectWorkoutMenu);
     });
   }
 
+  getSelectWorkoutConfirmation() {
+    let confirm = true;
+    if (this.unsavedChanges) {
+      confirm = window.confirm(
+        "This will erase the current workout session, are you sure?",
+      );
+    }
+    return confirm;
+  }
+
+  selectWorkout(selectWorkoutMenu) {
+    // Load workout on confirmation else change menu option back to previous workout
+    if (this.getSelectWorkoutConfirmation()) {
+      this.fetchWorkout(selectWorkoutMenu.value);
+      this.unsavedChanges = false;
+      this.previousWorkoutSelectValue = selectWorkoutMenu.value;
+    } else {
+      selectWorkoutMenu.value = this.previousWorkoutSelectValue;
+    }
+  }
+
   fetchWorkout(workoutName) {
-    fetch(`${this.baseURL}/select_workout/${workoutName}`, {
-      method: "GET",
-    })
-      .then((response) => response.text())
-      .then((workoutHTML) => {
-        // Add workout to page
-        const exerciseContainers = document.querySelector(".exercises");
-        exerciseContainers.innerHTML = workoutHTML;
-
-        // Add event listeners to current workout
+    pageManager
+      .fetchData({
+        url: `${this.baseURL}/select_workout/${workoutName}`,
+        method: "GET",
+        responseType: "text",
+      })
+      .then((contentHTML) => {
+        pageManager.updateContent(contentHTML, "workout_container");
         this.addWorkoutListeners();
-
-        if (workoutName === "Custom Workout") {
-          this.setMessage(
-            "Please select a workout or add an exercise to get started.",
-          );
-        } else {
-          this.setMessage(null);
-        }
       });
   }
 
@@ -68,71 +68,82 @@ class WorkoutManager {
     });
   }
 
+  fetchExercise() {
+    const exerciseName = document.getElementById("select_exercise").value;
+
+    pageManager
+      .fetchData({
+        url: `${this.baseURL}/add_exercise/${exerciseName}`,
+        method: "GET",
+        responseType: "text",
+      })
+      .then((exerciseHTML) => {
+        this.updateExercises(exerciseHTML);
+      });
+  }
+
+  updateExercises(exerciseHTML) {
+    const exercisesContainer = document.getElementById("workout_container");
+    const newExercise = pageManager.createElementFromHTMLText(exerciseHTML);
+    exercisesContainer.appendChild(newExercise);
+    this.addExerciseContainerListeners(newExercise);
+  }
+
   addExerciseBtnListener() {
     const addExerciseBtn = document.querySelector(".add_exercise");
     addExerciseBtn.addEventListener("click", (e) => {
-      const exerciseName = document.getElementById("select_exercise").value;
-      const exercisesContainer = document.querySelector(".exercises");
-
-      fetch(`${this.baseURL}/add_exercise/${exerciseName}`, {
-        method: "GET",
-      })
-        .then((response) => response.text())
-        .then((exerciseHTML) => {
-          // Add new exercise to current workout
-          const exerciseTemplate = document.createElement("template");
-          exerciseTemplate.innerHTML = exerciseHTML.trim();
-          const newExercise = exerciseTemplate.content.firstChild;
-          exercisesContainer.appendChild(newExercise);
-
-          // Select new exercise and add listeners
-          const exerciseContainer = exercisesContainer.querySelector(
-            ".exercise_container:last-child",
-          );
-          this.addExerciseContainerListeners(exerciseContainer);
-        });
-
-      this.setMessage(null);
+      this.fetchExercise();
       this.unsavedChanges = true;
     });
   }
 
-  addExerciseContainerListeners(exerciseContainer) {
-    // Add listener to delete button
-    exerciseContainer
+  addExerciseContainerListeners(container) {
+    this.addDeleteExerciseSetListener(container);
+    this.addAddExerciseSetListener(container);
+    this.addDeleteExerciseListener(container);
+
+    if (this.showRestTimerSetting === "True") {
+      this.addSetCompleteListeners(container);
+    }
+  }
+
+  addDeleteExerciseListener(container) {
+    container
       .querySelector(".delete_exercise")
       .addEventListener("click", (e) => {
         e.stopPropagation();
-        this.deleteExercise(e);
-      });
-
-    // Add listener to add set button
-    exerciseContainer
-      .querySelector(".add_set")
-      .addEventListener("click", (e) => {
-        this.addSet(e);
-      });
-
-    // Add listener to delete button
-    exerciseContainer
-      .querySelector(".delete_set")
-      .addEventListener("click", (e) => {
-        this.deleteSet(e);
-      });
-
-    // Add listener to set complete checkboxes
-    exerciseContainer
-      .querySelectorAll(".set_complete")
-      .forEach((setCompleteCheckbox) => {
-        setCompleteCheckbox.addEventListener("click", (e) => {
-          this.setComplete(e);
-        });
+        this.deleteExercise(container);
       });
   }
 
-  deleteExercise(e) {
-    // Remove last exercise in a workout
-    e.target.closest(".exercise_container").remove();
+  addAddExerciseSetListener(container) {
+    container.querySelector(".add_set").addEventListener("click", (e) => {
+      this.addExerciseSet(container);
+    });
+  }
+
+  addDeleteExerciseSetListener(container) {
+    container.querySelector(".delete_set").addEventListener("click", (e) => {
+      this.deleteSet(container);
+    });
+  }
+
+  addSetCompleteListeners(container) {
+    container.querySelectorAll(".set").forEach((exerciseSet) => {
+      this.addSetCompleteListener(exerciseSet);
+    });
+  }
+
+  addSetCompleteListener(exerciseSet) {
+    // Add listener to set checkbox
+    const setCompleteCheckbox = exerciseSet.querySelector(".set_complete");
+    setCompleteCheckbox.addEventListener("click", (e) => {
+      this.setComplete(e);
+    });
+  }
+
+  deleteExercise(container) {
+    container.remove();
 
     // Display message if no exercises are selected
     if (!document.querySelector(".exercise_container")) {
@@ -143,38 +154,24 @@ class WorkoutManager {
     this.unsavedChanges = true;
   }
 
-  addSet(e) {
+  addExerciseSet(container) {
     const exerciseName = document.querySelector(".exercise").value;
     fetch(`${this.baseURL}/add_set/${exerciseName}`, { method: "GET" })
       .then((response) => response.text())
-      .then((setHTML) => {
+      .then((contentHTML) => {
         // Add new set to exercise
-        const setTemplate = document.createElement("template");
-        setTemplate.innerHTML = setHTML.trim();
-        const exerciseContainer = e.target.closest(".exercise_container");
-        const newSet = setTemplate.content.firstChild;
-        exerciseContainer.querySelector(".sets").appendChild(newSet);
-        this.updateSetNumber(exerciseContainer);
-
-        this.addSetPostFetch(newSet);
-
+        const newExerciseSetElement =
+          pageManager.createElementFromHTMLText(contentHTML);
+        container.querySelector(".sets").appendChild(newExerciseSetElement);
+        this.updateSetNumber(container);
+        this.addSetCompleteListener(newExerciseSetElement);
         this.unsavedChanges = true;
       });
   }
 
-  addSetPostFetch(newSet) {
-    // Add listener to set checkbox
-    const setCompleteCheckbox = newSet.querySelector(".set_complete");
-    setCompleteCheckbox.addEventListener("click", (e) => {
-      this.setComplete(e);
-    });
-  }
-
-  deleteSet(e) {
+  deleteSet(container) {
     // Remove last set from an exercise
-    const lastSet = e.target
-      .closest(".exercise_container")
-      .querySelector(".set:last-child");
+    const lastSet = container.querySelector(".set:last-child");
     lastSet.remove();
     this.unsavedChanges = true;
   }
@@ -196,12 +193,7 @@ class WorkoutManager {
   setMessage(message) {
     // Display message to user when no exercises are selected
     const messageContainer = document.querySelector("#message");
-    if (message) {
-      messageContainer.innerText = message;
-      messageContainer.style.display = "flex";
-    } else {
-      messageContainer.style.display = "none";
-    }
+    messageContainer.innerText = message;
   }
 
   restTimer() {
@@ -267,20 +259,7 @@ class WorkoutManager {
   addSaveWorkoutBtnListener() {
     const saveWorkoutBtn = document.querySelector("#save_workout");
     saveWorkoutBtn.addEventListener("click", () => {
-      this.saveWorkout().then((workoutSaved) => {
-        if (workoutSaved.formEmpty) {
-          return;
-        }
-
-        if (workoutSaved) {
-          pageManager.showTempPopupMessage("Workout saved.", 2500);
-        } else if (!workoutSaved.formEmpty) {
-          pageManager.showTempPopupMessage(
-            "Problem saving workout, please try again.",
-            2500,
-          );
-        }
-      });
+      this.saveWorkout();
     });
   }
 
@@ -298,7 +277,6 @@ class WorkoutManager {
   saveWorkout() {
     // Verify form has exercises to save
     const exercises = this.validateWorkoutForm();
-
     // Gather form data
     const formData = this.readCurrentWorkout(exercises);
 
@@ -315,8 +293,20 @@ class WorkoutManager {
         responseType: "json",
         body: formData,
       })
-      .then((response) => {
-        return response;
+      .then((workoutSaved) => {
+        if (workoutSaved.formEmpty) {
+          return;
+        }
+
+        if (workoutSaved) {
+          pageManager.showTempPopupMessage("Workout saved.", 2500);
+          return { success: true, pk: workoutSaved.pk };
+        } else if (!workoutSaved.formEmpty) {
+          pageManager.showTempPopupMessage(
+            "Problem saving workout, please try again.",
+            2500,
+          );
+        }
       });
   }
 
@@ -380,21 +370,19 @@ class WorkoutSettingsManager extends WorkoutManager {
     this.newWorkout = false;
   }
 
-  setDate() {
-    // Override set date for workout settings
-  }
-
-  addExerciseContainerListeners(exerciseContainer) {
-    super.addExerciseContainerListeners(exerciseContainer);
+  addExerciseContainerListeners(container) {
+    this.addDeleteExerciseSetListener(container);
+    this.addAddExerciseSetListener(container);
+    this.addDeleteExerciseListener(container);
 
     // Add input listeners to each exercise set
-    const exerciseSets = exerciseContainer.querySelectorAll(".set");
+    const exerciseSets = container.querySelectorAll(".set");
     exerciseSets.forEach((exerciseSet) => {
       this.addWorkoutSettingsInputListeners(exerciseSet);
     });
 
     // Add input listener to five rep max
-    const fiveRepMaxInput = exerciseContainer.querySelector("input.max_rep");
+    const fiveRepMaxInput = container.querySelector("input.max_rep");
     this.addFiveRepMaxListener(fiveRepMaxInput);
   }
 
@@ -467,10 +455,6 @@ class WorkoutSettingsManager extends WorkoutManager {
     this.unsavedChanges = true;
   }
 
-  addSetPostFetch(newSet) {
-    this.addWorkoutSettingsInputListeners(newSet);
-  }
-
   addFiveRepMaxListener(inputFiveRepMax) {
     //
     inputFiveRepMax.addEventListener("keyup", (e) => {
@@ -525,39 +509,64 @@ class WorkoutSettingsManager extends WorkoutManager {
   }
 
   initialize() {
-    fetch(`${this.baseURL}`, {
-      method: "GET",
-      headers: {
-        Fetch: "True",
-      },
-    })
-      .then((response) => response.text())
+    pageManager
+      .fetchData({
+        url: `${this.baseURL}`,
+        method: "GET",
+        responseType: "text",
+      })
       .then((contentHTML) => {
-        const settingsContent = document.querySelector(".settings");
-        settingsContent.innerHTML = contentHTML;
-
-        super.initialize();
-
-        const saveWorkoutSettingsBtn = document.getElementById(
-          "save_workout_settings",
-        );
-        saveWorkoutSettingsBtn.addEventListener("click", (e) => {
-          this.saveWorkoutSettings();
-        });
-
-        const unitOfMeasurement = document.getElementById(
-          "unit_of_measurement",
-        ).value;
-        if (unitOfMeasurement === "Imperial") {
-          this.unitOfMeasurement = "Lbs";
-        } else {
-          this.unitOfMeasurement = "Kg";
-        }
+        pageManager.updateContent(contentHTML, "settings");
+        this.addWorkoutContainerListeners();
+        this.previousWorkoutSelectValue =
+          document.getElementById("select_workout").value;
+        this.getUnitOfMeasurement();
       });
   }
 
-  saveWorkoutSettings() {
-    // Get settings data
+  addWorkoutContainerListeners() {
+    this.addSelectWorkoutListener();
+    this.addExerciseBtnListener();
+    this.addSaveWorkoutSettingsListener();
+    this.addSaveWorkoutBtnListener();
+  }
+
+  getUnitOfMeasurement() {
+    const unitOfMeasurement = document.getElementById(
+      "unit_of_measurement",
+    ).value;
+    if (unitOfMeasurement === "Imperial") {
+      this.unitOfMeasurement = "Lbs";
+    } else {
+      this.unitOfMeasurement = "Kg";
+    }
+  }
+
+  addSaveWorkoutSettingsListener() {
+    const saveWorkoutSettingsBtn = document.getElementById(
+      "save_workout_settings",
+    );
+    saveWorkoutSettingsBtn.addEventListener("click", (e) => {
+      this.saveWorkoutSettings();
+    });
+  }
+
+  addExerciseSet(container) {
+    const exerciseName = document.querySelector(".exercise").value;
+    fetch(`${this.baseURL}/add_set/${exerciseName}`, { method: "GET" })
+      .then((response) => response.text())
+      .then((contentHTML) => {
+        // Add new set to exercise
+        const newExerciseSetElement =
+          pageManager.createElementFromHTMLText(contentHTML);
+        container.querySelector(".sets").appendChild(newExerciseSetElement);
+        this.addWorkoutSettingsInputListeners(newExerciseSetElement);
+        this.updateSetNumber(container);
+        this.unsavedChanges = true;
+      });
+  }
+
+  readWorkoutSettings() {
     const formData = new FormData();
     const autoUpdateFiveRepMax = document.getElementById(
       "id_auto_update_five_rep_max",
@@ -574,12 +583,20 @@ class WorkoutSettingsManager extends WorkoutManager {
     formData.append("show_rest_timer", showRestTimer.checked);
     formData.append("show_workout_timer", showWorkoutTimer.checked);
 
-    // Update settings and display response
-    fetch(`${this.baseURL}/save_workout_settings/`, {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
+    return formData;
+  }
+
+  saveWorkoutSettings() {
+    // Get settings data
+    const formData = this.readWorkoutSettings();
+
+    pageManager
+      .fetchData({
+        url: `${this.baseURL}/save_workout_settings/`,
+        method: "POST",
+        body: formData,
+        responseType: "json",
+      })
       .then((response) => {
         if (response.success === true) {
           const successMessage = document.querySelector(".success_message");
@@ -592,32 +609,34 @@ class WorkoutSettingsManager extends WorkoutManager {
   }
   saveWorkout() {
     // Get data from current workout
-    const workoutData = this.readCurrentWorkout();
-    const workoutName = workoutData.get("workout_name");
+    const formData = this.readCurrentWorkout();
+    const workoutName = formData.get("workout_name");
 
     // Send workout data and display response
-    fetch(`${this.baseURL}/save_workout/`, {
-      method: "POST",
-      body: workoutData,
-    })
-      .then((response) => response.json())
+    pageManager
+      .fetchData({
+        url: `${this.baseURL}/save_workout/`,
+        method: "POST",
+        body: formData,
+        responseType: "json",
+      })
       .then((response) => {
         if (response.success) {
           pageManager.showTempPopupMessage("Workout saved.", 2500);
-
-          // Update workout menu if new workout
-          if (this.newWorkout) {
-            const selectOption = document.createElement("option");
-            selectOption.value = workoutName;
-            selectOption.innerText = workoutName;
-            const selectWorkoutMenu = document.getElementById("select_workout");
-            selectWorkoutMenu.appendChild(selectOption);
-            selectWorkoutMenu.value = workoutName;
-            this.newWorkout = false;
-            this.unsavedChanges = false;
-          }
+          this.updateWorkoutList(workoutName);
         }
       });
+  }
+
+  updateWorkoutList(workoutName) {
+    const selectOption = document.createElement("option");
+    selectOption.value = workoutName;
+    selectOption.innerText = workoutName;
+    const selectWorkoutMenu = document.getElementById("select_workout");
+    selectWorkoutMenu.appendChild(selectOption);
+    selectWorkoutMenu.value = workoutName;
+    this.newWorkout = false;
+    this.unsavedChanges = false;
   }
 
   readCurrentWorkout(exercises) {

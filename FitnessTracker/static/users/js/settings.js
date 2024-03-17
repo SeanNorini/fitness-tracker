@@ -12,7 +12,6 @@ class SettingsManager {
   }
   btnGroupHandler(e) {
     let scriptLoaded = null;
-    console.log(e.target.getAttribute("id"));
     switch (e.target.getAttribute("id")) {
       case "user":
         settingsManager.initialize();
@@ -58,8 +57,8 @@ class SettingsManager {
       radio.addEventListener("change", (e) => {
         const heightLabel = document.querySelector('label[for="height"]');
         const heightInput = document.querySelector('input[name="height"]');
-        const weightLabel = document.querySelector('label[for="weight"]');
-        const weightInput = document.querySelector('input[name="weight"]');
+        const weightLabel = document.querySelector('label[for="body_weight"]');
+        const weightInput = document.querySelector('input[name="body_weight"]');
 
         if (e.target.value === "Imperial") {
           heightLabel.textContent = heightLabel.textContent.replace(
@@ -251,12 +250,13 @@ class SettingsManager {
         responseType: "text",
       })
       .then((contentHTML) => {
-        pageManager.updateContent(contentHTML, "settings");
+        pageManager.updateContent(contentHTML, "content");
         const error = document.querySelector(".errorlist");
         if (error) {
           this.changePasswordEventListeners();
         } else {
-          this.addReturnToSettingsListener();
+          pageManager.showTempPopupMessage("Password changed.", 2000);
+          this.initialize();
         }
       });
   }

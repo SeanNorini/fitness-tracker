@@ -382,17 +382,11 @@ class LogManager {
   saveWorkout() {
     this.workoutLogManager.saveWorkout().then((workoutSaved) => {
       if (workoutSaved.success) {
-        pageManager.showTempPopupMessage("Workout saved.", 2500);
         pageManager.currentPopup
           .querySelector(".close_popup_container")
           .click();
         this.updateLogIcons("exercise", "add");
-        this.updateWorkoutLogs(workoutSaved["pk"]);
-      } else {
-        pageManager.showTempPopupMessage(
-          "Problem saving workout, please try again.",
-          2500,
-        );
+        this.updateWorkoutLogs(workoutSaved.pk);
       }
     });
   }

@@ -67,9 +67,8 @@ class Exercise(models.Model):
         default="percentage",
     )
 
-    def save(self, *args, **kwargs):
-        self.name = self.name.capitalize()
-        super().save(*args, **kwargs)
+    class Meta:
+        unique_together = ("user", "name")
 
     def sets(self):
         return [
@@ -90,7 +89,7 @@ class Exercise(models.Model):
 
     @classmethod
     def get_exercise(cls, user, exercise_name):
-        exercise = cls.objects.get_or_create(user=user, name=exercise_name)[0]
+        exercise, created = cls.objects.get_or_create(user=user, name=exercise_name)
         return exercise
 
     def update_five_rep_max(self, weight, reps):
@@ -103,6 +102,7 @@ class Exercise(models.Model):
             self.save()
 
             return True
+        return False
 
 
 class Workout(models.Model):
@@ -112,11 +112,14 @@ class Workout(models.Model):
     config = models.JSONField(default=dict)
     default_user = User.objects.get(username="default")
 
+    class Meta:
+        unique_together = ("user", "name")
+
     def __str__(self) -> str:
         return self.name
 
     def save(self, *args, **kwargs):
-        self.name = self.name.capitalize()
+        self.name = self.name.title()
         super().save(*args, **kwargs)
 
     @classmethod

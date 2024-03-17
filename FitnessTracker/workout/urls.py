@@ -66,4 +66,9 @@ urlpatterns = [
         views.EditExerciseView.as_view(),
         name="edit_exercise",
     ),
+    path(
+        "workout/exercise_settings/delete_exercise/<str:exercise_name>/<int:pk>",
+        views.ExerciseSettingsDeleteExerciseView.as_view(),
+        name="exercise_settings_delete_exercise",
+    ),
 ]

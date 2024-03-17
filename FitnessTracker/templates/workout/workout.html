@@ -1,4 +1,8 @@
 {% load static %}
-{% for exercise in workout.exercises %}
-  {% include "workout/exercise.html" %}
-{% endfor %}
+<input type="hidden" class="workout_log_pk" value="{{ workout.pk }}">
+<div id="message">Please select a workout or add an exercise to get started.</div>
+  {% if workout %}
+    {% for exercise in workout.exercises %}
+      {% include "workout/exercise.html" %}
+    {% endfor %}
+  {% endif %}
