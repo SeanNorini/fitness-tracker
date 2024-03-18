@@ -336,9 +336,15 @@ class DragAndDrop {
     this.handlebarClass = "drag_and_drop_handlebar";
     this.parentContainer.addEventListener("mousedown", this.dragStart);
     this.marginOffset = marginOffset;
+    this.cloneElement = null;
   }
 
   dragStart = (e) => {
+    // Cancel is cloned element already exists
+    if (this.cloneElement) {
+      return;
+    }
+
     // Get nearest draggable element
     this.dragStartElement = e.target.closest(this.draggableSelector);
 
@@ -427,6 +433,7 @@ class DragAndDrop {
       this.dragStartElement.firstElementChild.classList.remove("dragging");
       this.cloneElement.remove();
     }
+    this.cloneElement = null;
   };
 
   getDragAndDropTarget(e) {
