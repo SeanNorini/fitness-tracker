@@ -327,3 +327,80 @@ class PageManager {
 }
 
 const pageManager = new PageManager();
+
+class DragAndDrop {
+  constructor(parentSelector, draggableSelector, handlebarClass) {
+    this.parentContainer = document.querySelector(`${parentSelector}`);
+    this.draggableSelector = draggableSelector;
+    this.handlebarClass = handlebarClass;
+    this.parentContainer.addEventListener("mousedown", this.onMousedownHandler);
+  }
+
+  dragStart(e) {
+    const rect = this.cloneElement.getBoundingClientRect();
+    this.offsetX = rect.width / 2;
+    this.offsetY = rect.height / 2;
+
+    document.addEventListener("mousemove", this.onMousemoveHandler);
+    document.addEventListener("mouseup", this.onMouseupHandler);
+  }
+
+  toggleDraggableClass() {
+    const draggableContainers = this.parentContainer.querySelectorAll(
+      this.draggableSelector,
+    );
+    draggableContainers.forEach((container) => {
+      container.classList.toggle("drag_over");
+    });
+  }
+
+  swapElements() {
+    this.cloneElement.classList.toggle("draggable");
+    this.parentContainer.insertBefore(this.cloneElement, this.elementToSwap);
+    this.parentContainer.insertBefore(this.elementToSwap, this.originalElement);
+    this.originalElement.remove();
+  }
+
+  swapTarget(e) {
+    const dragEndElement = document.elementFromPoint(e.clientX, e.clientY);
+    return dragEndElement.closest(`${this.draggableSelector}`);
+  }
+
+  onMousemoveHandler = (e) => {
+    this.cloneElement.style.left = e.clientX - this.offsetX + "px";
+    this.cloneElement.style.top = e.clientY - this.offsetY + "px";
+  };
+
+  onMouseupHandler = (e) => {
+    document.removeEventListener("mousemove", this.onMousemoveHandler);
+    document.removeEventListener("mouseup", this.onMouseupHandler);
+    this.dragEnd(e);
+  };
+
+  dragEnd(e) {
+    this.elementToSwap = this.swapTarget(e);
+
+    if (this.elementToSwap) {
+      this.swapElements();
+      this.originalElement.remove();
+      this.toggleDraggableClass();
+    } else {
+      this.cloneElement.remove();
+    }
+  }
+
+  onMousedownHandler = (e) => {
+    const draggableElement = e.target.closest(`${this.draggableSelector}`);
+    if (
+      draggableElement &&
+      e.target.classList.contains(`${this.handlebarClass}`)
+    ) {
+      this.toggleDraggableClass();
+      this.originalElement = draggableElement;
+      this.cloneElement = draggableElement.cloneNode(true);
+      this.cloneElement.classList.toggle("draggable");
+      this.parentContainer.appendChild(this.cloneElement);
+      this.dragStart(e);
+    }
+  };
+}

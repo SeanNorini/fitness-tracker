@@ -17,6 +17,12 @@ class WorkoutManager {
       document.getElementById("show_rest_timer").value;
     this.showWorkoutTimerSetting =
       document.getElementById("show_workout_timer").value;
+
+    this.dragAndDrop = new DragAndDrop(
+      "#workout_container",
+      ".exercise_container",
+      "exercise_name",
+    );
   }
 
   addSelectWorkoutListener() {
