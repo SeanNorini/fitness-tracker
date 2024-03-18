@@ -3,6 +3,7 @@ class WorkoutManager {
     this.unsavedChanges = false;
     this.restTimerRunning = false;
     this.baseURL = pageManager.baseURL + "/workout";
+    this.dragAndDrop = new DragAndDrop();
   }
 
   initialize() {
@@ -18,11 +19,7 @@ class WorkoutManager {
     this.showWorkoutTimerSetting =
       document.getElementById("show_workout_timer").value;
 
-    this.dragAndDrop = new DragAndDrop(
-      "#workout_container",
-      ".exercise_container",
-      "exercise_name",
-    );
+    this.dragAndDrop.initialize();
   }
 
   addSelectWorkoutListener() {
@@ -373,7 +370,6 @@ class WorkoutSettingsManager extends WorkoutManager {
   constructor() {
     super();
     this.baseURL = pageManager.baseURL + "/workout/workout_settings";
-    this.newWorkout = false;
   }
 
   addExerciseContainerListeners(container) {
@@ -527,6 +523,7 @@ class WorkoutSettingsManager extends WorkoutManager {
         this.previousWorkoutSelectValue =
           document.getElementById("select_workout").value;
         this.getUnitOfMeasurement();
+        this.dragAndDrop.initialize();
       });
   }
 
@@ -720,7 +717,9 @@ class WorkoutLogManager extends WorkoutManager {
     this.setDate();
     this.previousWorkoutSelectValue =
       document.getElementById("select_workout").value;
+    this.dragAndDrop.initialize("-20rem");
   }
+
   setDate() {
     const monthAndYear = document.querySelector("#month_name");
     const month = parseInt(monthAndYear.dataset.month) - 1;

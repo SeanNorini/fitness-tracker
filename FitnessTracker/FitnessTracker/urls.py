@@ -23,4 +23,5 @@ urlpatterns = [
     path("user/", include("users.urls")),
     path("", include("workout.urls")),
     path("log/", include("log.urls")),
+    path("cardio/", include("cardio.urls")),
 ]

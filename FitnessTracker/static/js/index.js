@@ -18,8 +18,10 @@ class PageManager {
       this.loadModule("user/settings");
     } else if (startingURL.includes("log")) {
       this.loadModule("log");
-    } else {
+    } else if (startingURL.includes("workout")) {
       this.loadModule("workout");
+    } else if (startingURL.includes("cardio")) {
+      this.loadModule("cardio");
     }
   }
 
@@ -99,7 +101,8 @@ class PageManager {
   }
 
   loadCardioModule() {
-    window.history.pushState({}, "", "/cardio/");
+    this.updateModuleWindow("Fitness Tracker - Cardio", "/cardio");
+    this.loadModuleScript("/static/cardio/js/cardio.js", "cardioManager");
   }
 
   loadModuleScript(scriptURL, moduleManager) {
@@ -326,81 +329,140 @@ class PageManager {
   }
 }
 
-const pageManager = new PageManager();
-
 class DragAndDrop {
-  constructor(parentSelector, draggableSelector, handlebarClass) {
-    this.parentContainer = document.querySelector(`${parentSelector}`);
-    this.draggableSelector = draggableSelector;
-    this.handlebarClass = handlebarClass;
-    this.parentContainer.addEventListener("mousedown", this.onMousedownHandler);
+  initialize(marginOffset = null) {
+    this.parentContainer = document.querySelector(".drag_and_drop_container");
+    this.draggableSelector = ".drag_and_drop_element";
+    this.handlebarClass = "drag_and_drop_handlebar";
+    this.parentContainer.addEventListener("mousedown", this.dragStart);
+    this.marginOffset = marginOffset;
   }
 
-  dragStart(e) {
-    const rect = this.cloneElement.getBoundingClientRect();
-    this.offsetX = rect.width / 2;
-    this.offsetY = rect.height / 2;
+  dragStart = (e) => {
+    // Get nearest draggable element
+    this.dragStartElement = e.target.closest(this.draggableSelector);
 
+    if (
+      this.dragStartElement &&
+      e.target.classList.contains(this.handlebarClass)
+    ) {
+      this.cloneStartElement();
+      this.dragStartElement.firstElementChild.classList.add("dragging");
+
+      // Get original element position
+      this.offsetX =
+        e.clientX - this.dragStartElement.getBoundingClientRect().left;
+      this.offsetY =
+        e.clientY - this.dragStartElement.getBoundingClientRect().top;
+
+      // Get start position of element being dragged
+      this.startX = e.clientX - this.offsetX + window.scrollX;
+      this.startY = e.clientY - this.offsetY + window.scrollY;
+
+      // Set dragged element to start position
+      this.cloneElement.style.left = this.startX + "px";
+      this.cloneElement.style.top = this.startY + "px";
+
+      // Activate listeners for dragging
+      this.addDragListeners();
+    }
+  };
+
+  cloneStartElement() {
+    this.cloneElement = this.dragStartElement.cloneNode(true);
+    this.cloneElement.classList.add("draggable"); // Toggle class for CSS style on dragged element
+    this.parentContainer.appendChild(this.cloneElement);
+    if (this.marginOffset) {
+      this.cloneElement.style.margin = this.marginOffset;
+    }
+  }
+
+  addDragListeners() {
     document.addEventListener("mousemove", this.onMousemoveHandler);
-    document.addEventListener("mouseup", this.onMouseupHandler);
-  }
+    document.addEventListener("mouseup", this.dragEnd);
 
-  toggleDraggableClass() {
-    const draggableContainers = this.parentContainer.querySelectorAll(
+    const draggableElements = this.parentContainer.querySelectorAll(
       this.draggableSelector,
     );
-    draggableContainers.forEach((container) => {
-      container.classList.toggle("drag_over");
+    draggableElements.forEach((draggableElement) => {
+      draggableElement.addEventListener("mouseenter", this.onMouseenterHandler);
+      draggableElement.addEventListener("mouseleave", this.onMouseleaveHandler);
     });
   }
 
-  swapElements() {
-    this.cloneElement.classList.toggle("draggable");
-    this.parentContainer.insertBefore(this.cloneElement, this.elementToSwap);
-    this.parentContainer.insertBefore(this.elementToSwap, this.originalElement);
-    this.originalElement.remove();
-  }
-
-  swapTarget(e) {
-    const dragEndElement = document.elementFromPoint(e.clientX, e.clientY);
-    return dragEndElement.closest(`${this.draggableSelector}`);
-  }
-
   onMousemoveHandler = (e) => {
-    this.cloneElement.style.left = e.clientX - this.offsetX + "px";
-    this.cloneElement.style.top = e.clientY - this.offsetY + "px";
+    this.cloneElement.style.left =
+      e.clientX - this.offsetX + window.scrollX + "px";
+    this.cloneElement.style.top =
+      e.clientY - this.offsetY + window.scrollY + "px";
   };
 
-  onMouseupHandler = (e) => {
-    document.removeEventListener("mousemove", this.onMousemoveHandler);
-    document.removeEventListener("mouseup", this.onMouseupHandler);
-    this.dragEnd(e);
-  };
-
-  dragEnd(e) {
-    this.elementToSwap = this.swapTarget(e);
-
-    if (this.elementToSwap) {
-      this.swapElements();
-      this.originalElement.remove();
-      this.toggleDraggableClass();
+  onMouseenterHandler = (e) => {
+    if (this.startY < e.clientY) {
+      e.target.firstElementChild.style.transform = "translateY(-10px)";
     } else {
+      e.target.firstElementChild.style.transform = "translateY(10px)";
+    }
+  };
+
+  onMouseleaveHandler(e) {
+    e.target.classList.remove("drag_over");
+    e.target.firstElementChild.style.transform = "translateY(0)";
+  }
+
+  dragEnd = (e) => {
+    // Get element being dragged onto
+    this.dragAndDropTarget = this.getDragAndDropTarget(e);
+
+    this.removeDragListeners();
+
+    if (this.dragAndDropTarget) {
+      // Move elements and clean up
+      this.moveElements(e);
+      this.cloneElement.style.margin = this.dragStartElement.style.margin;
+      this.dragStartElement.remove();
+      this.cloneElement.classList.remove("draggable");
+    } else {
+      // Invalid drag and drop, remove dragged element and make no changes
+      this.dragStartElement.firstElementChild.classList.remove("dragging");
       this.cloneElement.remove();
     }
+  };
+
+  getDragAndDropTarget(e) {
+    const dragEndElement = document.elementFromPoint(e.clientX, e.clientY);
+    return dragEndElement.closest(this.draggableSelector);
   }
 
-  onMousedownHandler = (e) => {
-    const draggableElement = e.target.closest(`${this.draggableSelector}`);
-    if (
-      draggableElement &&
-      e.target.classList.contains(`${this.handlebarClass}`)
-    ) {
-      this.toggleDraggableClass();
-      this.originalElement = draggableElement;
-      this.cloneElement = draggableElement.cloneNode(true);
-      this.cloneElement.classList.toggle("draggable");
-      this.parentContainer.appendChild(this.cloneElement);
-      this.dragStart(e);
+  removeDragListeners() {
+    document.removeEventListener("mousemove", this.onMousemoveHandler);
+    document.removeEventListener("mouseup", this.dragEnd);
+
+    const draggableContainers = this.parentContainer.querySelectorAll(
+      this.draggableSelector,
+    );
+    draggableContainers.forEach((draggable) => {
+      draggable.removeEventListener("mouseenter", this.onMouseenterHandler);
+      draggable.removeEventListener("mouseleave", this.onMouseleaveHandler);
+    });
+  }
+
+  moveElements(e) {
+    if (this.startY < e.clientY) {
+      // Insert after if element was dragged down
+      this.parentContainer.insertBefore(
+        this.cloneElement,
+        this.dragAndDropTarget.nextSibling,
+      );
+    } else {
+      // Insert before if element was dragged up
+      this.parentContainer.insertBefore(
+        this.cloneElement,
+        this.dragAndDropTarget,
+      );
     }
-  };
+    this.dragAndDropTarget.firstElementChild.style.transform = "translateY(0)";
+  }
 }
+
+const pageManager = new PageManager();

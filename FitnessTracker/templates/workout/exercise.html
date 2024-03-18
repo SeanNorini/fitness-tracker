@@ -1,28 +1,30 @@
-<div class="exercise_container">
-  <div class="row">
-    <div class="exercise_name">
-      {{ exercise.name }}
+<div class="drag_and_drop_element">
+  <div class="exercise_container">
+    <div class="row">
+      <div class="exercise_name drag_and_drop_handlebar">
+        {{ exercise.name }}
+      </div>
+      <div>
+          <span class="material-symbols-outlined delete delete_exercise">
+            delete
+          </span>
+      </div>
     </div>
-    <div>
-        <span class="material-symbols-outlined delete delete_exercise">
-          delete
-        </span>
+    <hr class="visible">
+    <div class="sets">
+      {% for set in exercise.sets %}
+        {% include 'workout/set.html' %}
+      {% endfor %}
     </div>
-  </div>
-  <hr class="visible">
-  <div class="sets">
-    {% for set in exercise.sets %}
-      {% include 'workout/set.html' %}
-    {% endfor %}
-  </div>
-  <hr class="visible">
-  <div id="set_controls">
-    <span class="material-symbols-outlined delete_set">
-      remove
-    </span>
-      &nbspSet&nbsp
-    <span class="material-symbols-outlined add_set">
-      add
-    </span>
+    <hr class="visible">
+    <div id="set_controls">
+      <span class="material-symbols-outlined delete_set">
+        remove
+      </span>
+        &nbspSet&nbsp
+      <span class="material-symbols-outlined add_set">
+        add
+      </span>
+    </div>
   </div>
 </div>

@@ -89,10 +89,6 @@ tr {
     margin-top: -1.8rem;
 }
 
-#add_log_popup{
-    margin-top:25rem;
-}
-
 #add_log_popup input:not(#workout_form input) {
   max-width: 4rem;
 }

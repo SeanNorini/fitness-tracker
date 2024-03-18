@@ -1,37 +1,39 @@
-<div class="exercise_container">
-  <div class="exercise_name row">
-    <div id="exercise_name">
-      {{ exercise.name }}
+<div class="drag_and_drop_element">
+  <div class="exercise_container">
+    <div class="row">
+      <div class="exercise_name drag_and_drop_handlebar">
+        {{ exercise.name }}
+      </div>
+      <div>
+          <span class="material-symbols-outlined delete delete_exercise">
+            delete
+          </span>
+      </div>
     </div>
-    <div>
-        <span class="material-symbols-outlined delete delete_exercise">
-          delete
-        </span>
+    <div class="row max_rep">
+      5-Rep Max:
+      <input type="number" class="round_float amount max_rep" value="{{ exercise.five_rep_max }}">
+      {% if unit_of_measurement == "Imperial" %}
+        Lbs
+      {% else %}
+        Kg
+      {% endif %}
     </div>
-  </div>
-  <div class="row max_rep">
-    5-Rep Max:
-    <input type="number" class="round_float amount max_rep" value="{{ exercise.five_rep_max }}">
-    {% if unit_of_measurement == "Imperial" %}
-      Lbs
-    {% else %}
-      Kg
-    {% endif %}
-  </div>
-  <hr class="horizontal">
-  <div class="sets">
-    {% for exercise_set in exercise.sets %}
-      {% include 'workout/workout_settings_set.html' %}
-    {% endfor %}
-  </div>
-  <hr class="horizontal">
-  <div id="set_controls">
-    <span class="material-symbols-outlined delete_set">
-      remove
-    </span>
-      &nbspSet&nbsp
-    <span class="material-symbols-outlined add_set">
-      add
-    </span>
+    <hr class="horizontal">
+    <div class="sets">
+      {% for exercise_set in exercise.sets %}
+        {% include 'workout/workout_settings_set.html' %}
+      {% endfor %}
+    </div>
+    <hr class="horizontal">
+    <div id="set_controls">
+      <span class="material-symbols-outlined delete_set">
+        remove
+      </span>
+        &nbspSet&nbsp
+      <span class="material-symbols-outlined add_set">
+        add
+      </span>
+    </div>
   </div>
 </div>

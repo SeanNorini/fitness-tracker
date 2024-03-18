@@ -457,8 +457,6 @@ button.controls:hover {
 #rest_timer_popup, #daily_log_popup, #add_log_popup {
   position: fixed;
   top: 0;
-  left: 50%;
-  transform: translate(-50%, 0%);
   background-color: var(--darkgray);
   border: 1px solid #ccc;
   padding: .5rem;

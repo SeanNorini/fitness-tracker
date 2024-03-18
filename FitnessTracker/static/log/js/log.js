@@ -1,5 +1,3 @@
-// noinspection JSUnusedLocalSymbols
-
 class LogManager {
   constructor() {
     this.baseURL = pageManager.baseURL + "/log";
@@ -16,13 +14,11 @@ class LogManager {
 
   initialize() {
     const navPrev = document.querySelector("#nav_prev");
-    // noinspection JSUnusedLocalSymbols
     navPrev.addEventListener("click", (e) => {
       this.getCalendar("prev");
     });
 
     const navNext = document.querySelector("#nav_next");
-    // noinspection JSUnusedLocalSymbols
     navNext.addEventListener("click", (e) => {
       this.getCalendar("next");
     });

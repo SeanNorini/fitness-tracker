@@ -4,7 +4,6 @@ from . import views
 urlpatterns = [
     path("workout/", views.WorkoutView.as_view(), name="workout"),
     path("", views.WorkoutView.as_view(), name="index"),
-    path("cardio/", views.WorkoutView.as_view(), name="cardio"),
     path("stats/", views.StatsView.as_view(), name="stats"),
     path(
         "workout/add_exercise/<str:exercise>",
