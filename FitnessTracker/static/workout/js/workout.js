@@ -626,7 +626,9 @@ class WorkoutSettingsManager extends WorkoutManager {
       .then((response) => {
         if (response.success) {
           pageManager.showTempPopupMessage("Workout saved.", 2500);
-          this.updateWorkoutList(workoutName);
+          if (this.newWorkout) {
+            this.updateWorkoutList(workoutName);
+          }
         }
       });
   }
@@ -661,7 +663,7 @@ class WorkoutSettingsManager extends WorkoutManager {
     const workoutExercises = document.querySelectorAll(".exercise_container");
     workoutExercises.forEach((exercise) => {
       const exerciseName = exercise
-        .querySelector("#exercise_name")
+        .querySelector(".exercise_name")
         .textContent.trim();
       const fiveRepMax = parseFloat(
         exercise.querySelector("input.max_rep").value,

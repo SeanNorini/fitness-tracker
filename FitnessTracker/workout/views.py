@@ -219,9 +219,7 @@ class WorkoutSettingsView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         DEFAULT_USER = User.objects.get(username="default")
-        exercises = Exercise.objects.filter(user=DEFAULT_USER).values_list(
-            "name", flat=True
-        )
+        exercises = Exercise.get_exercise_list(self.request.user)
         workouts = Workout.get_workout_list(self.request.user)
         context["workouts"] = workouts
         context["exercises"] = list(exercises)
@@ -305,7 +303,6 @@ class WorkoutSettingsSaveWorkoutView(LoginRequiredMixin, UpdateView):
 
         for exercise in exercise_list:
 
-            print(Exercise.objects.get(user=self.request.user, name=exercise["name"]))
             exercise, created = Exercise.objects.get_or_create(
                 user=self.request.user, name=exercise["name"]
             )
