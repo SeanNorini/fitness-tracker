@@ -304,142 +304,6 @@ button.controls:hover {
   font-size: 1.8rem;
 }
 
-.checkbox-wrapper-44 {
-  margin-left: 2rem;
-}
-
-.checkbox-wrapper-44 input[type="checkbox"] {
-  display: none;
-  visibility: hidden;
-}
-
-.checkbox-wrapper-44 *,
-.checkbox-wrapper-44 *::before,
-.checkbox-wrapper-44 *::after {
-  box-sizing: border-box;
-}
-
-.checkbox-wrapper-44 .toggleButton {
-  cursor: pointer;
-  display: block;
-  transform-origin: 50% 50%;
-  transform-style: preserve-3d;
-  transition: transform 0.14s ease;
-}
-.checkbox-wrapper-44 .toggleButton:active {
-  transform: rotateX(30deg);
-}
-.checkbox-wrapper-44 .toggleButton input + div {
-  border: 3px solid rgba(0, 0, 0, 0.2);
-  border-radius: 50%;
-  position: relative;
-  width: 44px;
-  height: 44px;
-}
-.checkbox-wrapper-44 .toggleButton input + div svg {
-  fill: none;
-  stroke-width: 3.6;
-  stroke: #000;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  width: 44px;
-  height: 44px;
-  display: block;
-  position: absolute;
-  left: -3px;
-  top: -3px;
-  right: -3px;
-  bottom: -3px;
-  z-index: 1;
-  stroke-dashoffset: 124.6;
-  stroke-dasharray: 0 162.6 133 29.6;
-  transition: all 0.4s ease 0s;
-}
-.checkbox-wrapper-44 .toggleButton input + div:before,
-.checkbox-wrapper-44 .toggleButton input + div:after {
-  content: "";
-  width: 3px;
-  height: 16px;
-  background: red;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  border-radius: 5px;
-}
-.checkbox-wrapper-44 .toggleButton input + div:before {
-  opacity: 0;
-  transform: scale(0.3) translate(-50%, -50%) rotate(45deg);
-  animation: bounceInBefore-44 0.3s linear forwards 0.3s;
-}
-.checkbox-wrapper-44 .toggleButton input + div:after {
-  opacity: 0;
-  transform: scale(0.3) translate(-50%, -50%) rotate(-45deg);
-  animation: bounceInAfter-44 0.3s linear forwards 0.3s;
-}
-.checkbox-wrapper-44 .toggleButton input:checked + div svg {
-  stroke-dashoffset: 162.6;
-  stroke-dasharray: 0 162.6 28 134.6;
-  transition: all 0.4s ease 0.2s;
-  stroke: var(--green_font);
-}
-.checkbox-wrapper-44 .toggleButton input:checked + div:before {
-  opacity: 0;
-  transform: scale(0.3) translate(-50%, -50%) rotate(45deg);
-  animation: bounceInBeforeDont-44 0.3s linear forwards 0s;
-}
-.checkbox-wrapper-44 .toggleButton input:checked + div:after {
-  opacity: 0;
-  transform: scale(0.3) translate(-50%, -50%) rotate(-45deg);
-  animation: bounceInAfterDont-44 0.3s linear forwards 0s;
-}
-
-@keyframes bounceInBefore-44 {
-  0% {
-    opacity: 0;
-    transform: scale(0.3) translate(-50%, -50%) rotate(45deg);
-  }
-  50% {
-    opacity: 0.9;
-    transform: scale(1.1) translate(-50%, -50%) rotate(45deg);
-  }
-  80% {
-    opacity: 1;
-    transform: scale(0.89) translate(-50%, -50%) rotate(45deg);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translate(-50%, -50%) rotate(45deg);
-  }
-}
-@keyframes bounceInAfter-44 {
-  0% {
-    opacity: 0;
-    transform: scale(0.3) translate(-50%, -50%) rotate(-45deg);
-  }
-  50% {
-    opacity: 0.9;
-    transform: scale(1.1) translate(-50%, -50%) rotate(-45deg);
-  }
-  80% {
-    opacity: 1;
-    transform: scale(0.89) translate(-50%, -50%) rotate(-45deg);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translate(-50%, -50%) rotate(-45deg);
-  }
-}
-@keyframes bounceInBeforeDont {
-  0% {
-    opacity: 1;
-    transform: scale(1) translate(-50%, -50%) rotate(-45deg);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.3) translate(-50%, -50%) rotate(-45deg);
-  }
-}
-
 #rest_timer {
   display: flex;
   justify-content: center;
@@ -503,4 +367,153 @@ button.controls:hover {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   display: none;
+}
+
+
+ /* Style for the grid container */
+.grid_container.grid_header {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 4 columns */
+  grid-template-rows: 1fr; /* 3 rows with a height of 100px each */
+  gap: 2px; /* Gap between grid items */
+  width: 100%;
+  min-width: 25rem;
+}
+
+.grid_date {
+  display: grid;
+  grid-template-columns: 50% repeat(4, 1fr); /* 4 columns */
+  grid-template-rows: repeat(3, 2rem); /* 3 rows with a height of 100px each */
+  gap: 2px; /* Gap between grid items */
+  width: 100%;
+  max-width: 25rem;
+
+}
+
+
+
+/* Style for grid items */
+.grid_item {
+  background-color: var(--darkgray);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 .5rem;
+}
+
+.grid_duration {
+  display: grid;
+  justify-content: flex-end;
+  grid-template-columns: 20% 5% 20% 5% 20%;
+  grid-template-rows: repeat(3, 2rem);
+  width: 100%;
+  max-width: 25rem;
+}
+
+.grid_cardio_summary {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  grid-template-rows: repeat(3, 10rem);
+  width: 90%;
+}
+
+.grid_distance {
+  display: grid;
+  justify-content: flex-end;
+  grid-template-columns: 11% 3% 11% 50%;
+  grid-template-rows: repeat(3, 2rem);
+  width: 100%;
+  max-width: 25rem;
+}
+
+.grid_header_cardio {
+  display: grid;
+  grid-template-columns: 25% 75%;
+  width: 100%;
+  max-width: 25rem;
+}
+
+.full_width_height {
+  width: 100%;
+  height: 100%;
+}
+
+.row_span_3 {
+  grid-row: span 3;
+}
+
+.row_span_2 {
+  grid-row: span 2;
+}
+
+.col_span_2 {
+  grid-column: span 2;
+}
+
+.collapse {
+  max-height: 10rem;
+  transition: max-height 1.5s ease;
+  overflow: hidden;
+}
+
+.collapse.hide {
+  max-height: 0 !important;
+  padding: 0;
+}
+
+.spinner {
+  cursor: grab;
+}
+
+.grabbing {
+  cursor: grabbing !important;
+}
+
+body.grabbing .spinner {
+  cursor: grabbing;
+}
+
+.grid_summary_box {
+  display: grid;
+  grid-template-rows: repeat(5, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+  border: 1px solid #3a414a;
+}
+
+.grid_item.right{
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.grid_item.center{
+  justify-content: center;
+  text-align: center;
+}
+
+.grid_item.left{
+  justify-content: flex-start;
+}
+
+.grid_summary_box .grid_item:first-child{
+  background-color: var(--medgray);
+}
+
+#cardio_chart {
+  border: 1px solid #3a414a;
+}
+
+.cardio_summary input{
+  border: 0;
+}
+
+#cardio_session_form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+#cardio_session_form > div:first-child,
+#cardio_session_form > div:last-child {
+  margin-top: 1rem;
 }

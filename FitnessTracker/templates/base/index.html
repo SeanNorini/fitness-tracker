@@ -4,6 +4,8 @@
 
 {% block head %}
   <link rel="stylesheet" href="{% static 'workout/css/index.css' %}">
+  <link rel="stylesheet" href="{% static 'css/drag_and_drop.css' %}">
+  <link rel="stylesheet" href="{% static 'css/animated_checkbox.css' %}">
   {% if css_file %}
     <link rel="stylesheet" href="{% static css_file %}">
   {% endif %}
@@ -32,7 +34,9 @@
 {% endblock %}
 
 {% block javascript %}{{block.super}}
-<script type="text/javascript" src="{% static '/js/index.js' %}"></script>
+  <script type="text/javascript" src="{% static '/js/drag_and_drop.js' %}"></script>
+  <script type="text/javascript" src="{% static '/js/input_spinner.js' %}"></script>
+  <script type="text/javascript" src="{% static '/js/index.js' %}"></script>
 {% endblock %}
 
 

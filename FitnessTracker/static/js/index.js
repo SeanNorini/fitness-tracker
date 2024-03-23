@@ -3,10 +3,14 @@ class PageManager {
     this.baseURL = window.location.origin;
     this.overlay = document.getElementById("overlay");
     this.popupStack = [];
+    this.date = new Date();
     this.currentPopup = null;
     this.addModuleLinkListeners();
     this.loadStartingModule();
     this.csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    this.rootFontSize = parseFloat(
+      window.getComputedStyle(document.documentElement).fontSize,
+    );
   }
 
   loadStartingModule() {
@@ -267,7 +271,7 @@ class PageManager {
     return fetch(args.url, {
       method: args.method,
       headers: {
-        Fetch: "True",
+        fetch: "True",
         "X-CSRFTOKEN": pageManager.csrftoken,
         ...args.headers,
       },
@@ -329,146 +333,38 @@ class PageManager {
   }
 }
 
-class DragAndDrop {
-  initialize(marginOffset = null) {
-    this.parentContainer = document.querySelector(".drag_and_drop_container");
-    this.draggableSelector = ".drag_and_drop_element";
-    this.handlebarClass = "drag_and_drop_handlebar";
-    this.parentContainer.addEventListener("mousedown", this.dragStart);
-    this.marginOffset = marginOffset;
-    this.cloneElement = null;
+class Collapsible {
+  constructor() {
+    this.containerClass = ".collapse_container";
+    this.controllerClass = ".collapse_controller";
+    this.collapseClass = "collapse";
   }
 
-  dragStart = (e) => {
-    // Cancel is cloned element already exists
-    if (this.cloneElement) {
-      return;
-    }
-
-    // Get nearest draggable element
-    this.dragStartElement = e.target.closest(this.draggableSelector);
-
-    if (
-      this.dragStartElement &&
-      e.target.classList.contains(this.handlebarClass)
-    ) {
-      this.cloneStartElement();
-      this.dragStartElement.firstElementChild.classList.add("dragging");
-
-      // Get original element position
-      this.offsetX =
-        e.clientX - this.dragStartElement.getBoundingClientRect().left;
-      this.offsetY =
-        e.clientY - this.dragStartElement.getBoundingClientRect().top;
-
-      // Get start position of element being dragged
-      this.startX = e.clientX - this.offsetX + window.scrollX;
-      this.startY = e.clientY - this.offsetY + window.scrollY;
-
-      // Set dragged element to start position
-      this.cloneElement.style.left = this.startX + "px";
-      this.cloneElement.style.top = this.startY + "px";
-
-      // Activate listeners for dragging
-      this.addDragListeners();
-    }
-  };
-
-  cloneStartElement() {
-    this.cloneElement = this.dragStartElement.cloneNode(true);
-    this.cloneElement.classList.add("draggable"); // Toggle class for CSS style on dragged element
-    this.parentContainer.appendChild(this.cloneElement);
-    if (this.marginOffset) {
-      this.cloneElement.style.margin = this.marginOffset;
-    }
-  }
-
-  addDragListeners() {
-    document.addEventListener("mousemove", this.onMousemoveHandler);
-    document.addEventListener("mouseup", this.dragEnd);
-
-    const draggableElements = this.parentContainer.querySelectorAll(
-      this.draggableSelector,
-    );
-    draggableElements.forEach((draggableElement) => {
-      draggableElement.addEventListener("mouseenter", this.onMouseenterHandler);
-      draggableElement.addEventListener("mouseleave", this.onMouseleaveHandler);
+  initialize() {
+    const containers = document.querySelectorAll(this.containerClass);
+    containers.forEach((container) => {
+      this.addControllerListener(container);
     });
   }
 
-  onMousemoveHandler = (e) => {
-    this.cloneElement.style.left =
-      e.clientX - this.offsetX + window.scrollX + "px";
-    this.cloneElement.style.top =
-      e.clientY - this.offsetY + window.scrollY + "px";
-  };
-
-  onMouseenterHandler = (e) => {
-    if (this.startY < e.clientY) {
-      e.target.firstElementChild.style.transform = "translateY(-10px)";
-    } else {
-      e.target.firstElementChild.style.transform = "translateY(10px)";
-    }
-  };
-
-  onMouseleaveHandler(e) {
-    e.target.classList.remove("drag_over");
-    e.target.firstElementChild.style.transform = "translateY(0)";
+  addControllerListener(container) {
+    const controller = container.querySelector(this.controllerClass);
+    controller.addEventListener("click", this.onClickHandler);
   }
 
-  dragEnd = (e) => {
-    // Get element being dragged onto
-    this.dragAndDropTarget = this.getDragAndDropTarget(e);
-
-    this.removeDragListeners();
-
-    if (this.dragAndDropTarget) {
-      // Move elements and clean up
-      this.moveElements(e);
-      this.cloneElement.style.margin = this.dragStartElement.style.margin;
-      this.dragStartElement.remove();
-      this.cloneElement.classList.remove("draggable");
-    } else {
-      // Invalid drag and drop, remove dragged element and make no changes
-      this.dragStartElement.firstElementChild.classList.remove("dragging");
-      this.cloneElement.remove();
-    }
-    this.cloneElement = null;
-  };
-
-  getDragAndDropTarget(e) {
-    const dragEndElement = document.elementFromPoint(e.clientX, e.clientY);
-    return dragEndElement.closest(this.draggableSelector);
-  }
-
-  removeDragListeners() {
-    document.removeEventListener("mousemove", this.onMousemoveHandler);
-    document.removeEventListener("mouseup", this.dragEnd);
-
-    const draggableContainers = this.parentContainer.querySelectorAll(
-      this.draggableSelector,
+  onClickHandler = (e) => {
+    const collapseTargets = this.getCollapseTargets(
+      e.currentTarget.parentNode.parentNode,
     );
-    draggableContainers.forEach((draggable) => {
-      draggable.removeEventListener("mouseenter", this.onMouseenterHandler);
-      draggable.removeEventListener("mouseleave", this.onMouseleaveHandler);
+    collapseTargets.forEach((target) => {
+      target.classList.toggle("hide");
     });
-  }
+  };
 
-  moveElements(e) {
-    if (this.startY < e.clientY) {
-      // Insert after if element was dragged down
-      this.parentContainer.insertBefore(
-        this.cloneElement,
-        this.dragAndDropTarget.nextSibling,
-      );
-    } else {
-      // Insert before if element was dragged up
-      this.parentContainer.insertBefore(
-        this.cloneElement,
-        this.dragAndDropTarget,
-      );
-    }
-    this.dragAndDropTarget.firstElementChild.style.transform = "translateY(0)";
+  getCollapseTargets(container) {
+    return Array.from(container.children).filter((child) =>
+      child.classList.contains(this.collapseClass),
+    );
   }
 }
 

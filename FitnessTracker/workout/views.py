@@ -106,7 +106,7 @@ class StatsView(LoginRequiredMixin, TemplateView):
             return HttpResponse(graph, content_type="image/png")
 
     def get(self, request, *args, **kwargs):
-        if request.headers.get("Fetch") == "True":
+        if request.headers.get("fetch") == "True":
             return render(
                 request, "workout/stats.html", self.get_context_data(**kwargs)
             )
@@ -128,6 +128,8 @@ class SelectWorkoutView(LoginRequiredMixin, TemplateView):
 
 
 class WorkoutView(LoginRequiredMixin, TemplateView):
+    template_name = "base/index.html"
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -148,7 +150,7 @@ class WorkoutView(LoginRequiredMixin, TemplateView):
         return context
 
     def get(self, request, *args, **kwargs):
-        if request.headers.get("Fetch") == "True":
+        if request.headers.get("fetch") == "True":
             return render(
                 request,
                 "workout/workout_session.html",

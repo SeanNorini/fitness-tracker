@@ -273,3 +273,22 @@ class WorkoutSet(models.Model):
                 update_five_rep_max = exercise.update_five_rep_max(weight, reps)
             if update_five_rep_max:
                 workout_log.workout.update_five_rep_max(exercise)
+
+
+class CardioLog(models.Model):
+    date = models.DateField()
+    time = models.TimeField()
+    duration_hours = models.PositiveSmallIntegerField(
+        default=0, validators=[MaxValueValidator(24)]
+    )
+    duration_minutes = models.PositiveSmallIntegerField(
+        default=0, validators=[MaxValueValidator(59)]
+    )
+    duration_seconds = models.PositiveSmallIntegerField(
+        default=0, validators=[MaxValueValidator(59)]
+    )
+    distance = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        validators=[MinValueValidator(0), MaxValueValidator(99.99)],
+    )

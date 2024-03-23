@@ -58,7 +58,7 @@ class LogView(LoginRequiredMixin, TemplateView):
         context["unit_of_measurement"] = (
             UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
         )
-        if request.headers.get("Fetch") == "True":
+        if request.headers.get("fetch") == "True":
 
             return render(request, "log/log.html", context)
 

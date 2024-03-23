@@ -147,9 +147,9 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
             user.save()
             login(self.request, user)
 
-            if self.request.headers.get("Fetch") == "True":
+            if self.request.headers.get("fetch") == "True":
                 return HttpResponseRedirect(
-                    reverse("user_settings"), headers={"Fetch": "True"}
+                    reverse("user_settings"), headers={"fetch": "True"}
                 )
             else:
                 return render(self.request, "users/change_password_done.html")
@@ -227,7 +227,7 @@ class UserSettingsView(LoginRequiredMixin, FormView):
             instance=user_settings_instance
         )
 
-        if request.headers.get("Fetch") == "True":
+        if request.headers.get("fetch") == "True":
             return render(
                 request,
                 "users/settings.html",

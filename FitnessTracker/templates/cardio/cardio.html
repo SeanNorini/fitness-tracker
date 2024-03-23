@@ -1,0 +1,113 @@
+<div class="flex_col cardio_summary">
+  <div class="flex_col center_content">
+    <div class="grid_cardio_summary">
+      <div class="grid_summary_box">
+        <div class="grid_item col_span_2">Today's Cardio Session:</div>
+        <div class="grid_item right">Distance:</div>
+        <div class="grid_item">0.0 mi</div>
+        <div class="grid_item right">Duration:</div>
+        <div class="grid_item">N/A</div>
+        <div class="grid_item right">Pace:</div>
+        <div class="grid_item">N/A</div>
+        <div class="grid_item right">Calories Burned:</div>
+        <div class="grid_item">0</div>
+      </div>
+      <div class="grid_item row_span_3" id="cardio_chart">Bar Chart</div>
+      <div class="grid_summary_box">
+        <div class="grid_item col_span_2">Previous Cardio Session:</div>
+        <div class="grid_item right">Distance:</div>
+        <div class="grid_item">0.0 mi</div>
+        <div class="grid_item right">Duration:</div>
+        <div class="grid_item">N/A</div>
+        <div class="grid_item right">Pace:</div>
+        <div class="grid_item">N/A</div>
+        <div class="grid_item right">Calories Burned:</div>
+        <div class="grid_item">0</div>
+      </div>
+      <div class="grid_summary_box">
+        <div class="grid_item col_span_2">Average Last Week:</div>
+        <div class="grid_item right">Distance:</div>
+        <div class="grid_item">0.0 mi</div>
+        <div class="grid_item right">Duration:</div>
+        <div class="grid_item">N/A</div>
+        <div class="grid_item right">Pace:</div>
+        <div class="grid_item">N/A</div>
+        <div class="grid_item right">Calories Burned:</div>
+        <div class="grid_item">0</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col" id="cardio_session_form">
+    <div>Enter New Cardio Session:</div>
+    <hr class="horizontal">
+    <div class="flex_col center_content collapse_container">
+      <div class="grid_header_cardio">
+        <div class="grid_item">Start</div>
+        <div class="grid_item collapse_controller" id="date">Date</div>
+      </div>
+      <div class="grid_date collapse hide">
+        <input type="text" class="grid_item spinner" id="previous_date" data-id="8">
+        <input type="text" class="grid_item spinner right" data-id="0" value="11">
+        <div class="grid_item row_span_3">:</div>
+        <input type="text" class="grid_item spinner" data-id="1" value="59">
+        <input type="text" class="grid_item spinner" data-id="2" value="AM">
+        <input type="text" name="selected_date" class="grid_item spinner" id="selected_date" data-id="8">
+        <input type="text" name="time_hours" class="grid_item spinner right" id="date_hours" data-id="0" value="12">
+        <input type="text" name="time_minutes" class="grid_item spinner" id="date_minutes" data-id="1" value="00">
+        <input type="text" name="time_period" class="grid_item spinner" id="date_am_pm" data-id="2" value="AM">
+        <input type="text" class="grid_item spinner" data-id="8">
+        <input type="text" class="grid_item spinner right" data-id="0" value="1">
+        <input type="text" class="grid_item spinner" data-id="1" value="01">
+        <input type="text" class="grid_item spinner" data-id="2">
+      </div>
+    </div>
+    
+    <div class="flex_col center_content collapse_container">
+      <div class="grid_header_cardio">
+        <div class="grid_item">Duration</div>
+        <div class="grid_item collapse_controller" id="duration">
+          <div class="hours">00</div>
+          :
+          <div class="minutes">30</div>
+          :
+          <div class="seconds">00</div>
+        </div>
+      </div>
+      <div class="grid_duration collapse hide">
+        <input type="text" class="grid_item spinner center" data-id="3" value="24">
+        <div class="grid_item row_span_3">:</div>
+        <input type="text" class="grid_item spinner center" data-id="4" value="29">
+        <div class="grid_item row_span_3">:</div>
+        <input type="text" class="grid_item spinner center" data-id="5" value="59">
+        <input type="text" name="duration_hours" class="grid_item spinner center" id="dur_hours" data-id="3" value="00">
+        <input type="text" name="duration_minutes" class="grid_item spinner center" id="dur_minutes" data-id="4" value="30">
+        <input type="text" name="duration_seconds" class="grid_item spinner center" id="dur_seconds" data-id="5" value="00">
+        <input type="text" class="grid_item spinner center" data-id="3" value="01">
+        <input type="text" class="grid_item spinner center" data-id="4" value="31">
+        <input type="text" class="grid_item spinner center" data-id="5" value="01">
+      </div>
+    </div>
+    
+    <div class="flex_col center_content collapse_container">
+      <div class="grid_header_cardio">
+        <div class="grid_item">Distance</div>
+        <div class="grid_item collapse_controller">
+          <div class="distance" id="distance">0.0</div>
+          <div class="distance_unit">mi</div>
+        </div>
+      </div>
+      <div class="grid_distance collapse hide">
+        <input type="text" class="grid_item spinner right" data-id="6" value="99">
+        <div class="grid_item row_span_3">.</div>
+        <input type="text" class="grid_item spinner" data-id="7" value="99">
+        <div class="grid_item row_span_3">mi</div>
+        <input type="text" name="distance_integer" class="grid_item spinner right" id="dist_int" data-id="6" value="0">
+        <input type="text" name="distance_decimal" class="grid_item spinner" id="dist_dec" data-id="7" value="00">
+        <input type="text" class="grid_item spinner right" data-id="6" value="1">
+        <input type="text" class="grid_item spinner" data-id="7" value="01">
+      </div>
+    </div>
+    <div><button class="controls" type="submit" id="save_cardio_session">Save Cardio Session</button></div>
+  </div>
+</div>

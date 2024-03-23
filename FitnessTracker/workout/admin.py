@@ -5,6 +5,7 @@ from .models import *
 admin.site.register(Exercise)
 admin.site.register(Workout)
 admin.site.register(WorkoutSet)
+admin.site.register(CardioLog)
 
 
 class WorkoutSetInline(admin.TabularInline):

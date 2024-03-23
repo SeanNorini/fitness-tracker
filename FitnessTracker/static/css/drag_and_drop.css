@@ -1,0 +1,16 @@
+.dragging {
+  animation: dragging 0.6s ease-in-out infinite;
+  opacity: 50%;
+}
+
+@keyframes dragging {
+  0% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+  100% { transform: rotate(-1deg); }
+}
+
+.draggable {
+  position: absolute;
+  opacity: 80%;
+  pointer-events: none;
+}
