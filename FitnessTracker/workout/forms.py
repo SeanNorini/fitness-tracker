@@ -1,5 +1,7 @@
 from django import forms
-from datetime import datetime
+from datetime import datetime, timedelta
+
+from django.core.validators import MaxValueValidator
 from workout.models import WorkoutLog, Exercise, CardioLog
 
 
@@ -22,64 +24,30 @@ class ExerciseForm(forms.ModelForm):
 
 class CardioLogForm(forms.ModelForm):
     # Define form fields
+    datetime = forms.DateTimeField()
+    duration = forms.DurationField()
+    distance = forms.FloatField(min_value=0, max_value=99.99)
 
-    date = forms.DateField()
+    def __init__(self, data=None, *args, **kwargs):
+        updated_data = {"datetime": data.get("datetime")}
 
-    time_hours = forms.IntegerField(label="Hours", min_value=1, max_value=12)
-    time_minutes = forms.IntegerField(label="Minutes", min_value=0, max_value=59)
-    time_period = forms.ChoiceField(
-        label="Period", choices=[("AM", "am"), ("PM", "pm")]
-    )
+        duration_hours = int(data.get("duration_hours", 0))
+        duration_minutes = int(data.get("duration_minutes", 0))
+        duration_seconds = int(data.get("duration_seconds", 0))
+        updated_data["duration"] = timedelta(
+            hours=duration_hours, minutes=duration_minutes, seconds=duration_seconds
+        )
 
-    duration_hours = forms.IntegerField(label="Hours", min_value=0, max_value=24)
-    duration_minutes = forms.IntegerField(label="Minutes", min_value=0, max_value=59)
-    duration_seconds = forms.IntegerField(label="Seconds", min_value=0, max_value=59)
+        distance_integer = data.get("distance_integer", 0)
+        distance_decimal = data.get("distance_decimal", 0)
+        updated_data["distance"] = float(f"{distance_integer}.{distance_decimal}")
 
-    distance_integer = forms.IntegerField(
-        label="Integer Distance", min_value=0, max_value=99
-    )
-    distance_decimal = forms.IntegerField(
-        label="Decimal Distance", min_value=0, max_value=99
-    )
-
-    def save(self, commit=True):
-        # Perform additional processing before saving
-        # Example: Combine distance_integer and distance_decimal into distance
-        time_hours = self.cleaned_data.get("time_hours", 0)
-        time_minutes = self.cleaned_data.get("time_minutes", 0)
-        time_period = self.cleaned_data.get("time_period", "'AM'")
-
-        # Convert 12-hour format to 24-hour format
-        if time_period == "PM" and time_hours < 12:
-            time_hours += 12
-        elif time_period == "AM" and time_hours == 12:
-            time_hours = 0
-
-        # Create a datetime object with the date and time components
-        time_obj = datetime.strptime(f"{time_hours}:{time_minutes}", "%H:%M").time()
-
-        # Set the time field of the instance
-        self.instance.time = time_obj
-
-        distance_integer = self.cleaned_data.get("distance_integer")
-        distance_decimal = self.cleaned_data.get("distance_decimal")
-        if distance_integer is not None and distance_decimal is not None:
-            distance = float(f"{distance_integer}.{distance_decimal}")
-            self.instance.distance = distance
-
-        # Call the parent save method to save the data
-        return super().save(commit=commit)
+        super().__init__(data=updated_data, *args, **kwargs)
 
     class Meta:
         model = CardioLog
         fields = [
-            "date",
-            "time_hours",
-            "time_minutes",
-            "time_period",
-            "duration_hours",
-            "duration_minutes",
-            "duration_seconds",
-            "distance_integer",
-            "distance_decimal",
+            "datetime",
+            "duration",
+            "distance",
         ]

@@ -12,11 +12,7 @@
       {% for set in exercise.sets %}
         <div>
           {{ set.weight }}
-          {% if unit_of_measurement == 'Imperial' %}
-          Lbs
-          {% else %}
-          Kg
-          {% endif %}
+          {{ user.weight_unit }}
           &nbsp;x&nbsp;
           {{ set.reps }}
         </div>

@@ -151,10 +151,10 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 class UserBodyCompositionForm(forms.ModelForm):
-    unit_of_measurement = forms.ChoiceField(
-        widget=forms.RadioSelect(attrs={"id": "unit_of_measurement"}),
+    system_of_measurement = forms.ChoiceField(
+        widget=forms.RadioSelect(attrs={"id": "system_of_measurement"}),
         choices=[("Imperial", "Imperial"), ("Metric", "Metric")],
-        label="Unit of Measurement",
+        label="System of Measurement",
         initial="Imperial",
         required=False,
     )
@@ -230,7 +230,7 @@ class UserBodyCompositionForm(forms.ModelForm):
     class Meta:
         model = UserBodyCompositionSetting
         fields = [
-            "unit_of_measurement",
+            "system_of_measurement",
             "gender",
             "height",
             "body_weight",

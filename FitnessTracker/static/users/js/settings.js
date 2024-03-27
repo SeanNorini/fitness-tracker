@@ -103,11 +103,13 @@ class SettingsManager {
       formData.set("gender", "F");
     }
 
-    const unitOfMeasurement = document.querySelector("#unit_of_measurement_0");
-    if (unitOfMeasurement.checked) {
-      formData.set("unit_of_measurement", "Imperial");
+    const systemOfMeasurement = document.querySelector(
+      "#system_of_measurement_0",
+    );
+    if (systemOfMeasurement.checked) {
+      formData.set("system_of_measurement", "Imperial");
     } else {
-      formData.set("unit_of_measurement", "Metric");
+      formData.set("system_of_measurement", "Metric");
     }
 
     return formData;

@@ -22,6 +22,38 @@ class User(AbstractUser):
         default="last",
     )
 
+    def distance_unit(self):
+        system_of_measurement = (
+            UserBodyCompositionSetting.objects.filter(user=self.id)
+            .first()
+            .system_of_measurement
+        )
+
+        if system_of_measurement == "Imperial":
+            return "mi"
+        else:
+            return "km"
+
+    def weight_unit(self):
+        system_of_measurement = (
+            UserBodyCompositionSetting.objects.filter(user=self.id)
+            .first()
+            .system_of_measurement
+        )
+
+        if system_of_measurement == "Imperial":
+            return "Lbs"
+        else:
+            return "Kg"
+
+    def get_body_weight(self):
+        return (
+            UserBodyCompositionSetting.objects.filter(user=self.id)
+            .order_by("-pk")
+            .first()
+            .body_weight
+        )
+
 
 class UserBodyCompositionSetting(models.Model):
     GENDER_CHOICES = [
@@ -33,7 +65,7 @@ class UserBodyCompositionSetting(models.Model):
         ("Metric", "Metric"),
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    unit_of_measurement = models.CharField(
+    system_of_measurement = models.CharField(
         max_length=8, choices=MEASUREMENT_CHOICES, default="Imperial"
     )
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default="M")

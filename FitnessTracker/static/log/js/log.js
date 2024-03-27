@@ -2,11 +2,7 @@ class LogManager {
   constructor() {
     this.baseURL = pageManager.baseURL + "/log";
     this.currentLog = null;
-    if (document.getElementById("unit_of_measurement").value === "Imperial") {
-      this.unitOfMeasurement = "Lbs";
-    } else {
-      this.unitOfMeasurement = "Kg";
-    }
+
     this.currentYear = new Date().getFullYear();
     this.currentMonth = new Date().getMonth() + 1;
     this.currentDay = new Date().getDate();

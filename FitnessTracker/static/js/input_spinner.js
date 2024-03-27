@@ -39,7 +39,7 @@ class Spinner {
     if (this.type === "range") {
       this.setRangeStartValue(options.inputStartValue);
     } else if (this.type === "list") {
-      this.setListStartIndex(options.inputStartValue - 1);
+      this.inputElement.value = options.inputStartValue;
     } else if (this.type === "date") {
       this.startDate = new Date();
       this.startDate.setDate(this.startDate.getDate() - this.inputElementIndex);
@@ -64,16 +64,10 @@ class Spinner {
     });
   }
 
-  getPythonDate() {
+  getDateObj() {
     const inputDate = new Date(this.startDate);
     inputDate.setDate(inputDate.getDate() + this.inputElementIndex);
-
-    let year = inputDate.getFullYear();
-    let month = String(inputDate.getMonth() + 1).padStart(2, "0"); // Add 1 to month because it's zero-based
-    let day = String(inputDate.getDate()).padStart(2, "0");
-
-    // Format the date as "YYYY-MM-DD"
-    return year + "-" + month + "-" + day;
+    return inputDate;
   }
 
   setValueRange(valueRange) {

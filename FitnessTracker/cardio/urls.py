@@ -9,4 +9,9 @@ urlpatterns = [
         name="save_cardio_session",
     ),
     path("get_cardio_log/", views.GetCardioLogView.as_view(), name="get_cardio_log"),
+    path(
+        "get_cardio_summaries/<str:selected_range>/",
+        views.GetCardioSummariesApiView.as_view(),
+        name="get_cardio_summaries",
+    ),
 ]

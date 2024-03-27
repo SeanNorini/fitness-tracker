@@ -9,11 +9,7 @@
   <div class="row max_rep">
     5-Rep Max:
     <input type="number" class="round_float amount" id="five_rep_max" value="{{ exercise.five_rep_max }}">
-    {% if unit_of_measurement == "Imperial" %}
-      Lbs
-    {% else %}
-      Kg
-    {% endif %}
+    {{ user.weight_unit }}
   </div>
   <hr class="visible">
   <div class="sets">
@@ -23,11 +19,7 @@
     <input type="number" class="weight" id="default_weight" step=".5" value="{{ exercise.default_weight }}">
     </div>
     <div>
-      {% if unit_of_measurement == 'Imperial' %}
-        Default Lbs
-      {% else %}
-        Default Kg
-      {% endif %}
+      Default {{ user.weight_unit }}
     </div>
   </div>
   <div>

@@ -426,6 +426,9 @@ button.controls:hover {
   max-width: 25rem;
 }
 
+.cardio_button_group {
+  margin-left: 28%;
+}
 .grid_header_cardio {
   display: grid;
   grid-template-columns: 25% 75%;

@@ -13,11 +13,7 @@
     <div class="row max_rep">
       5-Rep Max:
       <input type="number" class="round_float amount max_rep" value="{{ exercise.five_rep_max }}">
-      {% if unit_of_measurement == "Imperial" %}
-        Lbs
-      {% else %}
-        Kg
-      {% endif %}
+      {{ user.weight_unit }}
     </div>
     <hr class="horizontal">
     <div class="sets">

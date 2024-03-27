@@ -2,11 +2,7 @@
   <input type="hidden" id="weight_log_pk" value="{{ weight_log.pk|default:"0" }}">
   <div class="body_weight">
     Body Weight - {{ weight_log.body_weight|default:"0" }}
-    {% if unit_of_measurement == 'Imperial' %}
-    Lbs
-    {% else %}
-    Kg
-    {% endif %}
+    {{ user.weight_unit }}
   </div>
   <div class="body_fat">Body Fat - {{ weight_log.body_fat|default:"0" }}%</div>
 </div>

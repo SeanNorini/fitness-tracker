@@ -37,6 +37,10 @@
   <script type="text/javascript" src="{% static '/js/drag_and_drop.js' %}"></script>
   <script type="text/javascript" src="{% static '/js/input_spinner.js' %}"></script>
   <script type="text/javascript" src="{% static '/js/index.js' %}"></script>
+  <script type="text/javascript">
+    let distanceUnit = "{{ user.distance_unit }}";
+    let weightUnit = "{{ user.weight_unit }}";
+</script>
 {% endblock %}
 
 

@@ -4,13 +4,7 @@
 <form>
   <div>
     <div>
-      <label for="body_weight">Body Weight (
-        {% if user_body_composition_settings.unit_of_measurement == 'Imperial' %}
-        Lbs
-        {% else %}
-        Kg
-        {% endif %}
-        ):
+      <label for="body_weight">Body Weight ({{ user.weight_unit }}):
       </label>
       <input type="number" id="body_weight" value="{{ user_body_composition_settings.body_weight }}" required>
     </div>

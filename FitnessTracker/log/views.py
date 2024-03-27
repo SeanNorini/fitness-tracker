@@ -39,10 +39,6 @@ class LogView(LoginRequiredMixin, TemplateView):
             date__month=context["month"],
         )
 
-        context["unit_of_measurement"] = (
-            UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
-        )
-
         modules = ["workout", "cardio", "log", "stats", "settings"]
         context["modules"] = modules
         context["css_file"] = "log/css/log.css"
@@ -55,9 +51,7 @@ class LogView(LoginRequiredMixin, TemplateView):
         )
         html_calendar = cal.formatmonth(context["year"], context["month"])
         context["calendar"] = html_calendar
-        context["unit_of_measurement"] = (
-            UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
-        )
+
         if request.headers.get("fetch") == "True":
 
             return render(request, "log/log.html", context)
@@ -130,14 +124,10 @@ class DailyLogView(TemplateView):
         weight_log = WeightLog.objects.filter(user=self.request.user, date=date).first()
         context["weight_log"] = weight_log
 
-        context["unit_of_measurement"] = (
-            UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
-        )
-
         return context
 
 
-class EditWorkoutLogView(TemplateView):
+class EditWorkoutLogView(LoginRequiredMixin, TemplateView):
     template_name = "workout/workout_session.html"
 
     def get_context_data(self, **kwargs):
@@ -188,9 +178,7 @@ class GetWorkoutLogView(TemplateView):
         pk = self.kwargs["pk"]
         workout_log = WorkoutLog.objects.get(pk=pk, user=self.request.user)
         context["workout_log"] = workout_log.generate_workout_log()
-        context["unit_of_measurement"] = (
-            UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
-        )
+
         return context
 
 
@@ -207,9 +195,6 @@ class SaveWeightLogView(TemplateView):
 
         context["user_body_composition_settings"] = user_body_composition_settings
 
-        context["unit_of_measurement"] = (
-            UserBodyCompositionSetting.get_unit_of_measurement(self.request.user)
-        )
         return context
 
     def post(self, request, *args, **kwargs):

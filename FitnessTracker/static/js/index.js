@@ -107,6 +107,7 @@ class PageManager {
   loadCardioModule() {
     this.updateModuleWindow("Fitness Tracker - Cardio", "/cardio");
     this.loadModuleScript("/static/cardio/js/cardio.js", "cardioManager");
+    this.loadModuleStylesheets(["/static/css/button_group.css"]);
   }
 
   loadModuleScript(scriptURL, moduleManager) {

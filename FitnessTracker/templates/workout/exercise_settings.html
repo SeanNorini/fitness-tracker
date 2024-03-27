@@ -2,7 +2,7 @@
 
 <form class="form_container col workout_settings" id="workout_form">
 {% csrf_token %}
-<input type="hidden" id="unit_of_measurement" value="{{ unit_of_measurement }}">
+<input type="hidden" id="unit_of_measurement" value="{{ user.weight_unit }}">
 <div class="controls_container">
   <div>
     <div class="select_container">

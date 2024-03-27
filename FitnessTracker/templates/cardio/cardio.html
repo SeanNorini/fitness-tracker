@@ -1,39 +1,56 @@
+<div class="button_group_round cardio_button_group">
+      <button type="button" class="button_back" value="year" data-group="1">
+        <span class="button_front" id="year">
+          Year
+        </span>
+      </button>
+      <button type="button" class="button_back" value="month" data-group="1">
+        <span class="button_front" id="month">
+          Month
+        </span>
+      </button>
+      <button type="button" class="button_back active" value="week" data-group="1">
+        <span class="button_front" id="week">
+          Week
+        </span>
+      </button>
+    </div>    
 <div class="flex_col cardio_summary">
   <div class="flex_col center_content">
     <div class="grid_cardio_summary">
       <div class="grid_summary_box">
-        <div class="grid_item col_span_2">Today's Cardio Session:</div>
+        <div class="grid_item col_span_2 header">Current Day:</div>
         <div class="grid_item right">Distance:</div>
-        <div class="grid_item">0.0 mi</div>
+        <div class="grid_item distance">{{ latest.total_distance|floatformat:"2"|default:"0.0" }} {{ user.distance_unit }}</div>
         <div class="grid_item right">Duration:</div>
-        <div class="grid_item">N/A</div>
+        <div class="grid_item duration">{{ latest.duration|default:"N/A" }}</div>
         <div class="grid_item right">Pace:</div>
-        <div class="grid_item">N/A</div>
+        <div class="grid_item pace">{{ latest.pace|default:"N/A" }}</div>
         <div class="grid_item right">Calories Burned:</div>
-        <div class="grid_item">0</div>
+        <div class="grid_item calories">{{ latest.calories_burned|default:"0" }}</div>
       </div>
       <div class="grid_item row_span_3" id="cardio_chart">Bar Chart</div>
       <div class="grid_summary_box">
-        <div class="grid_item col_span_2">Previous Cardio Session:</div>
+        <div class="grid_item col_span_2 header">Previous Day:</div>
         <div class="grid_item right">Distance:</div>
-        <div class="grid_item">0.0 mi</div>
+        <div class="grid_item distance">{{ latest.total_distance|floatformat:"2"|default:"0.0" }} {{ user.distance_unit }}</div>
         <div class="grid_item right">Duration:</div>
-        <div class="grid_item">N/A</div>
+        <div class="grid_item duration">{{ latest.duration|default:"N/A" }}</div>
         <div class="grid_item right">Pace:</div>
-        <div class="grid_item">N/A</div>
+        <div class="grid_item pace">{{ latest.pace|default:"N/A" }}</div>
         <div class="grid_item right">Calories Burned:</div>
-        <div class="grid_item">0</div>
+        <div class="grid_item calories">{{ latest.calories_burned|default:"0" }}</div>
       </div>
       <div class="grid_summary_box">
-        <div class="grid_item col_span_2">Average Last Week:</div>
+        <div class="grid_item col_span_2 header">Weekly Summary (Avg. Daily):</div>
         <div class="grid_item right">Distance:</div>
-        <div class="grid_item">0.0 mi</div>
+        <div class="grid_item distance">{{ latest.total_distance|floatformat:"2"|default:"0.0" }} {{ user.distance_unit }}</div>
         <div class="grid_item right">Duration:</div>
-        <div class="grid_item">N/A</div>
+        <div class="grid_item duration">{{ latest.duration|default:"N/A" }}</div>
         <div class="grid_item right">Pace:</div>
-        <div class="grid_item">N/A</div>
+        <div class="grid_item pace">{{ latest.pace|default:"N/A" }}</div>
         <div class="grid_item right">Calories Burned:</div>
-        <div class="grid_item">0</div>
+        <div class="grid_item calories">{{ latest.calories_burned|default:"0" }}</div>
       </div>
     </div>
   </div>
@@ -44,7 +61,7 @@
     <div class="flex_col center_content collapse_container">
       <div class="grid_header_cardio">
         <div class="grid_item">Start</div>
-        <div class="grid_item collapse_controller" id="date">Date</div>
+        <div class="grid_item collapse_controller" id="date_header">Date</div>
       </div>
       <div class="grid_date collapse hide">
         <input type="text" class="grid_item spinner" id="previous_date" data-id="8">
@@ -52,10 +69,10 @@
         <div class="grid_item row_span_3">:</div>
         <input type="text" class="grid_item spinner" data-id="1" value="59">
         <input type="text" class="grid_item spinner" data-id="2" value="AM">
-        <input type="text" name="selected_date" class="grid_item spinner" id="selected_date" data-id="8">
-        <input type="text" name="time_hours" class="grid_item spinner right" id="date_hours" data-id="0" value="12">
-        <input type="text" name="time_minutes" class="grid_item spinner" id="date_minutes" data-id="1" value="00">
-        <input type="text" name="time_period" class="grid_item spinner" id="date_am_pm" data-id="2" value="AM">
+        <input type="text" name="date" class="grid_item spinner" id="date" data-id="8">
+        <input type="text" name="hours" class="grid_item spinner right" id="hours" data-id="0" value="12">
+        <input type="text" name="minutes" class="grid_item spinner" id="minutes" data-id="1" value="00">
+        <input type="text" name="period" class="grid_item spinner" id="period" data-id="2" value="AM">
         <input type="text" class="grid_item spinner" data-id="8">
         <input type="text" class="grid_item spinner right" data-id="0" value="1">
         <input type="text" class="grid_item spinner" data-id="1" value="01">

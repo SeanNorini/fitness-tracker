@@ -1,6 +1,6 @@
 <form class="form_container col workout_settings" id="workout_form">
 {% csrf_token %}
-<input type="hidden" id="unit_of_measurement" value="{{ unit_of_measurement }}">
+<input type="hidden" id="unit_of_measurement" value="{{ user.weight_unit }}">
 <div class="inner_container" id="workout_settings">
   <h1>Workout Settings</h1>
   <div>{{ form.auto_update_five_rep_max }}{{ form.auto_update_five_rep_max.label }}</div>

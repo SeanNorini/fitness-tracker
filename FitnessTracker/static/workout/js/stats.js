@@ -5,7 +5,6 @@ class StatsManager {
 
   getGraph() {
     const formData = this.getGraphSettings();
-    console.log(formData.get("csrfmiddlewaretoken"));
 
     return pageManager
       .fetchData({

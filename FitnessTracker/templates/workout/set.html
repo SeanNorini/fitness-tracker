@@ -7,11 +7,7 @@
     <input type="number" class="weight" step=".5" value="{{ set.weight|default:"0" }}">
     </div>
     <div>
-      {% if unit_of_measurement == 'Imperial' %}
-        Lbs
-      {% else %}
-        Kg
-      {% endif %}
+      {{ user.weight_unit }}
     </div>
   </div>
   <div>
