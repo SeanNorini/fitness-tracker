@@ -35,7 +35,9 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "log",
+    "cardio",
     "workout",
+    "nutrition_tracker",
     "users.apps.UsersConfig",
     "rest_framework",
     "django.contrib.admin",

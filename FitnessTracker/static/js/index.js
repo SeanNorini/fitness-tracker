@@ -26,6 +26,8 @@ class PageManager {
       this.loadModule("workout");
     } else if (startingURL.includes("cardio")) {
       this.loadModule("cardio");
+    } else if (startingURL.includes("nutrition")) {
+      this.loadModule("nutrition");
     }
   }
 
@@ -71,7 +73,18 @@ class PageManager {
       case "cardio":
         this.loadCardioModule();
         break;
+      case "nutrition":
+        this.loadNutritionModule();
     }
+  }
+
+  loadNutritionModule() {
+    this.updateModuleWindow("Fitness Tracker - Nutrition", "/nutrition");
+    this.loadModuleScript(
+      "/static/nutrition_tracker/js/nutrition.js",
+      "nutritionManager",
+    );
+    this.loadModuleStylesheets(["/static/nutrition_tracker/css/nutrition.css"]);
   }
 
   loadWorkoutModule() {
@@ -278,7 +291,11 @@ class PageManager {
       },
       body: args.body,
     }).then((response) => {
-      return response[args.responseType]();
+      if (response.ok) {
+        return response[args.responseType]();
+      } else {
+        throw new Error("Network response was not ok");
+      }
     });
   }
 

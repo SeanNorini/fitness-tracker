@@ -237,7 +237,7 @@ class UserSettingsView(LoginRequiredMixin, FormView):
                 },
             )
         else:
-            modules = ["workout", "cardio", "log", "stats", "settings"]
+            modules = ["workout", "cardio", "nutrition", "log", "stats", "settings"]
             return render(
                 request,
                 "base/index.html",

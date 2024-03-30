@@ -41,7 +41,7 @@ def plot_graph(user, selected_range):
         spine.set_edgecolor("#f5f5f5")
 
     buffer = BytesIO()
-    plt.savefig(buffer, format="png")
+    plt.savefig(buffer, format="png", transparent=True)
     plt.close()
     buffer.seek(0)
 
@@ -50,7 +50,7 @@ def plot_graph(user, selected_range):
     return img_base64
 
 
-class GetCardioSummariesApiView(APIView):
+class GetCardioSummariesAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
@@ -80,7 +80,7 @@ class CardioView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        modules = ["workout", "cardio", "log", "stats", "settings"]
+        modules = ["workout", "cardio", "nutrition", "log", "stats", "settings"]
         context["modules"] = modules
 
         context["template_content"] = "cardio/cardio.html"

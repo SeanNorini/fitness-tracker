@@ -39,7 +39,7 @@ class LogView(LoginRequiredMixin, TemplateView):
             date__month=context["month"],
         )
 
-        modules = ["workout", "cardio", "log", "stats", "settings"]
+        modules = ["workout", "cardio", "nutrition", "log", "stats", "settings"]
         context["modules"] = modules
         context["css_file"] = "log/css/log.css"
         return context

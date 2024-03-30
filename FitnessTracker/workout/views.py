@@ -44,7 +44,7 @@ def plot_graph(stat_name, values, dates):
         spine.set_edgecolor("#f5f5f5")
 
     buffer = BytesIO()
-    plt.savefig(buffer, format="png")
+    plt.savefig(buffer, format="png", transparent=True)
     plt.close()
     buffer.seek(0)
 
@@ -59,7 +59,7 @@ class StatsView(ExerciseMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        modules = ["workout", "cardio", "log", "stats", "settings"]
+        modules = ["workout", "cardio", "nutrition", "log", "stats", "settings"]
         context["modules"] = modules
         context["template_content"] = "workout/stats.html"
         return context
@@ -127,7 +127,7 @@ class WorkoutView(WorkoutMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        modules = ["workout", "cardio", "log", "stats", "settings"]
+        modules = ["workout", "cardio", "nutrition", "log", "stats", "settings"]
         context["modules"] = modules
 
         context["template_content"] = "workout/workout_session.html"

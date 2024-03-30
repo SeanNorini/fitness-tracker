@@ -105,7 +105,7 @@ hr.horizontal  {
   border: none;
   height: 1px;
 
-  background: linear-gradient(to right, #3a414a, #6f7681, #3a414a);
+  background: linear-gradient(to right, #3a414a, var(--border_highlight), #3a414a);
   visibility: visible;
   max-width: 50%;
   margin: 0 0 .5rem;
@@ -113,9 +113,8 @@ hr.horizontal  {
 
 hr.vertical {
   border: none;
-  background: linear-gradient(to top, #3a414a, #6f7681, #3a414a);
-  width: 2px;
-  height: 100%;
+  background: linear-gradient(to top, #3a414a, var(--border_highlight), #3a414a);
+  width: 1px;
   visibility: visible;
 }
 
@@ -192,7 +191,8 @@ input[type=number] {
   display: flex;
   flex-direction: column;
   padding: 1rem 1rem .5rem;
-  background-color: var(--blue);
+  background-color: var(--light_green);
+  border: 1px solid var(--border_highlight);
   border-radius: 1rem;
   text-align: center;
   font-size: 1.4rem;
@@ -201,7 +201,8 @@ input[type=number] {
 
 .module:hover {
   transition: all .3s ease-in;
-  background-color: #14375e;
+  background-color: var(--border_highlight);
+  border: 1px solid #9bd4e0;
 }
 
 .module-link {
@@ -369,71 +370,8 @@ button.controls:hover {
   display: none;
 }
 
-
- /* Style for the grid container */
-.grid_container.grid_header {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 4 columns */
-  grid-template-rows: 1fr; /* 3 rows with a height of 100px each */
-  gap: 2px; /* Gap between grid items */
-  width: 100%;
-  min-width: 25rem;
-}
-
-.grid_date {
-  display: grid;
-  grid-template-columns: 50% repeat(4, 1fr); /* 4 columns */
-  grid-template-rows: repeat(3, 2rem); /* 3 rows with a height of 100px each */
-  gap: 2px; /* Gap between grid items */
-  width: 100%;
-  max-width: 25rem;
-
-}
-
-
-
-/* Style for grid items */
-.grid_item {
-  background-color: var(--darkgray);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0 .5rem;
-}
-
-.grid_duration {
-  display: grid;
-  justify-content: flex-end;
-  grid-template-columns: 20% 5% 20% 5% 20%;
-  grid-template-rows: repeat(3, 2rem);
-  width: 100%;
-  max-width: 25rem;
-}
-
-.grid_cardio_summary {
-  display: grid;
-  grid-template-columns: 30% 70%;
-  grid-template-rows: repeat(3, 10rem);
-  width: 90%;
-}
-
-.grid_distance {
-  display: grid;
-  justify-content: flex-end;
-  grid-template-columns: 11% 3% 11% 50%;
-  grid-template-rows: repeat(3, 2rem);
-  width: 100%;
-  max-width: 25rem;
-}
-
 .cardio_button_group {
   margin-left: 28%;
-}
-.grid_header_cardio {
-  display: grid;
-  grid-template-columns: 25% 75%;
-  width: 100%;
-  max-width: 25rem;
 }
 
 .full_width_height {
@@ -497,8 +435,70 @@ body.grabbing .spinner {
   justify-content: flex-start;
 }
 
+
+/* Style for grid items */
+.cardio_summary .grid_item {
+  background-color: var(--darkgray);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 .5rem;
+}
+
 .grid_summary_box .grid_item:first-child{
   background-color: var(--medgray);
+}
+
+ /* Style for the grid container */
+.grid_container.grid_header {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 4 columns */
+  grid-template-rows: 1fr; /* 3 rows with a height of 100px each */
+  gap: 2px; /* Gap between grid items */
+  width: 100%;
+  min-width: 25rem;
+}
+
+.grid_date {
+  display: grid;
+  grid-template-columns: 50% repeat(4, 1fr); /* 4 columns */
+  grid-template-rows: repeat(3, 2rem); /* 3 rows with a height of 100px each */
+  gap: 2px; /* Gap between grid items */
+  width: 100%;
+  max-width: 25rem;
+
+}
+
+.grid_duration {
+  display: grid;
+  justify-content: flex-end;
+  grid-template-columns: 20% 5% 20% 5% 20%;
+  grid-template-rows: repeat(3, 2rem);
+  width: 100%;
+  max-width: 25rem;
+}
+
+.grid_cardio_summary {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  grid-template-rows: repeat(3, 10rem);
+  width: 90%;
+}
+
+.grid_distance {
+  display: grid;
+  justify-content: flex-end;
+  grid-template-columns: 11% 3% 11% 50%;
+  grid-template-rows: repeat(3, 2rem);
+  width: 100%;
+  max-width: 25rem;
+}
+
+.grid_header_cardio {
+  display: grid;
+  grid-template-columns: 25% 75%;
+  width: 100%;
+  max-width: 25rem;
 }
 
 #cardio_chart {
