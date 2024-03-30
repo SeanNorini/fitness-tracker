@@ -2,14 +2,14 @@ class SearchBar {
   constructor(inputHandler, minLengthQuery = 3, tabs = false) {
     // this.inputHandler = inputHandler;
     this.minLengthQuery = minLengthQuery;
-    this.searchBar = document.querySelector(".search_bar");
-    this.searchInput = this.searchBar.querySelector("input");
-    this.clearSearchBtn = this.searchBar.querySelector(".delete_search");
-    this.searchResultList = document.querySelector("#items");
     this.tabs = tabs;
     this.activeTab = "all";
   }
   initialize() {
+    this.searchBar = document.querySelector(".search_bar");
+    this.searchInput = this.searchBar.querySelector("input");
+    this.clearSearchBtn = this.searchBar.querySelector(".delete_search");
+    this.searchResultList = document.querySelector("#items");
     const debouncedSearch = this.debounce(this.inputHandler, 300);
     this.searchInput.addEventListener("input", debouncedSearch);
     this.clearSearchBtn.addEventListener("click", (e) => {

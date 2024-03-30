@@ -81,7 +81,7 @@ class SaveFoodLogAPIView(APIView):
                 food_item = FoodItem(
                     log_entry=existing_log,
                     name=food["name"],
-                    calories=int(food["calories"]),
+                    calories=int(float(food["calories"])),
                     protein=float(food["protein"]),
                     carbs=float(food["carbs"]),
                     fat=float(food["fat"]),
