@@ -1,89 +1,59 @@
-<div class="button_group_round cardio_button_group">
-      <button type="button" class="button_back" value="year" data-group="1">
-        <span class="button_front" id="year">
+<div class="btn-group-round cardio-button-group">
+      <button type="button" class="btn-back" value="year" data-group="1">
+        <span class="btn-front" id="year">
           Year
         </span>
       </button>
-      <button type="button" class="button_back" value="month" data-group="1">
-        <span class="button_front" id="month">
+      <button type="button" class="btn-back" value="month" data-group="1">
+        <span class="btn-front" id="month">
           Month
         </span>
       </button>
-      <button type="button" class="button_back active" value="week" data-group="1">
-        <span class="button_front" id="week">
+      <button type="button" class="btn-back active" value="week" data-group="1">
+        <span class="btn-front" id="week">
           Week
         </span>
       </button>
     </div>    
-<div class="flex_col cardio_summary">
-  <div class="flex_col center_content">
-    <div class="grid_cardio_summary">
-      <div class="grid_summary_box">
-        <div class="grid_item col_span_2 header">Current Day:</div>
-        <div class="grid_item right">Distance:</div>
-        <div class="grid_item distance">{{ latest.total_distance|floatformat:"2"|default:"0.0" }} {{ user.distance_unit }}</div>
-        <div class="grid_item right">Duration:</div>
-        <div class="grid_item duration">{{ latest.duration|default:"N/A" }}</div>
-        <div class="grid_item right">Pace:</div>
-        <div class="grid_item pace">{{ latest.pace|default:"N/A" }}</div>
-        <div class="grid_item right">Calories Burned:</div>
-        <div class="grid_item calories">{{ latest.calories_burned|default:"0" }}</div>
-      </div>
-      <div class="grid_item row_span_3" id="cardio_chart">Bar Chart</div>
-      <div class="grid_summary_box">
-        <div class="grid_item col_span_2 header">Previous Day:</div>
-        <div class="grid_item right">Distance:</div>
-        <div class="grid_item distance">{{ latest.total_distance|floatformat:"2"|default:"0.0" }} {{ user.distance_unit }}</div>
-        <div class="grid_item right">Duration:</div>
-        <div class="grid_item duration">{{ latest.duration|default:"N/A" }}</div>
-        <div class="grid_item right">Pace:</div>
-        <div class="grid_item pace">{{ latest.pace|default:"N/A" }}</div>
-        <div class="grid_item right">Calories Burned:</div>
-        <div class="grid_item calories">{{ latest.calories_burned|default:"0" }}</div>
-      </div>
-      <div class="grid_summary_box">
-        <div class="grid_item col_span_2 header">Weekly Summary (Avg. Daily):</div>
-        <div class="grid_item right">Distance:</div>
-        <div class="grid_item distance">{{ latest.total_distance|floatformat:"2"|default:"0.0" }} {{ user.distance_unit }}</div>
-        <div class="grid_item right">Duration:</div>
-        <div class="grid_item duration">{{ latest.duration|default:"N/A" }}</div>
-        <div class="grid_item right">Pace:</div>
-        <div class="grid_item pace">{{ latest.pace|default:"N/A" }}</div>
-        <div class="grid_item right">Calories Burned:</div>
-        <div class="grid_item calories">{{ latest.calories_burned|default:"0" }}</div>
-      </div>
+<div class="col col-lg col-center cardio-summary">
+  <div class="row row-lg row-center">
+    <div class="col col-3 gap-lg">
+      {% include "cardio/summary_template.html" with header="Current Day:" summary=latest %}
+      {% include "cardio/summary_template.html" with header="Previous Day:" summary=previous %}
+      {% include "cardio/summary_template.html" with header="Weekly Summary (Avg. Daily):" summary=weekly %}
     </div>
+    <div class="col col-center" id="cardio-chart">Bar Chart</div>
   </div>
   
-  <div class="col" id="cardio_session_form">
+  <div class="col col-sm col-center gap-sm m-top-3" id="cardio-session-form">
     <div>Enter New Cardio Session:</div>
-    <hr class="horizontal">
-    <div class="flex_col center_content collapse_container">
-      <div class="grid_header_cardio">
-        <div class="grid_item">Start</div>
-        <div class="grid_item collapse_controller" id="date_header">Date</div>
+    <hr>
+    <div class="col gap-sm collapse-container">
+      <div class="grid grid--cardio-header">
+        <div class="grid__item">Start</div>
+        <div class="grid__item grid__item--center collapse-controller" id="date-header">Date</div>
       </div>
-      <div class="grid_date collapse hide">
-        <input type="text" class="grid_item spinner" id="previous_date" data-id="8">
-        <input type="text" class="grid_item spinner right" data-id="0" value="11">
-        <div class="grid_item row_span_3">:</div>
-        <input type="text" class="grid_item spinner" data-id="1" value="59">
-        <input type="text" class="grid_item spinner" data-id="2" value="AM">
-        <input type="text" name="date" class="grid_item spinner" id="date" data-id="8">
-        <input type="text" name="hours" class="grid_item spinner right" id="hours" data-id="0" value="12">
-        <input type="text" name="minutes" class="grid_item spinner" id="minutes" data-id="1" value="00">
-        <input type="text" name="period" class="grid_item spinner" id="period" data-id="2" value="AM">
-        <input type="text" class="grid_item spinner" data-id="8">
-        <input type="text" class="grid_item spinner right" data-id="0" value="1">
-        <input type="text" class="grid_item spinner" data-id="1" value="01">
-        <input type="text" class="grid_item spinner" data-id="2">
+      <div class="grid grid--small grid--rows-small grid--cardio-date collapse hide">
+        <input type="text" class="grid__item grid__input--text-left spinner" id="previous-date" data-id="8">
+        <input type="text" class="grid__item spinner" data-id="0" value="11">
+        <div class="grid__item row-span-3">:</div>
+        <input type="text" class="grid__item spinner" data-id="1" value="59">
+        <input type="text" class="grid__item spinner" data-id="2" value="AM">
+        <input type="text" name="date" class="grid__item grid__input--text-left spinner" id="date" data-id="8">
+        <input type="text" name="hours" class="grid__item spinner" id="hours" data-id="0" value="12">
+        <input type="text" name="minutes" class="grid__item spinner" id="minutes" data-id="1" value="00">
+        <input type="text" name="period" class="grid__item spinner" id="period" data-id="2" value="AM">
+        <input type="text" class="grid__item grid__input--text-left spinner" id="next-date" data-id="8">
+        <input type="text" class="grid__item spinner" data-id="0" value="1">
+        <input type="text" class="grid__item spinner" data-id="1" value="01">
+        <input type="text" class="grid__item spinner" data-id="2">
       </div>
     </div>
     
-    <div class="flex_col center_content collapse_container">
-      <div class="grid_header_cardio">
-        <div class="grid_item">Duration</div>
-        <div class="grid_item collapse_controller" id="duration">
+    <div class="col gap-sm collapse-container">
+      <div class="grid grid--cardio-header">
+        <div class="grid__item">Duration</div>
+        <div class="grid__item grid__item--center collapse-controller" id="duration">
           <div class="hours">00</div>
           :
           <div class="minutes">30</div>
@@ -91,40 +61,40 @@
           <div class="seconds">00</div>
         </div>
       </div>
-      <div class="grid_duration collapse hide">
-        <input type="text" class="grid_item spinner center" data-id="3" value="24">
-        <div class="grid_item row_span_3">:</div>
-        <input type="text" class="grid_item spinner center" data-id="4" value="29">
-        <div class="grid_item row_span_3">:</div>
-        <input type="text" class="grid_item spinner center" data-id="5" value="59">
-        <input type="text" name="duration_hours" class="grid_item spinner center" id="dur_hours" data-id="3" value="00">
-        <input type="text" name="duration_minutes" class="grid_item spinner center" id="dur_minutes" data-id="4" value="30">
-        <input type="text" name="duration_seconds" class="grid_item spinner center" id="dur_seconds" data-id="5" value="00">
-        <input type="text" class="grid_item spinner center" data-id="3" value="01">
-        <input type="text" class="grid_item spinner center" data-id="4" value="31">
-        <input type="text" class="grid_item spinner center" data-id="5" value="01">
+      <div class="grid grid--small grid--rows-small grid--cardio-duration collapse hide">
+        <input type="text" class="grid__item spinner center" data-id="3" value="24">
+        <div class="grid__item row-span-3">:</div>
+        <input type="text" class="grid__item spinner center" data-id="4" value="29">
+        <div class="grid__item row-span-3">:</div>
+        <input type="text" class="grid__item spinner center" data-id="5" value="59">
+        <input type="text" name="duration-hours" class="grid__item spinner center" id="dur-hours" data-id="3" value="00">
+        <input type="text" name="duration-minutes" class="grid__item spinner center" id="dur-minutes" data-id="4" value="30">
+        <input type="text" name="duration-seconds" class="grid__item spinner center" id="dur-seconds" data-id="5" value="00">
+        <input type="text" class="grid__item spinner center" data-id="3" value="01">
+        <input type="text" class="grid__item spinner center" data-id="4" value="31">
+        <input type="text" class="grid__item spinner center" data-id="5" value="01">
       </div>
     </div>
     
-    <div class="flex_col center_content collapse_container">
-      <div class="grid_header_cardio">
-        <div class="grid_item">Distance</div>
-        <div class="grid_item collapse_controller">
+    <div class="col gap-sm collapse-container">
+      <div class="grid grid--cardio-header">
+        <div class="grid__item">Distance</div>
+        <div class="grid__item grid__item--center collapse-controller">
           <div class="distance" id="distance">0.0</div>
-          <div class="distance_unit">mi</div>
+          <div class="distance-unit">mi</div>
         </div>
       </div>
-      <div class="grid_distance collapse hide">
-        <input type="text" class="grid_item spinner right" data-id="6" value="99">
-        <div class="grid_item row_span_3">.</div>
-        <input type="text" class="grid_item spinner" data-id="7" value="99">
-        <div class="grid_item row_span_3">mi</div>
-        <input type="text" name="distance_integer" class="grid_item spinner right" id="dist_int" data-id="6" value="0">
-        <input type="text" name="distance_decimal" class="grid_item spinner" id="dist_dec" data-id="7" value="00">
-        <input type="text" class="grid_item spinner right" data-id="6" value="1">
-        <input type="text" class="grid_item spinner" data-id="7" value="01">
+      <div class="grid grid--small grid--rows-small grid--cardio-distance collapse hide">
+        <input type="text" class="grid__item spinner right" data-id="6" value="99">
+        <div class="grid__item row-span-3">.</div>
+        <input type="text" class="grid__item spinner" data-id="7" value="99">
+        <div class="grid__item row-span-3">mi</div>
+        <input type="text" name="distance-integer" class="grid__item spinner right" id="dist-int" data-id="6" value="0">
+        <input type="text" name="distance-decimal" class="grid__item spinner" id="dist-dec" data-id="7" value="00">
+        <input type="text" class="grid__item spinner right" data-id="6" value="1">
+        <input type="text" class="grid__item spinner" data-id="7" value="01">
       </div>
     </div>
-    <div><button class="controls" type="submit" id="save_cardio_session">Save Cardio Session</button></div>
+    <div class="col col-center"><button class="btn m-top-1" type="submit" id="save-cardio-session">Save Cardio Session</button></div>
   </div>
 </div>

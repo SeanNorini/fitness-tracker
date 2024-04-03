@@ -1,0 +1,173 @@
+:root {
+  --primary-color: #120707;
+  --secondary-color: #080707;
+  --tertiary-color: #202020;
+  --highlight-color: #85383c70;
+  --primary-background: #0c0c0c;
+  --secondary-background: #000000;
+  --blue-background: #1f538d;
+  --primary-font: #f5f5f5;
+  --secondary-font: #8d8d8d;
+  --blue-font: #6884ff;
+  --red-font: #ff004c;
+  --green-font: #28a745;
+  --bold: 700;
+  --font-size-sm: 1rem;
+  --font-size-md: 1.2rem;
+  --hover-border: 2px solid #9bd4e0;
+  --text-shadow: 1px 0 8px rgb(0, 0, 0);
+  --box-shadow: 3px 3px 10px 3px rgba(0, 0, 0, .5);
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+  font-size: 2.5rem;
+}
+
+.tooltip:hover + #workout-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+#workout-tooltip {
+  visibility: hidden;
+  max-width: 15rem;
+  width: 100%;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  transition: opacity 0.3s;
+  transform: translateX(-75%);
+}
+
+#popup-message {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--secondary-color);
+  border: 2px solid var(--highlight-color);
+  border-radius: 1rem;
+  font-size: 3rem;
+  padding: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: none;
+}
+
+#rest-timer-popup, #daily-log-popup, #add-log-popup {
+  position: fixed;
+  display: none;
+  top: 0;
+  padding: 0.5rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+  min-width: 25rem;
+  min-height: 10rem;
+  border-radius: 0.3rem;
+  overflow-y: visible;
+  max-height: 60%;
+  margin-top: 20rem;
+}
+
+#rest-timer {
+  font-size: 6rem;
+  margin-top: -2.5rem;
+  height: 100%;
+}
+
+#rest-timer-popup .close-popup-container {
+  top: -3.6rem;
+}
+
+.close-popup-container {
+  position: relative;
+  left: 0.5rem;
+  cursor: pointer;
+}
+
+.close-popup-container span {
+  background-color: var(--primary-font);
+  color: var(--secondary-color);
+  border-radius: 0.3rem;
+}
+
+#message {
+  min-height: 15rem;
+}
+
+#message:not(:last-child) {
+  display: none;
+}
+
+.dark-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 2;
+}
+
+.spinner {
+  cursor: grab;
+}
+
+.grabbing {
+  cursor: grabbing !important;
+}
+
+body.grabbing .spinner {
+  cursor: grabbing;
+}
+
+.delete-set {
+  color: var(--red-font);
+}
+
+.add-set {
+  color: var(--green-font);
+}
+
+.delete-set:hover, .add-set:hover {
+  cursor: pointer;
+}
+
+.delete-set {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.exercise:has(.set + .set) .delete-set {
+  visibility: visible;
+  pointer-events: all;
+}
+
+.exercise-name {
+  font-size: 1.6rem;
+  font-weight: bolder;
+  margin: 0 0 0.25rem;
+  gap: 1rem;
+  cursor: all-scroll;
+}
+
+.collapse {
+  max-height: 10rem;
+  transition: max-height 1.5s ease;
+  overflow: hidden;
+}
+
+.collapse.hide {
+  max-height: 0 !important;
+  padding: 0;
+}
+
+
+
+/*# sourceMappingURL=index.css.map */

@@ -1,0 +1,91 @@
+@import "variables.scss";
+@import "mixins.scss";
+
+.calendar {
+
+  tr:not(:first-child) {
+    display: flex;
+    flex-direction: row;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+  }
+
+  tr:last-child {
+    border-bottom: 1px solid #ccc;
+  }
+
+  tr {
+    display: flex;
+    width: 100%;
+  }
+
+  span#nav-next:hover,
+  span#nav-prev:hover {
+    @include hover;
+  }
+
+  button {
+    font-size: 1rem;
+    min-width: 10rem;
+    margin: 0;
+  }
+
+  span#nav-next,
+  span#nav-prev {
+    font-size: 2rem;
+    background-color: var(--tertiary-color);
+    border: 2px solid var(--highlight-color);
+    border-radius: 1rem;
+  }
+
+  table {
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    min-width: 40rem;
+
+    th:not(.month) {
+      border-right: 1px solid #ccc;
+      width: 100%;
+    }
+
+    tbody {
+      width: 100%;
+    }
+
+    td {
+      border-right: 1px solid #ccc;
+      text-align: center;
+      width: 100%;
+      min-height: 5rem;
+    }
+
+    td div:not(:first-child) {
+      display: flex;
+    }
+  }
+}
+
+.day:hover {
+  background-color: var(--tertiary-color);
+  cursor: pointer;
+  transition: all .3s ease-in;
+}
+
+#close:hover, #add-log-close:hover, .workout-name {
+  cursor: pointer;
+}
+
+#log-popup-content, #add-log-content{
+    overflow-y: auto;
+    margin-top: -1.8rem;
+}
+
+#add-log-popup .checkbox-wrapper-44{
+    visibility: hidden !important;
+}
+
+.workout:not(:last-child) .add-workout-log,
+.workout:not(:last-child) .workout-info.hidden + div{
+  display: none ;
+}

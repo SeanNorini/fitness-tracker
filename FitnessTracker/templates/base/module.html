@@ -1,12 +1,12 @@
 {% load static %}
 
-<div class="module" id="{{ module }}">
-  <div class="module-img">
+<div class="module col col-3 col-center border bg-primary hover p" id="{{ module }}">
+  <div>
     {% with 'img/'|add:module|add:'.jpg' as module_image %}
-    <img src="{% static module_image %}">
+    <img alt="{{ module }}" src="{% static module_image %}">
     {% endwith %}
   </div>
-  <div class="module-name">
+  <div>
     {{ module }}
   </div>
 </div>

@@ -36,7 +36,7 @@
 .checkbox-wrapper-44 .toggleButton input + div svg {
   fill: none;
   stroke-width: 3.6;
-  stroke: #000;
+  stroke: #333333;
   stroke-linecap: round;
   stroke-linejoin: round;
   width: 44px;
@@ -81,7 +81,7 @@
   stroke-dashoffset: 162.6;
   stroke-dasharray: 0 162.6 28 134.6;
   transition: all 0.4s ease 0.2s;
-  stroke: var(--green_font);
+  stroke: #28a745;
 }
 
 .checkbox-wrapper-44 .toggleButton input:checked + div:before {

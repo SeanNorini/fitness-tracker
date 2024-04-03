@@ -77,9 +77,13 @@ class LogHTMLCalendar(HTMLCalendar):
         else:
             day_format = f'<td class="{self.cssclasses[weekday]} day" data-day="{day}"><div>{day}</div>'
             if workout_log is not None:
-                day_format += '<div><span class="material-symbols-outlined exercise">exercise</span></div>'
+                day_format += '<div><span class="material-symbols-outlined exercise-icon text-xl">exercise</span></div>'
             if weight_log is not None:
-                day_format += '<div><span class="material-symbols-outlined monitor_weight">monitor_weight</span></div>'
+                day_format += (
+                    f'<div><span class="material-symbols-outlined monitor_weight-icon text-xl">'
+                    f"monitor_weight</span></div>"
+                )
+
             day_format += "</td>"
         return day_format
 
@@ -90,15 +94,20 @@ class LogHTMLCalendar(HTMLCalendar):
         # Add a CSS class to the table
         cal = cal.replace(
             '<table border="0" cellpadding="0" cellspacing="0" class="month">',
-            '<table class="calendar month">',
+            '<table class="month">',
+        )
+
+        cal = cal.replace(
+            f'class="month"',
+            f"class='row row-justify-space-between row-align-center full-width month'",
         )
 
         current_month = month_name[month]
         cal = cal.replace(
             f"{current_month} {year}",
-            f'<div><span class="material-symbols-outlined" id="nav_prev">navigate_before</span></div> \
-            <div id="month_name" data-month={month} data-year={year}>{current_month} {year}</div> \
-            <div><span class="material-symbols-outlined" id="nav_next">navigate_next</span></div>',
+            f'<div><span class="material-symbols-outlined text-lg" id="nav-prev">navigate_before</span></div> \
+            <div id="month-name" data-month={month} data-year={year}>{current_month} {year}</div> \
+            <div><span class="material-symbols-outlined text-lg" id="nav-next">navigate_next</span></div>',
         )
 
         return cal

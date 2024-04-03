@@ -99,35 +99,37 @@ class FetchNutritionSummaryAPIView(APIView):
             user=request.user,
             date__range=(timezone.now() - timedelta(days=6), timezone.now()),
         )
+        if logs:
+            total_carbs = 0
+            total_protein = 0
+            total_fat = 0
+            total_calories = 0
+            num_logs = 0
+            daily_calories_list = []
+            for log in logs:
+                num_logs += 1
+                daily_calories = 0
 
-        total_carbs = 0
-        total_protein = 0
-        total_fat = 0
-        total_calories = 0
-        num_logs = 0
-        daily_calories_list = []
-        for log in logs:
-            num_logs += 1
-            daily_calories = 0
+                for food in log.food_items.all():
+                    total_calories += food.calories
+                    daily_calories += food.calories
+                    total_protein += food.protein
+                    total_fat += food.fat
+                    total_carbs += food.carbs
+                daily_calories_list.append((log.date, daily_calories))
 
-            for food in log.food_items.all():
-                total_calories += food.calories
-                daily_calories += food.calories
-                total_protein += food.protein
-                total_fat += food.fat
-                total_carbs += food.carbs
-            daily_calories_list.append((log.date, daily_calories))
+            user_summary = {
+                "avg_protein": total_protein / num_logs,
+                "avg_carbs": total_carbs / num_logs,
+                "avg_calories": total_calories // num_logs,
+                "avg_fat": total_fat / num_logs,
+                "pie_chart": pie_chart(total_protein, total_carbs, total_fat),
+                "bar_chart": bar_chart(daily_calories_list),
+            }
 
-        user_summary = {
-            "avg_protein": total_protein / num_logs,
-            "avg_carbs": total_carbs / num_logs,
-            "avg_calories": total_calories // num_logs,
-            "avg_fat": total_fat / num_logs,
-            "pie_chart": pie_chart(total_protein, total_carbs, total_fat),
-            "bar_chart": bar_chart(daily_calories_list),
-        }
-
-        return Response(data=user_summary, status=status.HTTP_200_OK)
+            return Response(data=user_summary, status=status.HTTP_200_OK)
+        else:
+            return Response(data={}, status=status.HTTP_200_OK)
 
 
 def pie_chart(total_protein, total_carbs, total_fat):

@@ -1,0 +1,26 @@
+<div class="col border p-0_2 summary">
+  <div>
+    <div class="text-center header">{{ header }}</div>
+    <hr>
+    <div class="row row-nowrap">
+      <div class="col border-right">Distance:</div>
+      <div class="col col-center distance">{{ summary.total_distance|floatformat:"2"|default:"0.0" }} {{ user.distance_unit }}</div>
+    </div>
+    <hr>
+    <div class="row row-nowrap">
+      <div class="col border-right">Duration:</div>
+      <div class="col col-center duration">{{ summary.duration|default:"N/A" }}</div>
+    </div>
+    <hr>
+    <div class="row row-nowrap">
+      <div class="col border-right">Pace:</div>
+      <div class="col col-center pace">{{ summary.pace|default:"N/A" }}</div>
+    </div>
+    <hr>
+    <div class="row row-nowrap">
+      <div class="col border-right">Calories Burned:</div>
+      <div class="col col-center calories">{{ summary.calories_burned|default:"0" }}</div>
+    </div>
+  </div>
+</div>
+ 

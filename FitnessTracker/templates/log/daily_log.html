@@ -1,30 +1,43 @@
-<div class="log_popup_header">
-  <div id="log_popup_date">{{ month_name }} {{ day }}, {{ year }}</div>
+<div class="log-popup-header row row-justify-space-between">
+  <div id="log-popup-date">{{ month_name }} {{ day }}, {{ year }}</div>
 </div>
-<div class="calendar daily_log_container">
-  <div id="weight_log_container">
-    <div><span class="material-symbols-outlined">monitor_weight</span></div>
-    <div id="weight_log">
-      {% include 'log/weight_log.html' %}
+<div class="calendar col gap-lg daily-log-container">
+  <div class="col gap-lg" id="weight-log-container">
+    <div class="row gap-lg">
+      <div><span class="material-symbols-outlined">monitor_weight</span></div>
+      <div id="weight-log" class="col gap-lg">
+        {% include 'log/weight_log.html' %}
+      </div>
     </div>
+    <div class="row row-center gap-lg">
+      {% if weight_log %}
+        <button type="button" class="btn add-weight-log">Edit Weight Entry</button>
+        <button type="button" class="btn delete-weight-log">Delete Weight Entry</button>
+      {% else %}
+        <button type="button" class="btn add-weight-log">Add Weight Entry</button>
+        <button type="button" class="btn delete-weight-log hidden">Delete Weight Entry</button>
+      {% endif %}
+    </div>
+    
   </div>
 
+  <hr>
 
   
-  <div id="workout_log_container">
+  <div class="row gap-lg" id="workout-log-container">
     <div><span class="material-symbols-outlined">exercise</span></div>
-    <div id="workout_log_info">
+    <div id="workout-log-info" class="row gap-lg">
       {% if workout_logs %}
         {% for workout_log in workout_logs %}
           {% include 'log/workout_log.html' %}
         {% endfor %}
       {% endif %}
-      <div class="workout_log_placeholder{% if workout_logs %} hidden{% endif %}">
+      <div class="workout-log-placeholder{% if workout_logs %} hidden{% endif %}">
         No workout entries found.
       </div>
     </div>
   </div>
 
-  <button type="button" class="button add_workout_log center">Add Workout Entry</button>
+  <button type="button" class="btn add-workout-log">Add Workout Entry</button>
 </div> 
   

@@ -1,16 +1,18 @@
-{{ calendar|safe }}
-<div id="daily_log_popup" class="log_popup">
-  <div class="close_popup_container">
+<div class="calendar">
+  {{ calendar|safe }}
+</div>
+<div id="daily-log-popup" class="log-popup col col-sm border bg-secondary col-justify-center">
+  <div class="close-popup-container row row-justify-end">
     <div class="outline">Close</div>
-    <span class="material-symbols-outlined close_popup">close</span>
+    <span class="material-symbols-outlined close-popup">close</span>
   </div>
-  <div id="log_popup_content"></div>
+  <div id="log-popup-content" class="col gap-lg"></div>
 </div>
 
-<div id="add_log_popup">
-  <div class="close_popup_container">
+<div id="add-log-popup" class="col col-sm border bg-secondary col-justify-center">
+  <div class="close-popup-container row row-justify-end">
     <div class="outline">Close</div>
-    <span class="material-symbols-outlined close_popup">close</span>
+    <span class="material-symbols-outlined close-popup">close</span>
   </div>
-  <div id="add_log_content"></div>
+  <div id="add-log-content"></div>
 </div>

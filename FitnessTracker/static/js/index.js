@@ -22,7 +22,10 @@ class PageManager {
       this.loadModule("user/settings");
     } else if (startingURL.includes("log")) {
       this.loadModule("log");
-    } else if (startingURL.includes("workout")) {
+    } else if (
+      startingURL.includes("workout") ||
+      startingURL === `${this.baseURL}/`
+    ) {
       this.loadModule("workout");
     } else if (startingURL.includes("cardio")) {
       this.loadModule("cardio");
@@ -80,46 +83,36 @@ class PageManager {
 
   loadNutritionModule() {
     this.updateModuleWindow("Fitness Tracker - Nutrition", "/nutrition");
-    this.loadModuleScript(
-      "/static/nutrition_tracker/js/nutrition.js",
-      "nutritionManager",
-    );
-    this.loadModuleStylesheets(["/static/nutrition_tracker/css/nutrition.css"]);
+    this.loadModuleScript("/static/js/nutrition.js", "nutritionManager");
+    this.loadModuleStylesheets(["/static/css/nutrition.css"]);
   }
 
   loadWorkoutModule() {
     this.updateModuleWindow("Fitness Tracker - Workout", "/workout");
-    this.loadModuleScript("/static/workout/js/workout.js", "workoutManager");
+    this.loadModuleScript("/static/js/workout.js", "workoutManager");
   }
 
   loadStatsModule() {
     this.updateModuleWindow("Fitness Tracker - Stats", "/stats");
-    this.loadModuleScript("/static/workout/js/stats.js", "statsManager");
-    this.loadModuleStylesheets([
-      "/static/workout/css/stats.css",
-      "/static/css/button_group.css",
-    ]);
+    this.loadModuleScript("/static/js/stats.js", "statsManager");
+    this.loadModuleStylesheets(["/static/css/button_group.css"]);
   }
 
   loadSettingsModule() {
     this.updateModuleWindow("Fitness Tracker - Settings", "/user/settings");
-    this.loadModuleScript("/static/users/js/settings.js", "settingsManager");
-    this.loadModuleStylesheets([
-      "/static/css/button_group.css",
-      "/static/users/css/form.css",
-      "/static/users/css/settings.css",
-    ]);
+    this.loadModuleScript("/static/js/settings.js", "settingsManager");
+    this.loadModuleStylesheets(["/static/css/button_group.css"]);
   }
 
   loadLogModule() {
     this.updateModuleWindow("Fitness Tracker - Log", "/log");
-    this.loadModuleScript("/static/log/js/log.js", "logManager");
-    this.loadModuleStylesheets(["/static/log/css/log.css"]);
+    this.loadModuleScript("/static/js/log.js", "logManager");
+    this.loadModuleStylesheets(["/static/css/log.css"]);
   }
 
   loadCardioModule() {
     this.updateModuleWindow("Fitness Tracker - Cardio", "/cardio");
-    this.loadModuleScript("/static/cardio/js/cardio.js", "cardioManager");
+    this.loadModuleScript("/static/js/cardio.js", "cardioManager");
     this.loadModuleStylesheets(["/static/css/button_group.css"]);
   }
 
@@ -224,7 +217,7 @@ class PageManager {
       document.removeEventListener("click", closePopupOutsideHandler);
     };
 
-    const closePopupBtn = popupElement.querySelector(".close_popup_container");
+    const closePopupBtn = popupElement.querySelector(".close-popup-container");
     closePopupBtn.addEventListener("click", closePopupHandler, { once: true });
 
     const closePopupOutsideHandler = (e) => {
@@ -247,19 +240,19 @@ class PageManager {
   disablePage() {
     // Disable pointer events on page and add dark overlay
     document.body.classList.add("disabled");
-    this.overlay.classList.add("dark_overlay");
+    this.overlay.classList.add("dark-overlay");
   }
 
   enablePage() {
     // Enable pointer events on page
     document.body.classList.remove("disabled");
-    this.overlay.classList.remove("dark_overlay");
+    this.overlay.classList.remove("dark-overlay");
   }
 
-  buttonGroupToggle(btnElement) {
+  btnGroupToggle(btnElement) {
     const group = btnElement.getAttribute("data-group");
     const btnGroup = document.querySelectorAll(
-      `.button_back[data-group="${group}"]`,
+      `.btn-back[data-group="${group}"]`,
     );
 
     if (!btnElement.classList.contains("active")) {
@@ -269,13 +262,13 @@ class PageManager {
         }
       });
 
-      btnElement.classList.toggle("active");
+      btnElement.classList.add("active");
     }
   }
-  addButtonGroupToggleListeners(btnGroupHandler) {
-    document.querySelectorAll(".button_back").forEach((groupBtn) => {
+  addBtnGroupToggleListeners(btnGroupHandler) {
+    document.querySelectorAll(".btn-back").forEach((groupBtn) => {
       groupBtn.addEventListener("click", (e) => {
-        pageManager.buttonGroupToggle(groupBtn);
+        pageManager.btnGroupToggle(groupBtn);
         btnGroupHandler(e);
       });
     });
@@ -306,7 +299,7 @@ class PageManager {
 
   showTempPopupMessage(message, duration) {
     // Display popup message
-    const popupElement = document.getElementById("temp_popup");
+    const popupElement = document.getElementById("popup-message");
     popupElement.textContent = message;
     popupElement.style.display = "flex";
 
@@ -353,8 +346,8 @@ class PageManager {
 
 class Collapsible {
   constructor() {
-    this.containerClass = ".collapse_container";
-    this.controllerClass = ".collapse_controller";
+    this.containerClass = ".collapse-container";
+    this.controllerClass = ".collapse-controller";
     this.collapseClass = "collapse";
   }
 

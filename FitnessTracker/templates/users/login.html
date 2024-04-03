@@ -2,18 +2,16 @@
 {% load static %}
 
 {% block head %}
-<link rel="stylesheet" href="{% static 'users/css/login.css' %}">
 {% endblock %}
 
 {% block title %}{{block.super}} - Login{% endblock %}
 
 {% block content %}
-<div class="inner_container">
-  <h1>Login</h1>
-  <form class="form login" id="login_form" action="{% url 'login' %}" method="POST">
+  <form class="col col-sm bg-primary border m-auto gap-lg p" id="login-form" action="{% url 'login' %}" method="POST">
+    <div class="text-center"><h1>Login</h1></div>
     {% csrf_token %}
     {% if form.errors %}
-      <div id="form_error" class="errorlist">
+      <div id="form-error" class="errorlist">
         {% if form.non_field_errors %}
             <ul>
                 {% for error in form.non_field_errors %}
@@ -23,32 +21,29 @@
         {% endif %}
       </div>
     {% endif %}
-    <div class="username">
+    <div class="col">
       {{ form.username.label }}
       {{ form.username }}
       {{ form.username.errors }}
     </div>
-    <div class="password">
+    <div class="col">
       {{ form.password.label }}
       {{ form.password }}
       {{ form.password.errors }}
     </div>
-
-    <div class="remember_me row">
+    <div class="row gap-sm">
       {{ form.remember_me }}
       {{ form.remember_me.errors }}
-
+  
       Remember Me
     </div>
-    <button class="button" name="login" type="submit">Login</button>
-    <div class="bold_link row">
+    <button class="btn" name="login" id="login" type="submit">Login</button>
+    <div class="row row-justify-center gap-md">
       Need an account?
       <a id="registration" href="{% url 'registration' %}" data-text="Sign Up!">Sign Up!</a>
     </div>
-    <div class="bold_link row recovery">
-      <small><a id="reset_password" href="{% url 'reset_password' %}" data-test="Forgot password?">Forgot password?</a></small>
+    <div class="row row-justify-center">
+      <small><a id="reset-password" href="{% url 'reset_password' %}" data-text="Forgot password?">Forgot password?</a></small>
     </div>
-
   </form>
-</div>
 {% endblock %}

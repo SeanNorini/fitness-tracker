@@ -1,6 +1,8 @@
 {% load static %}
-<form id="registration_form" action="{% url 'registration' %}" method="POST">
-  <h1 id="header">Register</h1>
+
+
+<form id="registration-form" class="col col-md border bg-primary gap-lg m-auto p" action="{% url 'registration' %}" method="POST">
+  <h1 class="text-center">Register</h1>
   {% csrf_token %}
   <div class="col">
     {{ form.username.label_tag }}
@@ -12,12 +14,10 @@
     {{ form.password }}
     {{ form.password.errors }}
     {% if not form.errors%}
-    <ul>
-      <small>
+    <ul class="text-sm">
       <li>Password must be at least 8 characters long</li>
       <li>Password cannot be entirely numeric</li>
       <li>Password cannot be too common</li>
-      </small>
     </ul>
     {% endif %}
   </div>
@@ -31,22 +31,22 @@
     {{ form.email }}
     {{ form.email.errors }}
   </div>
-  <div id="optional">*Optional fields below, values will be used for calculations.</div>
+  <div><br>*Optional fields below, values will be used for calculations.</div>
   <div class="row" id="name">
     <div class="col">
       {{ form.first_name.label_tag }}
       {{ form.first_name }}
       {{ form.first_name.errors }}
     </div>
-    <div>
+    <div class="col justify-end">
       {{ form.last_name }}
       {{ form.last_name.errors }}
     </div>
   </div>
-  <div class="row grow">
+  <div class="row">
     <div>
-      {{ form2.unit_of_measurement.label_tag }}
-      {{ form2.unit_of_measurement }}
+      {{ form2.system_of_measurement.label_tag }}
+      {{ form2.system_of_measurement }}
     </div>
     <div id="gender">
       {{ form2.gender.label_tag }}
@@ -60,14 +60,14 @@
       {{ form2.height.errors }}
     </div>
     <div class="col">
-      {{ form2.weight.label_tag }}
-      {{ form2.weight }}
-      {{ form2.weight.errors }}
+      {{ form2.body_weight.label_tag }}
+      {{ form2.body_weight }}
+      {{ form2.body_weight.errors }}
     </div>
     <div class="col">
-      {{ form2.bodyfat.label_tag }}
-      {{ form2.bodyfat }}
-      {{ form2.bodyfat.errors }}
+      {{ form2.body_fat.label_tag }}
+      {{ form2.body_fat }}
+      {{ form2.body_fat.errors }}
     </div>
     <div class="col">
       {{ form2.age.label_tag }}
@@ -75,11 +75,12 @@
       {{ form2.age.errors }}
     </div>
   </div>
-  <div class="submit_form row">
-    <button class="button" name="register" type="submit">Complete Registration</button>
-  </div>
-  <div class="bold_link">
-    Already have an account?
-    <a href="{% url 'login' %}" id="login" data-text="Log in!">Log in!</a>
+  <div class="col gap-lg">
+    <button class="btn" name="register" type="submit">Complete Registration</button>
+    <div class="col text-center gap-sm">
+      Already have an account?
+      <a id="login" href="{% url 'login' %}" data-text="Log in!">Log in!</a>
+    </div>
   </div>
 </form>
+<script type="text/javascript" src="{% static '/js/registration.js' %}"></script>

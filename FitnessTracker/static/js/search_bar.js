@@ -6,16 +6,16 @@ class SearchBar {
     this.activeTab = "all";
   }
   initialize() {
-    this.searchBar = document.querySelector(".search_bar");
+    this.searchBar = document.querySelector(".search-bar");
     this.searchInput = this.searchBar.querySelector("input");
-    this.clearSearchBtn = this.searchBar.querySelector(".delete_search");
+    this.clearSearchBtn = this.searchBar.querySelector(".delete-search");
     this.searchResultList = document.querySelector("#items");
     const debouncedSearch = this.debounce(this.inputHandler, 300);
     this.searchInput.addEventListener("input", debouncedSearch);
     this.clearSearchBtn.addEventListener("click", (e) => {
       this.searchInput.value = "";
       this.searchResultList.innerHTML = "";
-      const searchResultContainer = document.querySelector(".item_details");
+      const searchResultContainer = document.getElementById("item-details");
       searchResultContainer.classList.add("hidden");
     });
 
@@ -47,7 +47,7 @@ class SearchBar {
     const query = this.searchInput.value;
     if (query.length >= this.minLengthQuery) {
       this.fetchSearchRequest(query);
-      const searchResultContainer = document.querySelector(".item_details");
+      const searchResultContainer = document.getElementById("item-details");
       searchResultContainer.classList.remove("hidden");
     }
   };
@@ -86,7 +86,13 @@ class SearchBar {
 
     this.searchResults[key].forEach((result) => {
       const resultContainer = document.createElement("div");
-      resultContainer.classList.add("result_container");
+      resultContainer.classList.add(
+        "row",
+        "row-align-center",
+        "px-1",
+        "radius",
+        "item",
+      );
 
       const itemImg = document.createElement("img");
       itemImg.src = result["photo"]["thumb"];
@@ -104,13 +110,20 @@ class SearchBar {
 
       if (key === "branded") {
         const brandContainer = document.createElement("div");
+        brandContainer.classList.add(
+          "row",
+          "row-align-center",
+          "row-justify-space-between",
+          "full-width",
+        );
+
         const resultBrand = document.createElement("div");
-        resultBrand.classList.add("brand_name");
+        resultBrand.classList.add("brand-name", "text-sm", "text-secondary");
         resultBrand.textContent = result["brand_name"];
 
         const resultCalories = document.createElement("div");
-        resultCalories.classList.add("brand_calories");
-        resultCalories.textContent = result["nf_calories"];
+        resultCalories.classList.add("brand-calories", "text-green", "text-sm");
+        resultCalories.textContent = result["nf_calories"] + " cal";
 
         brandContainer.appendChild(resultBrand);
         brandContainer.appendChild(resultCalories);
@@ -130,7 +143,7 @@ class SearchBar {
   }
 
   fetchItemDetails = (e) => {
-    const item = e.target.closest(".result_container");
+    const item = e.target.closest(".item");
     if (!item) {
       return;
     }
@@ -155,7 +168,7 @@ class SearchBar {
   };
 
   populateFoodDetails(food) {
-    const imgContainer = document.getElementById("detail_img");
+    const imgContainer = document.getElementById("detail-img");
     const imgElement = document.createElement("img");
     if (food["photo"]["highres"] === null) {
       imgContainer.innerHTML = "No Image";
@@ -167,25 +180,25 @@ class SearchBar {
       imgContainer.appendChild(imgElement);
     }
 
-    const nameContainer = document.getElementById("detail_name");
+    const nameContainer = document.getElementById("detail-name");
     nameContainer.textContent = food["food_name"]
       .split(" ")
       .map((word) => word[0].toUpperCase() + word.slice(1))
       .join(" ");
 
-    const servingsContainer = document.getElementById("detail_servings");
+    const servingsContainer = document.getElementById("detail-servings");
     servingsContainer.textContent = `${food["serving_qty"]} ${food["serving_unit"]}`;
 
-    const caloriesContainer = document.getElementById("detail_calories");
+    const caloriesContainer = document.getElementById("detail-calories");
     caloriesContainer.textContent = food["nf_calories"];
 
-    const proteinContainer = document.getElementById("detail_protein");
+    const proteinContainer = document.getElementById("detail-protein");
     proteinContainer.textContent = food["nf_protein"];
 
-    const carbsContainer = document.getElementById("detail_carbs");
+    const carbsContainer = document.getElementById("detail-carbs");
     carbsContainer.textContent = food["nf_total_carbohydrate"];
 
-    const fatContainer = document.getElementById("detail_fat");
+    const fatContainer = document.getElementById("detail-fat");
     fatContainer.textContent = food["nf_total_fat"];
   }
 

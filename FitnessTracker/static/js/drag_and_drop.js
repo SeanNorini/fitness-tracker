@@ -1,8 +1,8 @@
 class DragAndDrop {
   initialize(marginOffset = null) {
-    this.parentContainer = document.querySelector(".drag_and_drop_container");
-    this.draggableSelector = ".drag_and_drop_element";
-    this.handlebarClass = "drag_and_drop_handlebar";
+    this.parentContainer = document.querySelector(".drag-and-drop-container");
+    this.draggableSelector = ".drag-and-drop-element";
+    this.handlebarClass = "drag-and-drop-handlebar";
     this.parentContainer.addEventListener("mousedown", this.dragStart);
     this.marginOffset = marginOffset;
     this.cloneElement = null;
@@ -13,6 +13,7 @@ class DragAndDrop {
     if (this.cloneElement) {
       return;
     }
+    document.body.style.userSelect = "none";
 
     // Get nearest draggable element
     this.dragStartElement = e.target.closest(this.draggableSelector);
@@ -82,6 +83,7 @@ class DragAndDrop {
     this.dragStartElement.firstElementChild.classList.remove("dragging");
     this.cloneElement.remove();
     this.cloneElement = null;
+    document.body.style.userSelect = "auto";
   };
 
   removeDragListeners() {

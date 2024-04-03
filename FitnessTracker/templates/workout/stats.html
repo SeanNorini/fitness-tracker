@@ -1,48 +1,48 @@
 
 <input type="hidden" name="view" id="view" value="stats" />
-<form id="stats_form">
+<form id="stats_form" class="col gap-md">
   {% csrf_token %}
-  <div class="button_group_round">
-    <button type="button" class="button_back" id="all_time" value="60" data-group="1">
-      <span class="button_front">
+  <div class="btn-group-round">
+    <button type="button" class="btn-back" id="all-time" value="60" data-group="1">
+      <span class="btn-front">
         All Time
       </span>
     </button>
-    <button type="button" class="button_back" id="year" value="12" data-group="1">
-      <span class="button_front">
+    <button type="button" class="btn-back" id="year" value="12" data-group="1">
+      <span class="btn-front">
         Year
       </span>
     </button>
-    <button type="button" class="button_back" id="6_months" value="6" data-group="1">
-      <span class="button_front">
+    <button type="button" class="btn-back" id="6-months" value="6" data-group="1">
+      <span class="btn-front">
         6 Months
       </span>
     </button>
-    <button type="button" class="button_back" id="3_months" value="3" data-group="1">
-      <span class="button_front">
+    <button type="button" class="btn-back" id="3-months" value="3" data-group="1">
+      <span class="btn-front">
         3 Months
       </span>
     </button>
-    <button type="button" class="button_back active" id="1_month" value="1" data-group="1">
-      <span class="button_front">
+    <button type="button" class="btn-back active" id="1-month" value="1" data-group="1">
+      <span class="btn-front">
         Month
       </span>
     </button>
   </div>
-  <div class="button_group_round">
-    <button type="button" class="button_back active" id="bodyweight" value="bodyweight" data-group="2">
-      <span class="button_front">
-        Bodyweight
+  <div class="btn-group-round">
+    <button type="button" class="btn-back active" id="body-weight" value="body-weight" data-group="2">
+      <span class="btn-front">
+        Body Weight
       </span>
     </button>
-    <button type="button" class="button_back" id="weightlifting" value="weightlifting" data-group="2">
-      <span class="button_front">
+    <button type="button" class="btn-back" id="weightlifting" value="weightlifting" data-group="2">
+      <span class="btn-front">
         Weightlifting
       </span>
     </button>
   </div>
-  <div class="select_container hidden">
-    <select class="select_exercise">
+  <div class="col col-center">
+    <select id="select-exercise" class="border radius-2 bg-secondary text-md text-primary px hidden">
       {% for exercise in exercises %}
         <option>{{ exercise }}</option>
       {% endfor %}

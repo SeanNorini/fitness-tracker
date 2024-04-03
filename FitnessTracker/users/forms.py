@@ -174,9 +174,10 @@ class UserBodyCompositionForm(forms.ModelForm):
             attrs={
                 "id": "height",
                 "placeholder": 70,
-                "class": "numbers",
+                "class": "input input--medium",
                 "min": 20,
                 "max": 270,
+                "step": 0.5,
             }
         ),
         validators=[MinValueValidator(20.0), MaxValueValidator(270.0)],
@@ -189,9 +190,10 @@ class UserBodyCompositionForm(forms.ModelForm):
             attrs={
                 "id": "body_weight",
                 "placeholder": 160,
-                "class": "numbers",
+                "class": "input input--medium",
                 "min": 30,
                 "max": 1000,
+                "step": 0.5,
             }
         ),
         validators=[MinValueValidator(30.0), MaxValueValidator(1000.0)],
@@ -204,9 +206,10 @@ class UserBodyCompositionForm(forms.ModelForm):
             attrs={
                 "id": "body_fat",
                 "placeholder": 20,
-                "class": "numbers",
+                "class": "input input--medium",
                 "min": 5,
                 "max": 60,
+                "step": 0.25,
             }
         ),
         validators=[MinValueValidator(5.0), MaxValueValidator(60.0)],
@@ -219,9 +222,10 @@ class UserBodyCompositionForm(forms.ModelForm):
             attrs={
                 "id": "age",
                 "placeholder": 30,
-                "class": "numbers",
+                "class": "input input--medium",
                 "min": 1,
                 "max": 120,
+                "step": 1,
             }
         ),
         validators=[MinValueValidator(1), MaxValueValidator(120)],

@@ -1,36 +1,35 @@
-<div id="message">Please select or create an exercise to get started.</div>
-<div class="exercise_container">
-  <div class="exercise_name row">
-    <div id="exercise_name">
-      <input type="hidden" id="exercise_pk" value="{{ exercise.pk }}">
+<div class="exercise col col-lg col-align-center border bg-secondary gap-md">
+  <div class="exercise-name row text-center">
+    <div id="exercise-name">
+      <input type="hidden" id="exercise-pk" value="{{ exercise.pk }}">
       {{ exercise.name }}
     </div>
   </div>
-  <div class="row max_rep">
+  <div class="row row-center gap-md max-rep">
     5-Rep Max:
-    <input type="number" class="round_float amount" id="five_rep_max" value="{{ exercise.five_rep_max }}">
+    <input type="number" class="round-float amount input-sm text-center" id="five-rep-max" value="{{ exercise.five_rep_max }}">
     {{ user.weight_unit }}
   </div>
-  <hr class="visible">
+  <hr>
   <div class="sets">
-    <div class="set">
-  <div>
-    <div>
-    <input type="number" class="weight" id="default_weight" step=".5" value="{{ exercise.default_weight }}">
-    </div>
-    <div>
-      Default {{ user.weight_unit }}
+    <div class="set row row-center gap-lg">
+      <div class="row gap-md">
+        <div>
+          <input type="number" class="weight input-sm text-center" id="default-weight" step=".5" value="{{ exercise.default_weight }}">
+        </div>
+        <div>
+          Default {{ user.weight_unit }}
+        </div>
+      </div>
+      <div class="row gap-md">
+        <div>
+          <input type="number" class="reps input-xs text-center" id="default-reps" value="{{ exercise.default_reps }}">
+        </div>
+        <div>
+          Default Reps
+        </div>
+      </div>
     </div>
   </div>
-  <div>
-    <div>
-    <input type="number" class="reps" id="default_reps" value="{{ exercise.default_reps }}">
-    </div>
-    <div>
-    Default Reps
-    </div>
-  </div>
-</div>
-  </div>
-  <hr class="visible">
+  <hr>
 </div>

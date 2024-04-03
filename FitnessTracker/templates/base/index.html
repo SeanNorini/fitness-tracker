@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block head %}
-  <link rel="stylesheet" href="{% static 'workout/css/index.css' %}">
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
   <link rel="stylesheet" href="{% static 'css/drag_and_drop.css' %}">
   <link rel="stylesheet" href="{% static 'css/animated_checkbox.css' %}">
   {% if css_file %}
@@ -17,12 +17,12 @@
 
 {% block content %}
   {% csrf_token %}
-  <div class="modules-container">
+  <div class="row gap-md">
     {% for module in modules %}
       {% include "base/module.html" %}
     {% endfor %}
   </div>
-  <div id="temp_popup"></div>
+  <div id="popup-message"></div>
   <div id="overlay"></div>
   <div id="content">
     {% if template_content%}

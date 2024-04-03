@@ -1,50 +1,59 @@
-<input type="hidden" id="show_rest_timer" value="{{ show_rest_timer }}">
-<input type="hidden" id="show_workout_timer" value="{{ show_workout_timer }}">
+<input type="hidden" id="show-rest-timer" value="{{ show_rest_timer }}">
+<input type="hidden" id="show-workout-timer" value="{{ show_workout_timer }}">
 
-<form class="form_container col" id="workout_form">
+<form class="col col-lg gap-lg" id="workout-form">
 {% csrf_token %}
-  <div class="controls_container row">
-      <div class="top_controls">
-        <input type="date" id="date">
-        <div class="select_container">
-          <select id="select_workout">
-            {% for workout_name in workouts %}
-              <option value="{{ workout_name }}" {% if workout.workout_name == workout_name %}selected{% endif %}>
-                {{ workout_name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <span class="material-symbols-outlined workout_tooltip">
-        help
+  <div class="row row-lg border radius-3 row-justify-space-between row-align-center p">
+    <div>
+      <label for="date" class="hidden">Select Date</label>
+      <input type="date" id="date">
+    </div>
+    <div class="row row-center row-nowrap">
+      <div class="col border radius-2 bg-tertiary p-0_2">
+        <label for="select-workout" class="hidden">Select Workout</label>
+        <select id="select-workout" class="border radius-2 bg-secondary text-md text-primary px">
+          {% for workout_name in workouts %}
+            <option value="{{ workout_name }}" {% if workout.workout_name == workout_name %}selected{% endif %}>
+              {{ workout_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <span class="material-symbols-outlined tooltip">
+          help
         </span>
-        <div id="workout_tooltip">To create or edit exercises, workouts, or your routine, go to settings.</div>
+        <div id="workout-tooltip" class="text-center bg-blue">To create or edit exercises, workouts, or your routine, go to settings.</div>
       </div>
     </div>
-
+  </div>
     
-    <div class="exercises drag_and_drop_container" id="workout_container">
-      {% include "workout/workout.html" %}
-    </div>
-    <div class="controls_container">
+  <div class="exercises drag-and-drop-container col col-lg col-center gap-lg" id="workout-container">
+    {% include "workout/workout.html" %}
+  </div>
+  <div class="row row-lg border radius-3 row-center p gap-xl">
+
+    <div class="row row-align-center gap-md">
       <div>
-        <div class="select_container">
-          <select class="exercise" id="select_exercise">
+        <div class="col border radius-2 bg-tertiary p-0_2">
+          <label for="select-exercise" class="hidden">Select Exercise</label>
+          <select id="select-exercise" class="border radius-2 bg-secondary text-md text-primary px">
             {% for exercise in exercises %}
               <option>{{ exercise }}</option>
             {% endfor %}
           </select>
         </div>
       </div>
-        
+
       <div>
-        <button type="button" class="add_exercise controls" id="add_exercise" value="add exercise">Add Exercise</button>
-      </div>
-        
-      <div>
-        <button type="button" class="controls" id="save_workout" value="save workout">Save Workout Session</button>
+        <button type="button" class="btn" id="add-exercise">Add Exercise</button>
       </div>
     </div>
+
+    <div>
+      <button type="button" class="btn" id="save-workout">Save Workout</button>
+    </div>
+  </div>
 </form>
-<div id="rest_timer_popup">
+<div id="rest-timer-popup" class="col col-sm border bg-primary col-justify-center">
   {% include 'workout/rest_timer.html' %}
 </div>

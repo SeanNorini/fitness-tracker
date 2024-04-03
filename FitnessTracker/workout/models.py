@@ -112,9 +112,8 @@ class Exercise(models.Model):
 
     @classmethod
     def get_exercise(cls, user, exercise_name):
-        exercise, created = cls.objects.get_or_create(
-            user=user, name__iexact=exercise_name
-        )
+        exercise_name = exercise_name.strip()
+        exercise, created = cls.objects.get_or_create(user=user, name=exercise_name)
         return exercise
 
     def update_five_rep_max(self, weight, reps):
@@ -431,6 +430,6 @@ class CardioLog(models.Model):
                 distances.append(summary["total_distance"])
                 paces.append(summary["total_duration"] // summary["total_distance"])
         else:
-            return None
+            return None, None, None
 
         return dates, distances, paces

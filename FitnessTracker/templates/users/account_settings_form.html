@@ -1,37 +1,39 @@
-<h1>Account Settings</h1>
-<form class="form" id="account_settings_form" method="POST">
+<form class="col gap-lg" id="account-settings-form" method="POST">
+  <h1 class="text-center">Account Settings</h1>
   {% csrf_token %}
-  <div class="row" id="name">
-    <div id="first_name" class="col">
+  <div class="row gap-lg" id="name">
+    <div id="first_name" class="col gap-sm col-align-start">
       {{ form.first_name.label_tag }}
       {{ form.first_name }}
       {{ form.first_name.errors }}
     </div>
-    <div id="last_name">
+    <div id="last_name" class="col col-justify-end">
       {{ form.last_name }}
       {{ form.last_name.errors }}
     </div>
   </div>
-  <div id="email" class="col">
+  <div id="email" class="col gap-sm col-align-start">
     {{ form.email.label_tag }}
     {{ form.email }}
   </div>
-  <div id="confirm_email" class="col">
+  <div id="confirm_email" class="col gap-sm col-align-start">
     {{ form.confirm_email.label_tag }}
     {{ form.confirm_email }}
     {{ form.confirm_email.errors }}
   </div>
   {% if message %}
-    <div class="success_message">{{ message }}</div>
+    <div class="success-message row row-center text-green">{{ message }}</div>
   {% endif %}
-  <div class="row space_between">
+  <div class="row row-justify-space-between">
     <div>
-      <button class="button" id="update_settings" type="button">Update Account</button>
+      <button class="btn" id="update-settings" type="button">Update Account</button>
     </div>
     <div>
-      <button class="button" id="delete_account" type="button">Delete Account</button>
+      <button class="btn" id="delete-account" type="button">Delete Account</button>
     </div>
   </div>
-  <button class="button" id="change_password" type="button">Change Password</button>
+  <div class="row row-align-start">
+    <button class="btn" id="change-password" type="button">Change Password</button>
+  </div>
 </form>
 

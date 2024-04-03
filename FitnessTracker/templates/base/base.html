@@ -3,6 +3,19 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<body>
+<div class="container">
+  {% block header %}{% endblock %}
+
+  {% block content %}
+  {% endblock %}
+
+  {% block footer %}{% endblock %}
+</div>
+
+{% block javascript %}{% endblock %}
+</body>
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,17 +26,4 @@
   {% block head %} {% endblock %}
 
 </head>
-
-<body>
-  <div class="container">
-    {% block header %}{% endblock %}
-
-    {% block content %}
-    {% endblock %}
-
-    {% block footer %}{% endblock %}
-  </div>
-
-  {% block javascript %}{% endblock %}
-</body>
 </html>

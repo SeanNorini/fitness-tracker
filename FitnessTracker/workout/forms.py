@@ -31,15 +31,15 @@ class CardioLogForm(forms.ModelForm):
     def __init__(self, data=None, *args, **kwargs):
         updated_data = {"datetime": data.get("datetime")}
 
-        duration_hours = int(data.get("duration_hours", 0))
-        duration_minutes = int(data.get("duration_minutes", 0))
-        duration_seconds = int(data.get("duration_seconds", 0))
+        duration_hours = int(data.get("duration-hours", 0))
+        duration_minutes = int(data.get("duration-minutes", 0))
+        duration_seconds = int(data.get("duration-seconds", 0))
         updated_data["duration"] = timedelta(
             hours=duration_hours, minutes=duration_minutes, seconds=duration_seconds
         )
 
-        distance_integer = data.get("distance_integer", 0)
-        distance_decimal = data.get("distance_decimal", 0)
+        distance_integer = data.get("distance-integer", 0)
+        distance_decimal = data.get("distance-decimal", 0)
         updated_data["distance"] = float(f"{distance_integer}.{distance_decimal}")
 
         super().__init__(data=updated_data, *args, **kwargs)

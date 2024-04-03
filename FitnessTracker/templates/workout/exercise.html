@@ -1,28 +1,28 @@
-<div class="drag_and_drop_element">
-  <div class="exercise_container">
-    <div class="row">
-      <div class="exercise_name drag_and_drop_handlebar">
+<div class="drag-and-drop-element exercise col-lg gap-md border bg-secondary p">
+  <div class="col col-align-center gap-md">
+    <div class="row row row-center gap-md">
+      <div class="exercise-name drag-and-drop-handlebar">
         {{ exercise.name }}
       </div>
       <div>
-          <span class="material-symbols-outlined delete delete_exercise">
-            delete
-          </span>
+        <span class="material-symbols-outlined delete-exercise hover-red text-xxl">
+          delete
+        </span>
       </div>
     </div>
-    <hr class="visible">
-    <div class="sets">
+    <hr class="hr-half-width">
+    <div class="sets col col-align-center gap-md">
       {% for set in exercise.sets %}
         {% include 'workout/set.html' %}
       {% endfor %}
     </div>
-    <hr class="horizontal">
-    <div id="set_controls">
-      <span class="material-symbols-outlined delete_set">
+    <hr class="hr-half-width">
+    <div class="row row--justify-content-center">
+      <span class="material-symbols-outlined delete-set hover-red text-xxl">
         remove
       </span>
-        &nbspSet&nbsp
-      <span class="material-symbols-outlined add_set">
+      <div class="text-lg">&nbspSet&nbsp</div>
+      <span class="material-symbols-outlined add-set hover-red text-xxl">
         add
       </span>
     </div>

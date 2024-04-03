@@ -22,14 +22,17 @@ matplotlib.use("Agg")
 def plot_graph(user, selected_range):
     dates, distances, paces = CardioLog.get_graph_values(user, selected_range)
 
+    if dates is None or distances is None or paces is None:
+        return None
+
     plt.bar(dates, distances)
-    plt.xlabel("Date", color="#f5f5f5")
-    plt.ylabel("Distance", color="#f5f5f5")
-    plt.title("Daily Cardio Summaries", color="#f5f5f5")
+
+    plt.xlabel("Date", color="#f5f5f5", fontsize=16)
+    plt.ylabel("Distance", color="#f5f5f5", fontsize=16)
 
     plt.gcf().set_facecolor("#212121")
-    plt.xticks(color="#f5f5f5")
-    plt.yticks(color="#f5f5f5")
+    plt.xticks(color="#f5f5f5", fontsize=14)
+    plt.yticks(color="#f5f5f5", fontsize=14)
 
     ax = plt.gca()
     ax.set_facecolor("#212121")
@@ -40,6 +43,7 @@ def plot_graph(user, selected_range):
     for spine in ax.spines.values():
         spine.set_edgecolor("#f5f5f5")
 
+    plt.tight_layout()
     buffer = BytesIO()
     plt.savefig(buffer, format="png", transparent=True)
     plt.close()

@@ -1,38 +1,34 @@
 {% load static %}
-<div class="summary_container">
-  <div class="averages">
-    <div class="summary">
-      <div class="grid">
-        <div>Weekly Summary (Avg. Daily)</div>
-        <hr class="horizontal100">
-        <div class="row">
-          <div class="width50">Protein:</div>
-          <hr class="vertical">
-          <div class="center_content avg_protein">0g</div>
+<div class="row row-lg gap-lg">
+  <div class="col col-3 gap-lg">
+    <div class="col border p-0_2">
+      <div>
+        <div class="text-center">Weekly Summary<br>(Avg. Daily)</div>
+        <hr>
+        <div class="row row-nowrap">
+          <div class="col border-right">Protein:</div>
+          <div class="col col-center avg-protein">0g</div>
         </div>
-        <hr class="horizontal100">
-        <div class="row">
-          <div class="width50">Carbs:</div>
-          <hr class="vertical">
-          <div class="center_content avg_carbs">0g</div>
+        <hr>
+        <div class="row row-nowrap">
+          <div class="col border-right">Carbs:</div>
+          <div class="col col-center avg-carbs">0g</div>
         </div>
-        <hr class="horizontal100">
-        <div class="row">
-          <div class="width50">Fat:</div>
-          <hr class="vertical">
-          <div class="center_content avg_fat">0g</div>
+        <hr>
+        <div class="row row-nowrap">
+          <div class="col border-right">Fat:</div>
+          <div class="col col-center avg-fat">0g</div>
         </div>
-        <hr class="horizontal100">
-        <div class="row">
-          <div class="width50">Calories:</div>
-          <hr class="vertical">
-          <div class="center_content avg_calories">0</div>
+        <hr>
+        <div class="row row-nowrap">
+          <div class="col border-right">Calories:</div>
+          <div class="col col-center avg-calories">0</div>
         </div>
       </div>
     </div>
-    <div id="pie_chart">No Chart To Display</div>
+    <div id="pie-chart" class="row row-justify-center">No Chart To Display</div>
   </div>
-  <div class="grid_item row_span_2 center_content" id="bar_chart">
+  <div class="row row-justify-center full-width" id="bar-chart">
     No Chart To Display
   </div>
   
@@ -40,84 +36,86 @@
 
 </div>
 
-<div class="row" id="food_log_header">
-  <div>Daily Food Log</div>
-  <label for="date" class="hidden">Date</label>
-  <input name="date" id="date" type="date">
-</div>
-<div class="grid nutrition_info">
-    <div class="grid_item">Food Name</div>
-    <div class="grid_item">Serving</div>
-    <div class="grid_item">Calories</div>
-    <div class="grid_item">Protein</div>
-    <div class="grid_item">Carbs</div>
-    <div class="grid_item">Fat</div>
-    <div class="grid_item"></div>
-    
-    <div class="grid_item" id="total">Total</div>
-    <div class="grid_item"></div>
-    <div class="grid_item" id="total_calories">0</div>
-    <div class="grid_item" id="total_protein">0</div>
-    <div class="grid_item" id="total_carbs">0</div>
-    <div class="grid_item" id="total_fat">0</div>
-    <div class="grid_item"></div>
+<div class="col col-lg">
+  <div class="row row-lg row-justify-space-between row-align-center m-top-2" id="food-log-header">
+    <div><h1>Daily Food Log</h1></div>
+    <label for="date" class="hidden">Date</label>
+    <input name="date" id="date" type="date">
   </div>
-<div class="save_log">
-  <button type="button" id="save_log">Save Log</button>
+  <div class="grid nutrition-info">
+      <div class="grid-item">Food Name</div>
+      <div class="grid-item">Serving</div>
+      <div class="grid-item">Calories</div>
+      <div class="grid-item">Protein</div>
+      <div class="grid-item">Carbs</div>
+      <div class="grid-item">Fat</div>
+      <div class="grid-item"></div>
+
+      <div class="grid-item" id="total">Total</div>
+      <div class="grid-item"></div>
+      <div class="grid-item" id="total-calories">0</div>
+      <div class="grid-item" id="total-protein">0</div>
+      <div class="grid-item" id="total-carbs">0</div>
+      <div class="grid-item" id="total-fat">0</div>
+      <div class="grid-item"></div>
+    </div>
+  <div class="row row-lg row-justify-end">
+    <button type="button" class="btn" id="save-log">Save Log</button>
+  </div>
 </div>
 
-<div class="row" id="search_header">
-  Search Nutrition Database
-</div>
-<div class="search_container">
 
-  <div class="width100 row center_content">
-    <div class="row search_bar">
-      <div>
-        <span class="material-symbols-outlined search_icon">
+<div class="row row-lg m-top-2" id="search-header">
+  <h1>Search Food Database</h1>
+</div>
+<div class="search-container col col-lg col-center">
+  <div class="row row-center full-width">
+    <div class="row half-width search-bar row-nowrap">
+      <div class="row row-center">
+        <span class="material-symbols-outlined search-icon">
           search
         </span>
       </div>
-      <label for="nutrition_search" class="hidden">Nutrition Search</label>
-      <input type="text" name="nutrition_search" id="nutrition_search">
-      <div>
-        <span class="material-symbols-outlined delete_search">
+      <label for="nutrition-search" class="hidden">Nutrition Search</label>
+      <input type="text" name="nutrition-search" id="nutrition-search">
+      <div class="row row-center">
+        <span class="material-symbols-outlined delete-search text-xl text-red">
           cancel
         </span>
       </div>
     </div>
-    <div class="nutritionix_logo width100">
+    <div class="nutritionix-logo row row-justify-center half-width">
       <img alt="Powered by Nutritionix API" src="{% static 'img/Updated_NutritionixAPI_hires_flat.png' %}">
     </div>
   </div>
 
-  <div class="item_details width100 row hidden">
-    <div id="search_results">
-      <div id="tabs" class="row">
-        <div class="active tab" data-filter="all">All</div>
-        <div class="tab" data-filter="common">Common</div>
-        <div class="tab" data-filter="branded">Branded</div>
+  <div id="item-details" class="row row-align-start full-width gap-lg">
+    <div id="search-results" class="half-width">
+      <div id="tabs" class="row gap-xs">
+        <div class="active tab p-0_2 bg-primary" data-filter="all">All</div>
+        <div class="tab p-0_2 bg-primary" data-filter="common">Common</div>
+        <div class="tab p-0_2 bg-primary" data-filter="branded">Branded</div>
       </div>
-      <div id="items">
+      <div id="items" class="col bg-primary text-primary border full-width p gap-sm">
       </div>
     </div>
-    <div class="width50">
-      <div class="grid food_item">
-        <div class="grid_item col_span_2" id="detail_img">No Image</div>
-        <div class="grid_item col_span_2" id="detail_name">Select A Food</div>
-        <div class="grid_item">Servings:</div>
-        <div class="grid_item" id="detail_servings">0</div>
-        <div class="grid_item">Calories:</div>
-        <div class="grid_item" id="detail_calories">0</div>
-        <div class="grid_item">Protein:</div>
-        <div class="grid_item" id="detail_protein">0g</div>
-        <div class="grid_item">Carbs:</div>
-        <div class="grid_item" id="detail_carbs">0g</div>
-        <div class="grid_item">Fat:</div>
-        <div class="grid_item" id="detail_fat">0g</div>
+    <div class="half-width">
+      <div class="grid food-item">
+        <div class="grid-item col-span-2" id="detail-img">No Image</div>
+        <div class="grid-item col-span-2" id="detail-name">Select A Food</div>
+        <div class="grid-item">Servings:</div>
+        <div class="grid-item" id="detail-servings">0</div>
+        <div class="grid-item">Calories:</div>
+        <div class="grid-item" id="detail-calories">0</div>
+        <div class="grid-item">Protein:</div>
+        <div class="grid-item" id="detail-protein">0g</div>
+        <div class="grid-item">Carbs:</div>
+        <div class="grid-item" id="detail-carbs">0g</div>
+        <div class="grid-item">Fat:</div>
+        <div class="grid-item" id="detail-fat">0g</div>
       </div>
-      <div id="add_item">
-        <span class="material-symbols-outlined">
+      <div id="add-item" class="row row-center full-width text-lg text-green gap-md">
+        <span class="material-symbols-outlined text-xl">
           add_circle
         </span>
         Add Item

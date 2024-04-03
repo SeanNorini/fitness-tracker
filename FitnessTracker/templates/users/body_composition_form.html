@@ -1,40 +1,40 @@
 
-<h1>Body Composition</h1>
-<form class="form" id="body_composition_form" method="POST">
+<form class="col gap-lg" id="body-composition-form" method="POST">
+  <h1 class="text-center">Body Composition</h1>
   {% csrf_token %}
   <div id="optional">*Optional, default values shown will be used for calculations if left unset.</div>
-  <div class="row grow">
-    <div>
+  <div class="row">
+    <div class="col gap-md">
       {{ form2.system_of_measurement.label_tag }}
       {{ form2.system_of_measurement }}
     </div>
-    <div id="gender">
+    <div class="col gap-md" id="gender">
       {{ form2.gender.label_tag }}
       {{ form2.gender }}
     </div>
   </div>
-  <div id="age" class="col">
+  <div id="age" class="col gap-sm">
     {{ form2.age.label_tag }}
     {{ form2.age }}
     {{ form2.age.errors }}
   </div>
-  <div id="height" class="col">
+  <div id="height" class="col gap-sm">
     {{ form2.height.label_tag }}
     {{ form2.height }}
     {{ form2.height.errors }}
   </div>
-    <div id="body_weight" class="col">
+  <div id="body-weight" class="col gap-sm">
     {{ form2.body_weight.label_tag }}
     {{ form2.body_weight }}
     {{ form2.body_weight.errors }}
   </div>
-    <div id="body_fat" class="col">
+  <div id="body-fat" class="col gap-sm">
     {{ form2.body_fat.label_tag }}
     {{ form2.body_fat }}
     {{ form2.body_fat.errors }}
   </div>
   {% if message %}
-    <div class="success_message">{{ message }}</div>
+    <div class="success-message row row-center text-green">{{ message }}</div>
   {% endif %}
-  <button class="button" id="update_body_composition" type="button">Update Body Composition</button>
+  <button class="btn" id="update-body-composition" type="button">Update Body Composition</button>
 </form>

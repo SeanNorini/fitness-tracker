@@ -1,0 +1,67 @@
+@mixin hover {
+  transition: all .3s ease-in;
+  background-color: var(--highlight-color);
+  border: var(--hover-border);
+  cursor: pointer;
+}
+
+@mixin sizes {
+  &-lg {
+    width: 100%;
+    max-width: 50rem;
+  }
+
+  &-md {
+    width: 100%;
+    max-width: 40rem;
+  }
+
+  &-sm {
+    width: 100%;
+    max-width: 30rem;
+  }
+}
+
+@mixin justify {
+  &-start {
+    justify-content: flex-start;
+  }
+
+  &-center {
+    justify-content: center;
+  }
+
+  &-space-between {
+    justify-content: space-between;
+  }
+
+  &-end {
+    justify-content: flex-end;
+  }
+}
+
+@mixin align {
+  &-center{
+  align-items: center;
+  }
+
+  &-start {
+  align-items: flex-start;
+  }
+
+  &-end {
+  align-items: flex-end;
+  }
+}
+
+@mixin tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+  font-size: 2.5rem;
+}
+
+@mixin tooltip-hover {
+  visibility: visible;
+  opacity: 1;
+}

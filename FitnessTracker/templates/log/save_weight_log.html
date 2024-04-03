@@ -1,18 +1,17 @@
-<div class="log_popup_header">
-  <div id="weight_log_header_text"></div>
+<div class="log-popup-header">
+  <div id="weight-log-header-text"></div>
 </div>
 <form>
-  <div>
+  <div class="col gap-lg m-top-1">
     <div>
-      <label for="body_weight">Body Weight ({{ user.weight_unit }}):
+      <label for="body-weight">Body Weight ({{ user.weight_unit }}):
       </label>
-      <input type="number" id="body_weight" value="{{ user_body_composition_settings.body_weight }}" required>
+      <input type="number" id="body-weight" class="input-sm text-center" value="{{ user_body_composition_settings.body_weight }}" required>
     </div>
-    <br>
     <div>
-      <label for="body_fat">Body Fat Percentage:</label>
-      <input type="number" id="body_fat" value="{{ user_body_composition_settings.body_fat }}" required>
+      <label for="body-fat">Body Fat Percentage:</label>
+      <input type="number" id="body-fat" class="input-sm text-center" value="{{ user_body_composition_settings.body_fat }}" required>
     </div>
-    <button class="button" type="button" id="save_weight_log">Save Weight Log</button>
+    <button class="btn" type="button" id="save-weight-log">Save Weight Log</button>
   </div>
 </form>

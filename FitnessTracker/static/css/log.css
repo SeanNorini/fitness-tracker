@@ -1,0 +1,113 @@
+:root {
+  --primary-color: #120707;
+  --secondary-color: #080707;
+  --tertiary-color: #202020;
+  --highlight-color: #85383c70;
+  --primary-background: #0c0c0c;
+  --secondary-background: #000000;
+  --blue-background: #1f538d;
+  --primary-font: #f5f5f5;
+  --secondary-font: #8d8d8d;
+  --blue-font: #6884ff;
+  --red-font: #ff004c;
+  --green-font: #28a745;
+  --bold: 700;
+  --font-size-sm: 1rem;
+  --font-size-md: 1.2rem;
+  --hover-border: 2px solid #9bd4e0;
+  --text-shadow: 1px 0 8px rgb(0, 0, 0);
+  --box-shadow: 3px 3px 10px 3px rgba(0, 0, 0, .5);
+}
+
+.calendar tr:not(:first-child) {
+  display: flex;
+  flex-direction: row;
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+}
+
+.calendar tr:last-child {
+  border-bottom: 1px solid #ccc;
+}
+
+.calendar tr {
+  display: flex;
+  width: 100%;
+}
+
+.calendar span#nav-next:hover,
+.calendar span#nav-prev:hover {
+  transition: all 0.3s ease-in;
+  background-color: var(--highlight-color);
+  border: var(--hover-border);
+  cursor: pointer;
+}
+
+.calendar button {
+  font-size: 1rem;
+  min-width: 10rem;
+  margin: 0;
+}
+
+.calendar span#nav-next,
+.calendar span#nav-prev {
+  font-size: 2rem;
+  background-color: var(--tertiary-color);
+  border: 2px solid var(--highlight-color);
+  border-radius: 1rem;
+}
+
+.calendar table {
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  min-width: 40rem;
+}
+
+.calendar table th:not(.month) {
+  border-right: 1px solid #ccc;
+  width: 100%;
+}
+
+.calendar table tbody {
+  width: 100%;
+}
+
+.calendar table td {
+  border-right: 1px solid #ccc;
+  text-align: center;
+  width: 100%;
+  min-height: 5rem;
+}
+
+.calendar table td div:not(:first-child) {
+  display: flex;
+}
+
+.day:hover {
+  background-color: var(--tertiary-color);
+  cursor: pointer;
+  transition: all 0.3s ease-in;
+}
+
+#close:hover, #add-log-close:hover, .workout-name {
+  cursor: pointer;
+}
+
+#log-popup-content, #add-log-content {
+  overflow-y: auto;
+  margin-top: -1.8rem;
+}
+
+#add-log-popup .checkbox-wrapper-44 {
+  visibility: hidden !important;
+}
+
+.workout:not(:last-child) .add-workout-log,
+.workout:not(:last-child) .workout-info.hidden + div {
+  display: none;
+}
+
+
+
+/*# sourceMappingURL=log.css.map */

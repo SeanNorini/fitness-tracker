@@ -1,36 +1,33 @@
 
 
-<form class="form_container col workout_settings" id="workout_form">
-{% csrf_token %}
-<input type="hidden" id="unit_of_measurement" value="{{ user.weight_unit }}">
-<div class="controls_container">
-  <div>
-    <div class="select_container">
-      <select class="exercise" id="select_exercise">
-          <option disabled selected>Select an exercise</option>
-        {% for exercise_name in exercises %}
-          <option>{{ exercise_name }}</option>
-        {% endfor %}
-      </select>
+<form class="col col-lg gap-lg">
+  {% csrf_token %}
+  <div class="row border radius-3 bg-primary row-lg row-justify-space-between p">
+    <div>
+      <div class="row border radius-2 bg-tertiary p-0_2">
+        <label for="select-exercise" class="hidden">Select Exercise</label>
+        <select class="border radius-2 bg-secondary text-md text-primary px" id="select-exercise">
+            <option disabled selected>Select an exercise</option>
+          {% for exercise_name in exercises %}
+            <option>{{ exercise_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
     </div>
+      
+    <div class="row">
+      <button class="btn" id="save-exercise" type="button">Save Exercise</button>
+    </div>
+      
   </div>
-    
-  <div class="row edit_container">
-    <button class="controls" id="save_exercise" type="button">Save Exercise</button>
-    <span class="material-symbols-outlined workout_help">
-      help
-    </span>
+  
+  <div class="exercises col col-lg" id="exercise">
+    <div class="col col-center" id="message">Please select or create an exercise to get started.</div>
   </div>
-    
-</div>
-
-<div class="exercise" id="exercise">
-  <div id="message">Please select or create an exercise to get started.</div>
-</div>
-
-<div class="controls_container">
-  <button class="controls" id="new_exercise" type="button">New Exercise</button>
-  <button class="controls" id="delete_exercise" type="button">Delete Exercise</button>
-</div>
+  
+  <div class="row border radius-3 row-bg-primary row-lg row-justify-space-between p">
+    <button class="btn" id="new-exercise" type="button">New Exercise</button>
+    <button class="btn" id="delete-exercise" type="button">Delete Exercise</button>
+  </div>
 </form>
 

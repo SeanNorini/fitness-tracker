@@ -1,11 +1,11 @@
-<div class="set">
-  <div class="set_number">
+<div class="set row row-center row-nowrap gap-xl">
+  <div class="set-number">
     Set {{ forloop.counter }}:
   </div>
   <div>
     <div>
-      <input type="number" class="round_float amount" value="{{ exercise_set.amount }}">
-      <select name="modifier" class="modifier">
+      <input type="number" class="round-float amount input-sm bg-primary text-primary text-center border" value="{{ exercise_set.amount }}">
+      <select name="modifier" class="modifier border radius-2 bg-secondary text-md text-primary text-center px">
         <option value="exact" {% if exercise_set.modifier == "exact" %} selected {% endif %}>Exact</option>
         <option value="percentage" {% if exercise_set.modifier == "percentage" %} selected {% endif %}>%</option>
         <option value="increment" {% if exercise_set.modifier == "increment" %} selected {% endif %}>+</option>
@@ -13,17 +13,14 @@
       </select>
     </div>
   </div>
-  <div>
+  <div class="row row-center row-nowrap gap-md">
     <div>
-      <input type="number" class="reps round_integer" value="{{ exercise_set.reps }}">
+      <input type="number" class="reps round-integer input-xs bg-primary text-primary text-center border" value="{{ exercise_set.reps }}">
     </div>
     <div>
     Reps
     </div>
-    &nbsp
-    <hr class="vertical">
-    &nbsp
-    <div class="calculate_set">
+    <div class="calculate-set">
     </div>
   </div>
 </div>

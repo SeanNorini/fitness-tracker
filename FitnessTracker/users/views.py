@@ -71,7 +71,7 @@ class RegistrationView(FormView):
     def post(self, request, *args, **kwargs):
         user_form = UserRegistrationForm(request.POST)
         user_body_composition_form = UserBodyCompositionForm(request.POST)
-        print(request.POST["height"])
+
         if user_form.is_valid() and user_body_composition_form.is_valid():
             with transaction.atomic():
                 user = user_form.save(commit=False)
@@ -93,11 +93,11 @@ class RegistrationView(FormView):
                 return render(self.request, "users/registration_success.html")
 
         else:
-            print(user_form.errors)
+
             return render(
                 self.request,
                 "users/registration_form.html",
-                {"form": user_form, "form2": user_settings_form},
+                {"form": user_form, "form2": user_body_composition_form},
             )
 
     def get(self, request, *args, **kwargs):

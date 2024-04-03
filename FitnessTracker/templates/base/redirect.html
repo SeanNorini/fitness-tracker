@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block head %}
-<link rel="stylesheet" href="{% static 'users/css/form.css' %}">
 {% endblock %}
 
 {% block title %}{{block.super}}{% endblock %}
@@ -15,6 +14,6 @@
 <script type="text/javascript">
     setTimeout(function() {
         window.location.href = "{{ url }}";
-    }, 3000);
+    }, 5000);
 </script>
 {% endblock %}

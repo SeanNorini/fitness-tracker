@@ -1,0 +1,61 @@
+@import url("variables.scss");
+
+.btn-group-round {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.btn-group-round button:first-child span,
+.btn-group-round button:first-child {
+    border-radius: 1rem 0 0 1rem;
+}
+
+.btn-group-round button:last-child span,
+.btn-group-round button:last-child {
+    border-radius: 0 1rem 1rem 0;
+}
+
+.btn-group-round button {
+    padding: 0;
+}
+
+.btn-front{
+    display: block;
+    background-color: var(--primary-color);
+    font-size: 1.2rem;
+    transform: translateY(-.2rem);
+    border-top: 2px solid var(--highlight-color);
+    border-right: 1px solid var(--highlight-color);
+    border-bottom: 2px solid var(--highlight-color);
+    border-left: 1px solid var(--highlight-color);
+    padding: .4rem .6rem;
+    color: var(--primary-font);
+}
+
+.btn-back:first-child > span{
+    border-left: 2px solid var(--highlight-color);
+}
+
+.btn-back:last-child > span{
+    border-right: 2px solid var(--highlight-color);
+}
+
+.btn-back {
+    border: 0;
+    background-color: var(--tertiary-color);
+    cursor: pointer;
+}
+
+.btn-back:hover:not(.active) .btn-front{
+  transition: all .3s ease-in;
+  background-color: var(--highlight-color);
+    transform: translateY(-.3rem);
+}
+
+.btn-back.active .btn-front{
+    transition: all .3s ease-in;
+    transform: translateY(0);
+    background-color: var(--tertiary-color);
+}
+
