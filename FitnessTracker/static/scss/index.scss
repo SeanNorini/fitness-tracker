@@ -1,6 +1,7 @@
 @import "variables.scss";
 @import "mixins.scss";
 
+// Tooltip styles
 .tooltip {
   @include tooltip;
 
@@ -21,6 +22,7 @@
   transform: translateX(-75%);
 }
 
+// Timed popup styles
 #popup-message{
   position: fixed;
   top: 40%;
@@ -36,6 +38,12 @@
   display: none;
 }
 
+// Hide element
+.hidden {
+  display: none !important;
+}
+
+// Popup styles
 #rest-timer-popup, #daily-log-popup, #add-log-popup {
   position: fixed;
   display: none;
@@ -51,14 +59,14 @@
   margin-top: 20rem;
 }
 
-#rest-timer-popup .close-popup-container {
-  top: -3.6rem;
-}
-
 #rest-timer {
   font-size: 6rem;
   margin-top: -2.5rem;
   height: 100%;
+
+  .close-popup-container {
+     top: -3.8rem;
+  }
 }
 
 .close-popup-container {
@@ -74,13 +82,6 @@
   }
 }
 
-#message {
-  min-height: 15rem;
-  &:not(:last-child) {
-    display: none;
-  }
-}
-
 .dark-overlay {
   position: fixed;
   top: 0;
@@ -93,6 +94,29 @@
   z-index: 2;
 }
 
+// Disable pointer on rest of page during popup
+.disabled {
+  pointer-events: none;
+}
+
+// Enable pointer on popup
+.enabled {
+  pointer-events: auto !important;
+}
+
+// Collapsible container styles
+.collapse {
+  max-height: 10rem;
+  transition: max-height 1.5s ease;
+  overflow: hidden;
+
+  &.hide {
+    max-height: 0 !important;
+    padding: 0;
+  }
+}
+
+// Input spinner styles
 .spinner {
   cursor: grab;
 }
@@ -105,6 +129,7 @@ body.grabbing .spinner {
   cursor: grabbing;
 }
 
+// Exercise container styles
 .delete-set {
   color: var(--red-font);
 }
@@ -135,14 +160,10 @@ body.grabbing .spinner {
   cursor: all-scroll;
 }
 
-.collapse {
-  max-height: 10rem;
-  transition: max-height 1.5s ease;
-  overflow: hidden;
-
-  &.hide {
-    max-height: 0 !important;
-    padding: 0;
+// Display message in exercise container when empty
+#message {
+  min-height: 15rem;
+  &:not(:last-child) {
+    display: none;
   }
 }
-

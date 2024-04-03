@@ -19,6 +19,10 @@
   --box-shadow: 3px 3px 10px 3px rgba(0, 0, 0, .5);
 }
 
+#search-header {
+  margin-bottom: -2.5rem;
+}
+
 .search-bar {
   background-color: #FAF9F6;
   color: #1b1b1b;
@@ -27,13 +31,11 @@
   border-radius: 0.2rem 1rem 1rem 0.2rem;
   border: 1px solid #ccc;
 }
-
 .search-bar > :first-child {
   background-color: #eee;
   min-width: 2rem;
   border-right: 1px solid #ccc;
 }
-
 .search-bar input {
   border: 0;
   background-color: #FAF9F6;
@@ -50,15 +52,14 @@
   max-width: 20rem;
 }
 
-#items > div:hover {
-  background-color: var(--highlight-color);
-  cursor: pointer;
-}
-
 #items {
   border-radius: 0 1rem 1rem 1rem;
   max-height: 30rem;
   overflow-y: auto;
+}
+#items > div:hover {
+  background-color: var(--highlight-color);
+  cursor: pointer;
 }
 
 #tabs div {
@@ -95,12 +96,10 @@
   background-color: var(--tertiary-color);
   border-radius: 1rem 0 0 1rem;
 }
-
 .nutrition-info .grid-item:nth-child(14n+7) {
   background-color: var(--tertiary-color);
   border-radius: 0 1rem 1rem 0;
 }
-
 .nutrition-info .grid-item:nth-child(14n+2),
 .nutrition-info .grid-item:nth-child(14n+3),
 .nutrition-info .grid-item:nth-child(14n+4),
@@ -108,28 +107,18 @@
 .nutrition-info .grid-item:nth-child(14n+6) {
   background-color: var(--tertiary-color);
 }
-
 .nutrition-info .grid-item:not(:nth-child(7n+1)) {
   justify-content: center;
 }
-
 .nutrition-info .grid-item:nth-child(7n+1) {
   padding-left: 0.5rem;
 }
-
 .nutrition-info .grid-item:not(:nth-child(7n+7)) {
   border-right: 3px solid var(--secondary-color);
 }
-
 .nutrition-info .grid-item {
   display: flex;
   align-items: center;
-}
-
-.food-item .grid-item:nth-child(4n+1):not(:first-child),
-.food-item .grid-item:nth-child(4n+2) {
-  background-color: var(--tertiary-color);
-  border-right: 3px solid var(--secondary-color);
 }
 
 .food-item {
@@ -140,29 +129,26 @@
   border-radius: 1rem;
   margin-bottom: 0.5rem;
 }
-
+.food-item .grid-item:nth-child(4n+1):not(:first-child),
+.food-item .grid-item:nth-child(4n+2) {
+  background-color: var(--tertiary-color);
+  border-right: 3px solid var(--secondary-color);
+}
 .food-item .grid-item {
   background-color: var(--secondary-color);
   padding: 0.2rem 0.5rem;
 }
-
 .food-item .grid-item:nth-child(2),
 .food-item .grid-item:first-child {
   border-radius: 1rem;
   display: flex;
   justify-content: center;
 }
-
 .food-item .grid-item:nth-child(4n+1) {
   border-radius: 1rem 0 0 1rem;
 }
-
 .food-item .grid-item:nth-child(4n+2):not(:nth-child(2)) {
   border-radius: 0 1rem 1rem 0;
-}
-
-#search-header {
-  margin-bottom: -2.5rem;
 }
 
 #pie-chart img,

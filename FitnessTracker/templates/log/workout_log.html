@@ -1,7 +1,7 @@
 <div class="workout col">
   <input type="hidden" class="workout-log-pk" value="{{ workout_log.pk|default:"0" }}">
   <div class="workout-name">{{ workout_log.workout_name }}</div>
-  <hr class="horizontal">
+  <hr>
   <div class="col workout-info py hidden">
     {% if workout_log.total_time != 0 %}
     <div>Total time: {{ workout_log.total_time }}</div>

@@ -94,11 +94,6 @@
   cursor: pointer;
 }
 
-#log-popup-content, #add-log-content {
-  overflow-y: auto;
-  margin-top: -1.8rem;
-}
-
 #add-log-popup .checkbox-wrapper-44 {
   visibility: hidden !important;
 }

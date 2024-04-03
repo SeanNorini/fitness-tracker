@@ -19,6 +19,10 @@
   --box-shadow: 3px 3px 10px 3px rgba(0, 0, 0, .5);
 }
 
+#search-header {
+  margin-bottom: -2.5rem;
+}
+
 .search-bar {
   background-color: #FAF9F6;
   color: #1b1b1b;
@@ -50,15 +54,15 @@
   max-width: 20rem;
 }
 
-#items > div:hover {
-  background-color: var(--highlight-color);
-  cursor: pointer;
-}
-
 #items {
   border-radius: 0 1rem 1rem 1rem;
   max-height: 30rem;
   overflow-y: auto;
+}
+
+#items > div:hover {
+  background-color: var(--highlight-color);
+  cursor: pointer;
 }
 
 #tabs div {
@@ -126,12 +130,6 @@
   align-items: center;
 }
 
-.food-item .grid-item:nth-child(4n+1):not(:first-child),
-.food-item .grid-item:nth-child(4n+2) {
-  background-color: var(--tertiary-color);
-  border-right: 3px solid var(--secondary-color);
-}
-
 .food-item {
   width: 100%;
   background-color: var(--secondary-color);
@@ -139,6 +137,12 @@
   padding: 0.5rem;
   border-radius: 1rem;
   margin-bottom: 0.5rem;
+}
+
+.food-item .grid-item:nth-child(4n+1):not(:first-child),
+.food-item .grid-item:nth-child(4n+2) {
+  background-color: var(--tertiary-color);
+  border-right: 3px solid var(--secondary-color);
 }
 
 .food-item .grid-item {
@@ -159,10 +163,6 @@
 
 .food-item .grid-item:nth-child(4n+2):not(:nth-child(2)) {
   border-radius: 0 1rem 1rem 0;
-}
-
-#search-header {
-  margin-bottom: -2.5rem;
 }
 
 #pie-chart img,

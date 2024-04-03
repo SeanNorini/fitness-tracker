@@ -1,12 +1,69 @@
 @import "variables.scss";
 @import "mixins.scss";
 
-label {
-  font-size: 1.2rem;
+// Global reset
+*, *::after, *::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-h1, h2, h3, h4 {
+// Layout styles
+body {
   margin: 0;
+  background-color: var(--secondary-background);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 320px;
+  min-height: 100vh;
+  gap: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  color: var(--primary-font);
+  background-color: var(--primary-background);
+  max-width: 1200px;
+  padding: 1rem;
+  font-size: var(--font-size-md);
+}
+
+.row, .col {
+  display: flex;
+  @include sizes;
+
+  &-justify {
+    @include justify;
+  }
+
+  &-align {
+    @include align;
+  }
+
+  &-center {
+    justify-content: center;
+    align-items: center;
+  }
+
+  &-nowrap {
+    flex-wrap: nowrap !important;
+  }
+
+  @media (max-width: 780px) {
+    flex-wrap: wrap;
+  }
+}
+
+.col {
+  flex-direction: column;
+  width: 100%;
+
+  &-3 {
+    min-width: 10rem;
+    max-width: 30%;
+  }
 }
 
 .full-width {
@@ -17,43 +74,26 @@ h1, h2, h3, h4 {
   width: 50%;
 }
 
-.full-height {
-  height: 100%;
+// HR styles
+hr {
+  border: none;
+  background: linear-gradient(to right, #3a414a, var(--highlight-color), #3a414a);
+  width: 100%;
+  height: 1px;
+  margin: .2rem 0;
 }
 
+// Img styles
 img {
   max-width: 100%;
 }
 
-ul {
-  margin: 0;
-}
-.popup {
-  position: fixed;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: var(--darkgray);
-  border: 1px solid #ccc;
-  padding: .5rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  z-index: 2;
-  min-width: 25rem;
-  min-height: 10rem;
-  overflow-y: visible;
-}
-
-.hr--vertical {
-  height: 100%;
-  width: 1px;
-  margin: 0 .2rem;
-}
-
+// Form error message styles
 .errorlist {
   color: var(--red-font);
 }
 
-
+// Grid styles
 .grid {
   display: grid;
   width: 100%;
@@ -136,20 +176,7 @@ ul {
   grid-column: span 2;
 }
 
-#content {
-  width: 100%;
-  gap: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 10rem;
-}
-
-
-
-
-
-
+// :hover styles
 .hover {
   transition: all .3s ease-in;
   cursor: pointer;
@@ -166,6 +193,7 @@ ul {
   }
 }
 
+// Border styles
 .border {
   border: 2px solid var(--highlight-color);
   border-radius: 1rem;
@@ -175,6 +203,7 @@ ul {
   }
 }
 
+// Padding styles
 .p {
   padding: .5rem;
 
@@ -195,6 +224,7 @@ ul {
   }
 }
 
+// Background-color styles
 .bg {
   &-primary {
     background-color: var(--primary-color);
@@ -213,10 +243,7 @@ ul {
   }
 }
 
-*, *::after, *::before {
-  box-sizing: border-box;
-}
-
+// Gap styles
 .gap {
   &-xs {
     gap: .1rem;
@@ -239,13 +266,10 @@ ul {
   }
 }
 
+// Margin styles
 .m {
   &-auto {
     margin: auto;
-  }
-
-  &-left {
-    margin-left: auto;
   }
 
   &-top-1 {
@@ -259,8 +283,17 @@ ul {
   &-top-3 {
     margin-top: 3rem;
   }
+
+  &-bottom-10 {
+    margin-bottom: 10rem;
+  }
+
+  &-left {
+    margin-left: auto;
+  }
 }
 
+// Text styles
 .text {
   &-sm {
     font-size: 1rem;
@@ -303,42 +336,7 @@ ul {
   }
 }
 
-.row, .col {
-  display: flex;
-  @include sizes;
-
-  &-justify {
-    @include justify;
-  }
-
-  &-align {
-    @include align;
-  }
-
-  &-center {
-    justify-content: center;
-    align-items: center;
-  }
-
-  &-nowrap {
-    flex-wrap: nowrap !important;
-  }
-
-  @media (max-width: 780px) {
-    flex-wrap: wrap;
-  }
-}
-
-.col {
-  flex-direction: column;
-  width: 100%;
-
-  &-3 {
-    min-width: 10rem;
-    max-width: 30%;
-  }
-}
-
+// Border radius styles
 .radius {
 
   border-radius: 1rem;
@@ -352,18 +350,7 @@ ul {
   }
 }
 
-.disabled {
-  pointer-events: none;
-}
-
-.enabled {
-  pointer-events: auto !important;
-}
-
-.hidden {
-  display: none !important;
-}
-
+// Link styles
 a {
   cursor: pointer;
   display: inline-flex;
@@ -394,44 +381,7 @@ a {
   }
 }
 
-hr {
-  border: none;
-  background: linear-gradient(to right, #3a414a, var(--highlight-color), #3a414a);
-  width: 100%;
-  height: 1px;
-  margin: .2rem 0;
-}
-
-.border {
-  border: 2px solid var(--highlight-color);
-}
-
-.hr-half-width {
-  width: 50%;
-  margin: 0 auto;
-}
-
-body {
-  margin: 0;
-  background-color: var(--secondary-background);
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  min-width: 320px;
-  min-height: 100vh;
-  gap: 1rem;
-  margin-left: auto;
-  margin-right: auto;
-  color: var(--primary-font);
-  background-color: var(--primary-background);
-  max-width: 1200px;
-  padding: 1rem;
-  font-size: var(--font-size-md);
-}
-
+// Button styles
 .btn {
   padding: .25rem 1rem;
   background-color: var(--secondary-color);
@@ -449,6 +399,7 @@ body {
   }
 }
 
+// Input styles
 input {
   color: var(--primary-font);
   background-color: var(--secondary-color);
@@ -500,61 +451,3 @@ input {
 
 
 
-
-
-//:root {
-//  display: flex;
-//  flex-grow: 1;
-//  justify-content: center;
-//  --background: #121212;
-//  --darkgray: #212121;
-//  --medgray: #3a414a;
-//  --lightgray: #6f7681;
-//  --form-background: rgba(20, 55, 94, .7);
-//  --primary-font: rgb(250, 250, 250);
-//  --blue: #1f538d;
-//  --blue-font: #6884ff;
-//  --red-font: #ff004c;
-//  --font-color: #f5f5f5;
-//  --green-font: #28a745;
-//  --light-green: #18393a;
-//  --med-green: #1a2a27;
-//  --dark-green: #0d1b1e;
-//  --border-highlight: #426f78;
-//  --secondary-background:#0e171a;
-//
-//  min-width: 640px;
-//}
-//#203839
-//linear-gradient(0.4turn, var(--dark-green), #254d43)
-//
-//    display: flex;
-//    flex-grow: 1;
-//    justify-content: center;
-//    --background: #121212;
-//    --darkgray: #212121;
-//    --medgray: #3a414a;
-//    --lightgray: #6f7681;
-//    --form-background: rgba(20, 55, 94, .7);
-//    --primary-font: rgb(237 237 237);
-//    --blue: #911e1e;
-//    --blue-font: #3070ff;
-//    --red-font: #ff004c;
-//    --font-color: #f5f5f5;
-//    --green-font: #28a745;
-//    --light-green: #120707;
-//    --med-green: #202020;
-//    --dark-green: #080707;
-//    --border-highlight: #85383c70;
-//    --primary-background: #0c0c0c;
-//    --secondary-background: #000000;
-//    min-width: 640px;
-
-
-  //--background: #121212;
-  //--darkgray: #212121;
-  //--medgray: #3a414a;
-  //--lightgray: #6f7681;
-  //--form-background: rgba(20, 55, 94, .7);
-  //
-  //--blue: #1f538d;

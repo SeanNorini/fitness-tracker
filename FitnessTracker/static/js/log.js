@@ -461,7 +461,7 @@ class LogManager {
     if (actionType === "add") {
       if (!currentIcon) {
         this.currentLog.innerHTML +=
-          `<div><span class="material-symbols-outlined ${iconName}-icon">` +
+          `<div><span class="material-symbols-outlined ${iconName}-icon text-xl">` +
           `${iconName}</span></div>`;
       }
     } else {

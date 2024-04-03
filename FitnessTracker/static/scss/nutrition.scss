@@ -1,5 +1,11 @@
 @import "variables.scss";
 
+
+// Search bar styles
+#search-header {
+  margin-bottom: -2.5rem;
+}
+
 .search-bar{
   background-color: #FAF9F6;
   color: #1b1b1b;
@@ -7,18 +13,18 @@
   height: 2.1rem;
   border-radius: .2rem 1rem 1rem .2rem;
   border: 1px solid #ccc;
-}
 
-.search-bar >:first-child{
+  >:first-child{
   background-color: #eee;
   min-width: 2rem;
   border-right: 1px solid #ccc;
-}
+  }
 
-.search-bar input {
+  input {
   border: 0;
   background-color: #FAF9F6;
   color: black;
+  }
 }
 
 .search-icon {
@@ -27,19 +33,20 @@
   border-radius: .2rem 0 0 .2rem;
 }
 
+// Search result styles
 .search-container img {
   max-width: 20rem;
-}
-
-#items > div:hover{
-  background-color: var(--highlight-color);
-  cursor: pointer;
 }
 
 #items {
   border-radius: 0 1rem 1rem 1rem;
   max-height: 30rem;
   overflow-y: auto;
+
+  > div:hover{
+  background-color: var(--highlight-color);
+  cursor: pointer;
+  }
 }
 
 #tabs div{
@@ -61,6 +68,7 @@
   background-color: var(--highlight-color);
 }
 
+// Nutrition info grid styles
 .grid.nutrition-info {
   grid-auto-rows: 2.5rem;
   grid-template-columns: 40% repeat(6, 1fr);
@@ -73,48 +81,45 @@
   font-size: 1.2rem;
 }
 
-.nutrition-info .grid-item:nth-child(14n+1) {
+.nutrition-info {
+
+  .grid-item:nth-child(14n+1) {
   background-color: var(--tertiary-color);
   border-radius: 1rem 0 0 1rem;
-}
+  }
 
-.nutrition-info .grid-item:nth-child(14n+7) {
+  .grid-item:nth-child(14n+7) {
   background-color: var(--tertiary-color);
   border-radius: 0 1rem 1rem 0;
-}
+  }
 
-.nutrition-info .grid-item:nth-child(14n+2),
-.nutrition-info .grid-item:nth-child(14n+3),
-.nutrition-info .grid-item:nth-child(14n+4),
-.nutrition-info .grid-item:nth-child(14n+5),
-.nutrition-info .grid-item:nth-child(14n+6){
+  .grid-item:nth-child(14n+2),
+  .grid-item:nth-child(14n+3),
+  .grid-item:nth-child(14n+4),
+  .grid-item:nth-child(14n+5),
+  .grid-item:nth-child(14n+6){
   background-color: var(--tertiary-color);
-}
+  }
 
-.nutrition-info .grid-item:not(:nth-child(7n + 1)){
+  .grid-item:not(:nth-child(7n + 1)){
   justify-content: center;
-}
+  }
 
-.nutrition-info .grid-item:nth-child(7n + 1){
+  .grid-item:nth-child(7n + 1){
   padding-left: .5rem;
-}
+  }
 
-.nutrition-info .grid-item:not(:nth-child(7n + 7)){
+  .grid-item:not(:nth-child(7n + 7)){
   border-right: 3px solid var(--secondary-color);
-}
+  }
 
-.nutrition-info .grid-item {
+  .grid-item {
   display: flex;
   align-items: center;
+  }
 }
 
-
-.food-item .grid-item:nth-child(4n+1):not(:first-child),
-.food-item .grid-item:nth-child(4n+2) {
-  background-color: var(--tertiary-color);
-  border-right: 3px solid var(--secondary-color);
-}
-
+// Food item grid styles
 .food-item {
   width: 100%;
   background-color: var(--secondary-color);
@@ -122,32 +127,35 @@
   padding: .5rem;
   border-radius: 1rem;
   margin-bottom: .5rem;
-}
 
-.food-item .grid-item{
+  .grid-item:nth-child(4n+1):not(:first-child),
+  .grid-item:nth-child(4n+2) {
+  background-color: var(--tertiary-color);
+  border-right: 3px solid var(--secondary-color);
+  }
+
+  .grid-item{
   background-color: var(--secondary-color);
   padding: .2rem .5rem;
-}
+  }
 
-.food-item .grid-item:nth-child(2),
-.food-item .grid-item:first-child{
+  .grid-item:nth-child(2),
+  .grid-item:first-child{
   border-radius: 1rem;
   display: flex;
   justify-content: center;
-}
+  }
 
-.food-item .grid-item:nth-child(4n+1){
+  .grid-item:nth-child(4n+1){
   border-radius: 1rem 0 0 1rem;
-}
+  }
 
-.food-item .grid-item:nth-child(4n+2):not(:nth-child(2)){
+  .grid-item:nth-child(4n+2):not(:nth-child(2)){
   border-radius: 0 1rem 1rem 0;
+  }
 }
 
-#search-header {
-  margin-bottom: -2.5rem;
-}
-
+// Chart img styles
 #pie-chart img,
 #bar-chart img,
 #pie-chart{

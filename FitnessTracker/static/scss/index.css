@@ -57,6 +57,10 @@
   display: none;
 }
 
+.hidden {
+  display: none !important;
+}
+
 #rest-timer-popup, #daily-log-popup, #add-log-popup {
   position: fixed;
   display: none;
@@ -72,14 +76,13 @@
   margin-top: 20rem;
 }
 
-#rest-timer-popup .close-popup-container {
-  top: -3.6rem;
-}
-
 #rest-timer {
   font-size: 6rem;
   margin-top: -2.5rem;
   height: 100%;
+}
+#rest-timer .close-popup-container {
+  top: -3.8rem;
 }
 
 .close-popup-container {
@@ -94,13 +97,6 @@
   border-radius: 0.3rem;
 }
 
-#message {
-  min-height: 15rem;
-}
-#message:not(:last-child) {
-  display: none;
-}
-
 .dark-overlay {
   position: fixed;
   top: 0;
@@ -111,6 +107,24 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.7);
   z-index: 2;
+}
+
+.disabled {
+  pointer-events: none;
+}
+
+.enabled {
+  pointer-events: auto !important;
+}
+
+.collapse {
+  max-height: 10rem;
+  transition: max-height 1.5s ease;
+  overflow: hidden;
+}
+.collapse.hide {
+  max-height: 0 !important;
+  padding: 0;
 }
 
 .spinner {
@@ -155,14 +169,11 @@ body.grabbing .spinner {
   cursor: all-scroll;
 }
 
-.collapse {
-  max-height: 10rem;
-  transition: max-height 1.5s ease;
-  overflow: hidden;
+#message {
+  min-height: 15rem;
 }
-.collapse.hide {
-  max-height: 0 !important;
-  padding: 0;
+#message:not(:last-child) {
+  display: none;
 }
 
 /*# sourceMappingURL=index.css.map */

@@ -1,6 +1,7 @@
 @import "variables.scss";
 @import "mixins.scss";
 
+// Calendar styles
 .calendar {
 
   tr:not(:first-child) {
@@ -72,13 +73,9 @@
   transition: all .3s ease-in;
 }
 
+// Log popup styles
 #close:hover, #add-log-close:hover, .workout-name {
   cursor: pointer;
-}
-
-#log-popup-content, #add-log-content{
-    overflow-y: auto;
-    margin-top: -1.8rem;
 }
 
 #add-log-popup .checkbox-wrapper-44{

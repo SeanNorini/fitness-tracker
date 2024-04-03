@@ -3,7 +3,7 @@
 
 <form class="col col-lg gap-lg" id="workout-form">
 {% csrf_token %}
-  <div class="row row-lg border radius-3 row-justify-space-between row-align-center p">
+  <div class="row row-lg row-justify-space-between row-align-center bg-primary border radius-3 p">
     <div>
       <label for="date" class="hidden">Select Date</label>
       <input type="date" id="date">
@@ -30,7 +30,7 @@
   <div class="exercises drag-and-drop-container col col-lg col-center gap-lg" id="workout-container">
     {% include "workout/workout.html" %}
   </div>
-  <div class="row row-lg border radius-3 row-center p gap-xl">
+  <div class="row row-lg row-center bg-primary border radius-3 p gap-xl">
 
     <div class="row row-align-center gap-md">
       <div>
@@ -54,6 +54,10 @@
     </div>
   </div>
 </form>
-<div id="rest-timer-popup" class="col col-sm border bg-primary col-justify-center">
-  {% include 'workout/rest_timer.html' %}
+<div id="rest-timer-popup" class="col col-sm border bg-secondary col-justify-center popup-container">
+  <div class="close-popup-container row row-justify-end">
+    <div>Close</div>
+    <span class="material-symbols-outlined close-popup">close</span>
+  </div>
+  <div id="rest-timer" class="col col-center gap-lg popup-content"><h1>00:00</h1></div>
 </div>
