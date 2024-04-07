@@ -1,0 +1,15 @@
+<div id="{{ popup_id }}" class="col col-sm popup border bg-secondary">
+  <div class="close-popup-container row row-justify-end">
+    <div>Close</div>
+    <span class="material-symbols-outlined close-popup">close</span>
+  </div>
+  <div id="{{ content_id }}" class="col {{ gap|default:"gap-lg" }} m-top_-1_5">
+    {% if content_id == "rest-timer" %}
+      <h1 id="timer" class="text-center">00:00</h1>
+    {% elif workouts %}
+      {% for workout in workouts %}
+        <div class="workout border border-invis hover p-0_2">{{ workout }}</div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>

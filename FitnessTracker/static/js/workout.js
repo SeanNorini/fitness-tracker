@@ -6,9 +6,9 @@ class WorkoutManager {
     this.dragAndDrop = new DragAndDrop();
   }
 
-  initialize() {
+  initialize(nav = true) {
+    this.nav = nav;
     this.addSelectWorkoutListener();
-    this.addExerciseBtnListener();
     this.setDate();
     this.addSaveWorkoutBtnListener();
     this.previousWorkoutSelectValue =
@@ -20,7 +20,40 @@ class WorkoutManager {
       document.getElementById("show-workout-timer").value;
 
     this.dragAndDrop.initialize();
+
+    this.addExerciseSearchBar = new SearchBar_(
+      this.addExerciseSearchHandler.bind(this),
+    );
+    this.addExerciseSearchBar.initialize("add-exercise-search-bar");
+
+    if (nav) {
+      const routine = document.getElementById("routine");
+      if (routine) {
+        this.addNavigateRoutineListeners();
+      }
+    }
   }
+
+  addNavigateRoutineListeners() {
+    const navNext = document.getElementById("nav-next");
+    navNext.addEventListener("click", this.navigateRoutineWorkoutHandler);
+    const navPrev = document.getElementById("nav-prev");
+    navPrev.addEventListener("click", this.navigateRoutineWorkoutHandler);
+  }
+
+  navigateRoutineWorkoutHandler = (e) => {
+    const direction = e.target.id === "nav-prev" ? "prev" : "next";
+    pageManager
+      .fetchData({
+        url: `${this.baseURL}/get_routine_workout/${direction}`,
+        method: "GET",
+        responseType: "text",
+      })
+      .then((contentHTML) => {
+        pageManager.updateContent(contentHTML, "content");
+        this.initialize();
+      });
+  };
 
   addSelectWorkoutListener() {
     // Add listener to select workout menu
@@ -69,11 +102,12 @@ class WorkoutManager {
     exercises.forEach((exercise) => {
       this.addExerciseContainerListeners(exercise);
     });
+    if (this.nav) {
+      this.addNavigateRoutineListeners();
+    }
   }
 
-  fetchExercise() {
-    const exerciseName = document.getElementById("select-exercise").value;
-
+  fetchExercise(exerciseName) {
     pageManager
       .fetchData({
         url: `${this.baseURL}/add_exercise/${exerciseName}`,
@@ -92,13 +126,13 @@ class WorkoutManager {
     this.addExerciseContainerListeners(newExercise);
   }
 
-  addExerciseBtnListener() {
-    const addExerciseBtn = document.getElementById("add-exercise");
-    addExerciseBtn.addEventListener("click", (e) => {
-      this.fetchExercise();
+  addExerciseSearchHandler = (e) => {
+    if (e.target.classList.contains("exercise-option")) {
+      const exerciseName = e.target.textContent.trim();
+      this.fetchExercise(exerciseName);
       this.unsavedChanges = true;
-    });
-  }
+    }
+  };
 
   addExerciseContainerListeners(container) {
     this.addDeleteExerciseSetListener(container);
@@ -200,7 +234,7 @@ class WorkoutManager {
   }
 
   restTimer() {
-    const restTimerElement = document.getElementById("rest-timer");
+    const restTimerElement = document.getElementById("timer");
     let minutes = 0;
     let seconds = 0;
 
@@ -407,9 +441,8 @@ class WorkoutSettingsManager extends WorkoutManager {
         roundedFloatInput.value &&
         !isNaN(parseFloat(roundedFloatInput.value))
       ) {
-        const roundedValue =
-          Math.round(parseFloat(roundedFloatInput.value) * 4) / 4;
-        roundedFloatInput.value = roundedValue.toFixed(2);
+        roundedFloatInput.value =
+          Math.round(parseFloat(roundedFloatInput.value) / 0.25) * 0.25;
       }
     });
 
@@ -527,7 +560,6 @@ class WorkoutSettingsManager extends WorkoutManager {
 
   addWorkoutContainerListeners() {
     this.addSelectWorkoutListener();
-    this.addExerciseBtnListener();
     this.addSaveWorkoutSettingsListener();
     this.addSaveWorkoutBtnListener();
   }
@@ -701,7 +733,6 @@ class WorkoutSettingsManager extends WorkoutManager {
 class WorkoutLogManager extends WorkoutManager {
   initialize() {
     this.addSelectWorkoutListener();
-    this.addExerciseBtnListener();
     this.addWorkoutListeners();
     this.setDate();
     this.previousWorkoutSelectValue =

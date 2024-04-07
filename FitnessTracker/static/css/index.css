@@ -1,24 +1,3 @@
-:root {
-  --primary-color: #120707;
-  --secondary-color: #080707;
-  --tertiary-color: #202020;
-  --highlight-color: #85383c70;
-  --primary-background: #0c0c0c;
-  --secondary-background: #000000;
-  --blue-background: #1f538d;
-  --primary-font: #f5f5f5;
-  --secondary-font: #8d8d8d;
-  --blue-font: #6884ff;
-  --red-font: #ff004c;
-  --green-font: #28a745;
-  --bold: 700;
-  --font-size-sm: 1rem;
-  --font-size-md: 1.2rem;
-  --hover-border: 2px solid #9bd4e0;
-  --text-shadow: 1px 0 8px rgb(0, 0, 0);
-  --box-shadow: 3px 3px 10px 3px rgba(0, 0, 0, .5);
-}
-
 .tooltip {
   position: relative;
   display: inline-block;
@@ -62,29 +41,19 @@
   display: none !important;
 }
 
-#rest-timer-popup, #daily-log-popup, #add-log-popup {
+.popup {
   position: fixed;
-  display: none;
-  top: 0;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   padding: 0.5rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  z-index: 2;
-  min-width: 25rem;
-  min-height: 10rem;
-  border-radius: 0.3rem;
-  overflow-y: visible;
-  max-height: 60%;
-  margin-top: 20rem;
+  z-index: 1000;
+  display: none;
 }
 
 #rest-timer {
-  font-size: 6rem;
-  margin-top: -2.5rem;
-  height: 100%;
-}
-
-#rest-timer .close-popup-container {
-  top: -3.8rem;
+  font-size: 3rem;
 }
 
 .close-popup-container {

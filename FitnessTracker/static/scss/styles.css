@@ -100,7 +100,7 @@ body {
   width: 100%;
 }
 .col-3 {
-  min-width: 10rem;
+  min-width: 7rem;
   max-width: 30%;
 }
 
@@ -136,6 +136,9 @@ img {
 }
 .grid--col-3 {
   grid-template-columns: 35% repeat(2, 1fr);
+}
+.grid--col-2 {
+  grid-template-columns: 1fr 1fr;
 }
 .grid--small {
   width: 100%;
@@ -183,6 +186,10 @@ img {
   grid-template-columns: 25% 75%;
 }
 
+.row-span-all {
+  grid-row: 1/-1;
+}
+
 .row-span-3 {
   grid-row: span 3;
 }
@@ -208,13 +215,22 @@ img {
   cursor: pointer;
   color: var(--red-font);
 }
+.hover-pointer {
+  cursor: pointer;
+}
 
 .border {
   border: 2px solid var(--highlight-color);
   border-radius: 1rem;
 }
+.border-invis {
+  border: 2px solid transparent;
+}
 .border-right {
   border-right: 2px solid var(--highlight-color);
+}
+.border-bottom {
+  border-bottom: 2px solid var(--highlight-color);
 }
 
 .p {
@@ -273,6 +289,18 @@ img {
 }
 .m-top-3 {
   margin-top: 3rem;
+}
+.m-right-1 {
+  margin-right: 1rem;
+}
+.m-left-1 {
+  margin-left: 1rem;
+}
+.m-top_-1_5 {
+  margin-top: -1.5rem;
+}
+.m-top_-3_8 {
+  margin-top: -3.8rem;
 }
 .m-bottom-10 {
   margin-bottom: 10rem;
@@ -406,6 +434,26 @@ input[type=number] {
 }
 .input-sm {
   max-width: 6rem;
+}
+
+.pos-rel {
+  position: relative;
+}
+.pos-abs {
+  position: absolute;
+}
+
+.search-list {
+  z-index: 20;
+  max-height: 25rem;
+  overflow-y: auto;
+}
+.search-list-bottom {
+  bottom: 100%;
+}
+
+.vis-hidden {
+  visibility: hidden;
 }
 
 /*# sourceMappingURL=styles.css.map */

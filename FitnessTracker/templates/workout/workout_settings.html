@@ -1,54 +1,62 @@
 <form class="col gap-lg" id="workout_form">
 {% csrf_token %}
-  <div class="col col-lg border gap-lg p" id="workout_settings">
+
+  <div class="col col-lg border bg-primary gap-lg p" id="workout_settings">
     <h1 class="text-center">Workout Settings</h1>
     <div>{{ form.auto_update_five_rep_max }}{{ form.auto_update_five_rep_max.label }}</div>
     <div>{{ form.show_rest_timer }}{{ form.show_rest_timer.label }}</div>
     <div>{{ form.show_workout_timer }}{{ form.show_workout_timer.label }}</div>
     <div class="success-message hidden">Workout settings saved.</div>
     <button id="save-workout-settings" class="btn" type="button">Save Settings</button>
-    
   </div>
 
-
-  <div class="row row-lg border radius-3 row-center p">
+<div class="row row-lg row-justify-space-between row-align-center bg-primary border radius-3 p">
+    <div>
+      <label for="date" class="hidden">Select Date</label>
+      <input type="date" id="date" readonly>
+    </div>
     <div class="row row-center row-nowrap">
       <div class="col border radius-2 bg-tertiary p-0_2">
         <label for="select-workout" class="hidden">Select Workout</label>
         <select id="select-workout" class="border radius-2 bg-secondary text-md text-primary px">
+          <option value="Custom Workout" selected>Select A Workout</option>
           {% for workout_name in workouts %}
-            <option value="{{ workout_name }}" {% if workout.workout_name == workout_name %}selected{% endif %}>
-              {{ workout_name }}</option>
+              <option>{{ workout_name }}</option>
           {% endfor %}
         </select>
       </div>
+      <div>
+        <span class="material-symbols-outlined tooltip">
+          help
+        </span>
+        <div id="workout-tooltip" class="text-center bg-blue">To create or edit exercises, workouts, or your routine, go to settings.</div>
+      </div>
     </div>
   </div>
-
+    
   <div class="exercises drag-and-drop-container col col-lg col-center gap-lg" id="workout-container">
     {% include "workout/workout.html" %}
   </div>
-  <div class="row row-lg border radius-3 row-center p gap-xl">
-
-    <div class="row row-align-center gap-md">
-      <div>
-        <div class="col border radius-2 bg-tertiary p-0_2">
-          <label for="select-exercise" class="hidden">Select Exercise</label>
-          <select id="select-exercise" class="border radius-2 bg-secondary text-md text-primary px">
+  <div class="row row-lg bg-primary border radius-3 p gap-xl">
+    <div class="row row-align-center row-justify-space-between gap-md full-width">
+      <div class="row row-center" id="add-exercise-search-bar">
+        <div class="pos-rel">
+          <label for="add-exercise" class="hidden">Add Exercise Search Bar</label>
+          <input id="add-exercise" class="search hover-pointer" type="text" placeholder="Select An Exercise">
+          <div class="search-list search-list-bottom hidden col pos-abs border bg-secondary p-0_2 gap-sm">
             {% for exercise in exercises %}
-              <option>{{ exercise }}</option>
+              <div class="row row-align-center hover border p-0_2 exercise-option">{{ exercise }}</div>
             {% endfor %}
-          </select>
+          </div>
+        </div>
+        <div class="text-xxl text-red hover-pointer">
+          <span class="clear material-symbols-outlined">
+            cancel
+          </span>
         </div>
       </div>
-
-      <div>
-        <button type="button" class="btn" id="add-exercise">Add Exercise</button>
-      </div>
-    </div>
-
     <div>
       <button type="button" class="btn" id="save-workout">Save Workout</button>
-    </div>
+    </div></div>
   </div>
 </form>

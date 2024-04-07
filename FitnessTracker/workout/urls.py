@@ -70,4 +70,39 @@ urlpatterns = [
         views.ExerciseSettingsDeleteExerciseView.as_view(),
         name="exercise_settings_delete_exercise",
     ),
+    path(
+        "workout/routine_settings/",
+        views.RoutineSettingsView.as_view(),
+        name="routine_settings",
+    ),
+    path(
+        "workout/routine_settings/save_routine/",
+        views.SaveRoutineAPIView.as_view(),
+        name="save_routine",
+    ),
+    path(
+        "workout/routine_settings/save_routine_settings/",
+        views.SaveRoutineSettingsAPIView.as_view(),
+        name="save_routine_settings",
+    ),
+    path(
+        "workout/get_routine/<int:pk>",
+        views.GetRoutineAPIView.as_view(),
+        name="get_routine",
+    ),
+    path(
+        "workout/routine_settings/update_routine_settings/",
+        views.UpdateRoutineSettingsAPIView.as_view(),
+        name="update_routine_settings",
+    ),
+    path(
+        "workout/routine_settings/get_active_workout_search_list/",
+        views.GetActiveWorkoutSearchListView.as_view(),
+        name="get_active_workout_search_list",
+    ),
+    path(
+        "workout/get_routine_workout/<str:direction>",
+        views.GetRoutineWorkoutView.as_view(),
+        name="get_routine_workout",
+    ),
 ]

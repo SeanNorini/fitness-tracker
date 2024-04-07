@@ -37,7 +37,7 @@ document.getElementById("registration-form").addEventListener("submit", (e) => {
   e.preventDefault();
   // Pull data from form
   const formElements = document
-    .querySelector("#registration_form")
+    .querySelector("#registration-form")
     .querySelectorAll("input");
   const formData = new FormData();
   formElements.forEach((element) => {

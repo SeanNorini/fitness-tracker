@@ -99,15 +99,17 @@ class LogHTMLCalendar(HTMLCalendar):
 
         cal = cal.replace(
             f'class="month"',
-            f"class='row row-justify-space-between row-align-center full-width month'",
+            f"class='row row-justify-space-between row-align-center full-width month p-0_2'",
         )
 
         current_month = month_name[month]
         cal = cal.replace(
             f"{current_month} {year}",
-            f'<div><span class="material-symbols-outlined text-lg" id="nav-prev">navigate_before</span></div> \
-            <div id="month-name" data-month={month} data-year={year}>{current_month} {year}</div> \
-            <div><span class="material-symbols-outlined text-lg" id="nav-next">navigate_next</span></div>',
+            f'<div><span class="material-symbols-outlined hover border bg-tertiary text-xl" id="nav-prev">'
+            f"navigate_before</span></div>"
+            f'<div id="month-name" data-month={month} data-year={year}>{current_month} {year}</div>'
+            f'<div><span class="material-symbols-outlined hover border bg-tertiary text-xl" id="nav-next">'
+            f"navigate_next</span></div>",
         )
 
         return cal

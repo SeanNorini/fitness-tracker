@@ -1,0 +1,17 @@
+<label for="active-workout" class="hidden">Active Workout Search Bar</label>
+<input id="active-workout" class="search" type="text" placeholder="{% if settings.routine %}{{ settings.get_workout }}{% else %}N/A{% endif %}">
+<div class="search-list hidden col pos-abs border bg-secondary p-0_2 gap-sm">
+  {% for week in settings.routine.get_weeks %}
+    <div class="col">
+      <div>Week #{{ week.week_number }}</div>
+      <hr class="half-width">
+      {% for day in week.get_days %}
+        <div>Day #{{ day.day_number }}</div>
+        <hr class="half-width">
+          {% for workout in day.get_workouts %}
+            <div class="row row-center hover border workout" data-week="{{ week.week_number }}" data-day="{{ day.day_number }}" data-index="{{ forloop.counter0 }}">{{ workout }}</div>
+          {% endfor %}
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>

@@ -1,4 +1,3 @@
-@import "variables.scss";
 @import "mixins.scss";
 
 // Tooltip styles
@@ -44,29 +43,19 @@
 }
 
 // Popup styles
-#rest-timer-popup, #daily-log-popup, #add-log-popup {
+.popup {
   position: fixed;
-  display: none;
-  top: 0;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   padding: .5rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  z-index: 2;
-  min-width: 25rem;
-  min-height: 10rem;
-  border-radius: .3rem;
-  overflow-y: visible;
-  max-height: 60%;
-  margin-top: 20rem;
+  z-index: 1000;
+  display: none;
 }
 
 #rest-timer {
-  font-size: 6rem;
-  margin-top: -2.5rem;
-  height: 100%;
-
-  .close-popup-container {
-     top: -3.8rem;
-  }
+  font-size: 3rem;
 }
 
 .close-popup-container {

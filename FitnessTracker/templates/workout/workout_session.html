@@ -1,17 +1,33 @@
-<input type="hidden" id="show-rest-timer" value="{{ show_rest_timer }}">
-<input type="hidden" id="show-workout-timer" value="{{ show_workout_timer }}">
+<input type="hidden" id="show-rest-timer" value="{{ show_rest_timer|default:"false" }}">
+<input type="hidden" id="show-workout-timer" value="{{ show_workout_timer|default:"false" }}">
 
 <form class="col col-lg gap-lg" id="workout-form">
 {% csrf_token %}
+{% if routine_settings.routine %}
+  <div class="row row-lg row-justify-space-between row-align-center bg-primary p">
+    <div class="row row-center gap-md">
+      <span id="nav-prev" class="material-symbols-outlined border bg-tertiary text-xl hover">navigate_before</span>
+      Previous Workout
+    </div>
+    <div class="row row-center gap-md">
+      <h1 id="routine">{{ routine_settings.routine }}</h1>
+    </div>
+    <div class="row row-center gap-md">
+      Next Workout
+      <span id="nav-next" class="material-symbols-outlined border bg-tertiary text-xl hover">navigate_next</span>
+    </div>
+  </div>
+{% endif %}
   <div class="row row-lg row-justify-space-between row-align-center bg-primary border radius-3 p">
     <div>
       <label for="date" class="hidden">Select Date</label>
-      <input type="date" id="date">
+      <input type="date" id="date" readonly>
     </div>
     <div class="row row-center row-nowrap">
       <div class="col border radius-2 bg-tertiary p-0_2">
         <label for="select-workout" class="hidden">Select Workout</label>
         <select id="select-workout" class="border radius-2 bg-secondary text-md text-primary px">
+          <option value="Custom Workout" selected>Select A Workout</option>
           {% for workout_name in workouts %}
             <option value="{{ workout_name }}" {% if workout.workout_name == workout_name %}selected{% endif %}>
               {{ workout_name }}</option>
@@ -30,34 +46,27 @@
   <div class="exercises drag-and-drop-container col col-lg col-center gap-lg" id="workout-container">
     {% include "workout/workout.html" %}
   </div>
-  <div class="row row-lg row-center bg-primary border radius-3 p gap-xl">
-
-    <div class="row row-align-center gap-md">
-      <div>
-        <div class="col border radius-2 bg-tertiary p-0_2">
-          <label for="select-exercise" class="hidden">Select Exercise</label>
-          <select id="select-exercise" class="border radius-2 bg-secondary text-md text-primary px">
+  <div class="row row-lg bg-primary border radius-3 p gap-xl">
+    <div class="row row-align-center row-justify-space-between gap-md full-width">
+      <div class="row row-center" id="add-exercise-search-bar">
+        <div class="pos-rel">
+          <label for="add-exercise" class="hidden">Add Exercise Search Bar</label>
+          <input id="add-exercise" class="search hover-pointer" type="text" placeholder="Select An Exercise">
+          <div class="search-list search-list-bottom hidden col pos-abs border bg-secondary p-0_2 gap-sm">
             {% for exercise in exercises %}
-              <option>{{ exercise }}</option>
+              <div class="row row-align-center hover border p-0_2 exercise-option">{{ exercise }}</div>
             {% endfor %}
-          </select>
+          </div>
+        </div>
+        <div class="text-xxl text-red hover-pointer">
+          <span class="clear material-symbols-outlined">
+            cancel
+          </span>
         </div>
       </div>
-
-      <div>
-        <button type="button" class="btn" id="add-exercise">Add Exercise</button>
-      </div>
-    </div>
-
     <div>
       <button type="button" class="btn" id="save-workout">Save Workout</button>
-    </div>
+    </div></div>
   </div>
 </form>
-<div id="rest-timer-popup" class="col col-sm border bg-secondary col-justify-center popup-container">
-  <div class="close-popup-container row row-justify-end">
-    <div>Close</div>
-    <span class="material-symbols-outlined close-popup">close</span>
-  </div>
-  <div id="rest-timer" class="col col-center gap-lg popup-content"><h1>00:00</h1></div>
-</div>
+{% include "base/popup.html" with popup_id="rest-timer-popup" content_id="rest-timer"%}

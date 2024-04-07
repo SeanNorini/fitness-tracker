@@ -6,8 +6,12 @@ from users.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-
+from django.shortcuts import get_object_or_404
 from users.models import WorkoutSetting
+
+
+def get_default_user():
+    return User.objects.get(username="default")
 
 
 def validate_date(date):
@@ -20,16 +24,22 @@ def validate_date(date):
 
 
 def get_attribute_list(model_class, user, attribute_name):
-    objects = model_class.objects.filter(
-        Q(user=user) | Q(user=model_class.default_user)
+    default_user = get_default_user()
+    objects = model_class.objects.filter(Q(user=user) | Q(user=default_user)).distinct()
+
+    attribute_values = set()
+    user_values = set(objects.filter(user=user).values_list(attribute_name, flat=True))
+
+    # Add user values first
+    attribute_values.update(user_values)
+
+    # Add default user values if not already present
+    default_user_values = set(
+        objects.filter(user=default_user).values_list(attribute_name, flat=True)
     )
+    attribute_values.update(default_user_values - user_values)
 
-    for value in objects.values_list(attribute_name, flat=True).distinct():
-        if model_class.objects.filter(name=value, user=user).exists():
-            objects = objects.exclude(name=value, user=model_class.default_user)
-
-    attribute_values = objects.values_list(attribute_name, flat=True)
-    return attribute_values
+    return sorted(list(attribute_values))
 
 
 def get_time_from_duration(duration):
@@ -59,7 +69,6 @@ class Exercise(models.Model):
         ("exact", "Exact"),
     ]
 
-    default_user = User.objects.get(username="default")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, null=False, blank=False)
     five_rep_max = models.DecimalField(
@@ -134,7 +143,6 @@ class Workout(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
     exercises = models.ManyToManyField(Exercise, blank=True)
     config = models.JSONField(default=dict)
-    default_user = User.objects.get(username="default")
 
     class Meta:
         unique_together = ("user", "name")
@@ -433,3 +441,163 @@ class CardioLog(models.Model):
             return None, None, None
 
         return dates, distances, paces
+
+
+class Routine(models.Model):
+    name = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ("user", "name")
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def get_routines(cls, user):
+        user_routines = Routine.objects.filter(user=user)
+        routine_list = user_routines.values_list("name", flat=True)
+
+        default_user_routines = Routine.objects.filter(user=get_default_user()).exclude(
+            name__in=routine_list
+        )
+
+        return list(user_routines) + list(default_user_routines)
+
+    def get_weeks(self):
+        return Week.objects.filter(routine=self)
+
+
+class Week(models.Model):
+    routine = models.ForeignKey(Routine, related_name="weeks", on_delete=models.CASCADE)
+    week_number = models.PositiveSmallIntegerField()
+
+    class Meta:
+        unique_together = ("routine", "week_number")
+        ordering = ["week_number"]
+
+    def get_days(self):
+        return Day.objects.filter(week=self)
+
+    def __str__(self):
+        return f"Week {self.week_number} of {self.routine.name}"
+
+
+class Day(models.Model):
+    week = models.ForeignKey(Week, related_name="days", on_delete=models.CASCADE)
+    day_number = models.PositiveSmallIntegerField(
+        choices=[(i, f"Day {i}") for i in range(1, 8)]
+    )
+
+    class Meta:
+        unique_together = ("week", "day_number")
+        ordering = ["day_number"]
+
+    def __str__(self):
+        return f"{self.get_day_number_display()} of {self.week}"
+
+    def get_workouts(self):
+        return Workout.objects.filter(dayworkout__day=self).order_by(
+            "dayworkout__order"
+        )
+
+
+class DayWorkout(models.Model):
+    day = models.ForeignKey(Day, on_delete=models.CASCADE)
+    workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
+    order = models.IntegerField(default=0)  # Field to determine the order
+
+    class Meta:
+        ordering = ["order"]
+
+
+Day.add_to_class(
+    "workouts",
+    models.ManyToManyField(to=Workout, through=DayWorkout, related_name="days"),
+)
+
+
+class RoutineSettings(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    routine = models.ForeignKey(
+        Routine, null=True, blank=True, on_delete=models.SET_NULL
+    )
+    week_number = models.PositiveSmallIntegerField(default=1)
+    day_number = models.PositiveSmallIntegerField(default=1)
+    workout_index = models.PositiveSmallIntegerField(default=0)
+    last_completed = models.DateTimeField(default=timezone.now)
+
+    def get_workout(self):
+        # Retrieve the specific week
+        week = get_object_or_404(
+            Week, routine=self.routine, week_number=self.week_number
+        )
+
+        # Retrieve the specific day
+        day = get_object_or_404(Day, week=week, day_number=self.day_number)
+
+        # Retrieve the workouts for the day ordered by 'order' in DayWorkout
+        workouts = Workout.objects.filter(dayworkout__day=day).order_by(
+            "dayworkout__order"
+        )
+
+        # Attempt to retrieve the workout at the specified index
+        try:
+
+            current_workout = workouts[self.workout_index]
+        except IndexError:
+            # Handle the case where the index is out of bounds
+            current_workout = None
+
+        return current_workout
+
+    def get_next_workout(self):
+        week = get_object_or_404(
+            Week, routine=self.routine, week_number=self.week_number
+        )
+        day = get_object_or_404(Day, week=week, day_number=self.day_number)
+        workouts = Workout.objects.filter(dayworkout__day=day).order_by(
+            "dayworkout__order"
+        )
+
+        if self.workout_index == len(workouts) - 1:
+            self.workout_index = 0
+            self.day_number += 1
+
+            if self.day_number > 7:
+                self.day_number = 1
+                self.week_number += 1
+                weeks_in_routine = Week.objects.filter(routine=self.routine).count()
+                if self.week_number > weeks_in_routine:
+                    self.week_number = 1
+        else:
+            self.workout_index += 1
+
+        self.save()
+
+        return self.get_workout()
+
+    def get_prev_workout(self):
+        week = get_object_or_404(
+            Week, routine=self.routine, week_number=self.week_number
+        )
+        day = get_object_or_404(Day, week=week, day_number=self.day_number)
+        workouts = Workout.objects.filter(dayworkout__day=day).order_by(
+            "dayworkout__order"
+        )
+
+        if self.workout_index == 0:
+            self.workout_index = len(workouts) - 1
+            self.day_number -= 1
+            if self.day_number < 1:
+                self.day_number = 7
+                self.week_number -= 1
+                weeks_in_routine = Week.objects.filter(routine=self.routine).count()
+                if self.week_number < 1:
+                    self.week_number = weeks_in_routine
+        else:
+            self.workout_index -= 1
+
+        self.save()
+
+        return self.get_workout()

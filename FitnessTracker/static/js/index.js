@@ -185,6 +185,7 @@ class PageManager {
 
   enableTopPopup(popupElement) {
     popupElement.style.display = "flex";
+    popupElement.style.flexDirection = "col";
     popupElement.classList.add("enabled");
     popupElement.style.zIndex = (this.popupStack.length + 1).toString();
 

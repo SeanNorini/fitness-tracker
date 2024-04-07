@@ -1,18 +1,5 @@
 <div class="calendar">
   {{ calendar|safe }}
 </div>
-<div id="daily-log-popup" class="log-popup col col-sm border bg-secondary col-justify-center">
-  <div class="close-popup-container row row-justify-end">
-    <div>Close</div>
-    <span class="material-symbols-outlined close-popup">close</span>
-  </div>
-  <div id="log-popup-content" class="col gap-lg"></div>
-</div>
-
-<div id="add-log-popup" class="col col-sm border bg-secondary col-justify-center">
-  <div class="close-popup-container row row-justify-end">
-    <div>Close</div>
-    <span class="material-symbols-outlined close-popup">close</span>
-  </div>
-  <div id="add-log-content"></div>
-</div>
+{% include "base/popup.html" with popup_id="daily-log-popup" content_id="log-popup-content"%}
+{% include "base/popup.html" with popup_id="add-log-popup" content_id="add-log-content"%}

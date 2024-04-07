@@ -6,6 +6,9 @@ admin.site.register(Exercise)
 admin.site.register(Workout)
 admin.site.register(WorkoutSet)
 admin.site.register(CardioLog)
+admin.site.register(Week)
+admin.site.register(Routine)
+admin.site.register(Day)
 
 
 class WorkoutSetInline(admin.TabularInline):

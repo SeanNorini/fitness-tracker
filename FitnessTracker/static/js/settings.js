@@ -37,6 +37,10 @@ class SettingsManager {
         }
         break;
       case "routine":
+        pageManager.loadModuleScript(
+          "/static/js/routine_settings.js",
+          "routineSettingsManager",
+        );
         break;
     }
   }

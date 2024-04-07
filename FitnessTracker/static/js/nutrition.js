@@ -52,7 +52,7 @@ class NutritionManager {
   saveLogListener() {
     const saveLogBtn = document.getElementById("save-log");
     saveLogBtn.addEventListener("click", (e) => {
-      const containers = document.querySelector(".nutrition_info").children;
+      const containers = document.querySelector(".nutrition-info").children;
       const foods = { food_item: [] };
       for (let i = 7; i < containers.length - 7; i += 7) {
         const foodItem = {};

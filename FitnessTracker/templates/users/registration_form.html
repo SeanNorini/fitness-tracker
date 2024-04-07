@@ -14,7 +14,7 @@
     {{ form.password }}
     {{ form.password.errors }}
     {% if not form.errors%}
-    <ul class="text-sm">
+    <ul class="text-sm m-left-1">
       <li>Password must be at least 8 characters long</li>
       <li>Password cannot be entirely numeric</li>
       <li>Password cannot be too common</li>
@@ -32,13 +32,13 @@
     {{ form.email.errors }}
   </div>
   <div><br>*Optional fields below, values will be used for calculations.</div>
-  <div class="row" id="name">
+  <div class="row row-align-end" id="name">
     <div class="col">
       {{ form.first_name.label_tag }}
       {{ form.first_name }}
       {{ form.first_name.errors }}
     </div>
-    <div class="col justify-end">
+    <div class="col">
       {{ form.last_name }}
       {{ form.last_name.errors }}
     </div>

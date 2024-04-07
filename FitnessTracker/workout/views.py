@@ -1,5 +1,11 @@
 import json
 from datetime import date
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import RetrieveAPIView
+from .serializers import RoutineSerializer, RoutineSettingsSerializer
 
 from dateutil.relativedelta import relativedelta
 from matplotlib.ticker import MaxNLocator
@@ -8,6 +14,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.generic import TemplateView, FormView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
+
 from .models import *
 from users.models import User, UserBodyCompositionSetting, WeightLog, WorkoutSetting
 from .forms import (
@@ -116,7 +123,12 @@ class SelectWorkoutView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        workout = Workout.get_workout(self.request.user, self.kwargs["workout_name"])
+        try:
+            workout = Workout.get_workout(
+                self.request.user, self.kwargs["workout_name"]
+            )
+        except Workout.DoesNotExist:
+            return context
         context["workout"] = workout.configure_workout
         return context
 
@@ -342,3 +354,94 @@ class ExerciseSettingsDeleteExerciseView(LoginRequiredMixin, DeleteView):
         obj = self.get_object()
         obj.delete()
         return JsonResponse({"success": True})
+
+
+class RoutineSettingsView(WorkoutMixin, TemplateView):
+    template_name = "workout/routine.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["routines"] = Routine.get_routines(self.request.user)
+        context["settings"], _ = RoutineSettings.objects.get_or_create(
+            user=self.request.user
+        )
+
+        return context
+
+
+class SaveRoutineSettingsAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        pass
+
+
+class SaveRoutineAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = RoutineSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            instance = serializer.save()
+            data = serializer.data
+            data["pk"] = instance.pk
+            return Response(data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetRoutineAPIView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = RoutineSerializer
+
+    def get_queryset(self):
+        return Routine.objects.filter(
+            Q(user=self.request.user) | Q(user=get_default_user())
+        )
+
+
+class UpdateRoutineSettingsAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        user = self.request.user
+        obj, created = RoutineSettings.objects.get_or_create(user=user)
+        return obj
+
+    def patch(self, request, *args, **kwargs):
+        routine_settings = self.get_object()
+        serializer = RoutineSettingsSerializer(
+            routine_settings, data=request.data, partial=True
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            print(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetActiveWorkoutSearchListView(TemplateView):
+    template_name = "workout/active_workout_search_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["settings"], _ = RoutineSettings.objects.get_or_create(
+            user=self.request.user
+        )
+
+        return context
+
+
+class GetRoutineWorkoutView(WorkoutMixin, TemplateView):
+    template_name = "workout/workout_session.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        direction = kwargs["direction"]
+        routine_settings = RoutineSettings.objects.get(user=self.request.user)
+
+        if direction == "next":
+            routine_settings.get_next_workout()
+        elif direction == "prev":
+            routine_settings.get_prev_workout()
+        return context
