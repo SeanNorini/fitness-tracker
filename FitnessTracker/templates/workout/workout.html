@@ -1,8 +1,17 @@
 {% load static %}
 <input type="hidden" class="workout_log_pk" value="{{ workout.pk }}">
-<div class="col col-center" id="message">Please select a workout or add an exercise to get started.</div>
-  {% if workout %}
-    {% for exercise in workout.exercises %}
-      {% include "workout/exercise.html" %}
-    {% endfor %}
+
+
+<div class="col col-center" id="message">
+  {% if workout.workout_name == "Rest Day" %}
+    <h1>Rest Day</h1>
+  {% else %}
+    Please select a workout or add an exercise to get started.
   {% endif %}
+</div>
+
+{% if workout %}
+  {% for exercise in workout.exercises %}
+    {% include "workout/exercise.html" %}
+  {% endfor %}
+{% endif %}

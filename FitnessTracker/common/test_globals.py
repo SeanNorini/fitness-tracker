@@ -5,6 +5,11 @@ PASSWORD_INVALID = "invalid_pass"
 EMAIL_VALID = "new_user@gmail.com"
 EMAIL_INVALID = "invalid@@gmail.com@"
 
+MIN_LENGTH_NAME = 2
+MIN_LENGTH_PASSWORD = 8
+MAX_LENGTH_NAME_OR_PASSWORD = 100
+MAX_LENGTH_USERNAME_OR_EMAIL = 254
+
 LOGIN_USER_FORM_FIELDS = {"username": "new_user", "password": "new_user_password"}
 
 CREATE_USER = {

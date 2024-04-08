@@ -150,6 +150,12 @@ body.grabbing .spinner {
   display: none;
 }
 
+input[type=date] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
 
 
 /*# sourceMappingURL=index.css.map */

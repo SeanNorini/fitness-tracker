@@ -527,77 +527,59 @@ class RoutineSettings(models.Model):
     workout_index = models.PositiveSmallIntegerField(default=0)
     last_completed = models.DateTimeField(default=timezone.now)
 
-    def get_workout(self):
-        # Retrieve the specific week
-        week = get_object_or_404(
-            Week, routine=self.routine, week_number=self.week_number
-        )
+    def _update_workout_day_week(self, direction):
+        """Update workout_index, day_number, and week_number based on direction.
 
-        # Retrieve the specific day
-        day = get_object_or_404(Day, week=week, day_number=self.day_number)
+        Args:
+            direction (str): 'next' for the next workout or 'prev' for the previous workout.
+        """
+        workouts_count = Workout.objects.filter(dayworkout__day=self._get_day()).count()
 
-        # Retrieve the workouts for the day ordered by 'order' in DayWorkout
-        workouts = Workout.objects.filter(dayworkout__day=day).order_by(
-            "dayworkout__order"
-        )
-
-        # Attempt to retrieve the workout at the specified index
-        try:
-
-            current_workout = workouts[self.workout_index]
-        except IndexError:
-            # Handle the case where the index is out of bounds
-            current_workout = None
-
-        return current_workout
-
-    def get_next_workout(self):
-        week = get_object_or_404(
-            Week, routine=self.routine, week_number=self.week_number
-        )
-        day = get_object_or_404(Day, week=week, day_number=self.day_number)
-        workouts = Workout.objects.filter(dayworkout__day=day).order_by(
-            "dayworkout__order"
-        )
-
-        if self.workout_index == len(workouts) - 1:
-            self.workout_index = 0
-            self.day_number += 1
-
-            if self.day_number > 7:
-                self.day_number = 1
-                self.week_number += 1
-                weeks_in_routine = Week.objects.filter(routine=self.routine).count()
-                if self.week_number > weeks_in_routine:
-                    self.week_number = 1
-        else:
-            self.workout_index += 1
+        if direction == "next":
+            self.workout_index = (self.workout_index + 1) % workouts_count
+            if self.workout_index == 0:
+                self.day_number = self.day_number % 7 + 1
+                if self.day_number == 1:
+                    weeks_in_routine = Week.objects.filter(routine=self.routine).count()
+                    self.week_number = (self.week_number % weeks_in_routine) + 1
+        elif direction == "prev":
+            self.workout_index = (self.workout_index - 1) % workouts_count
+            if self.workout_index == workouts_count - 1:
+                self.day_number = 7 if self.day_number == 1 else self.day_number - 1
+                if self.day_number == 7:
+                    weeks_in_routine = Week.objects.filter(routine=self.routine).count()
+                    self.week_number = (
+                        weeks_in_routine
+                        if self.week_number == 1
+                        else self.week_number - 1
+                    )
 
         self.save()
 
+    def _get_day(self):
+        """Retrieve the Day object for the current day_number and week_number."""
+        week = get_object_or_404(
+            Week, routine=self.routine, week_number=self.week_number
+        )
+        return get_object_or_404(Day, week=week, day_number=self.day_number)
+
+    def get_workout(self):
+        """Retrieve the current workout based on workout_index."""
+        day = self._get_day()
+        workouts = Workout.objects.filter(dayworkout__day=day).order_by(
+            "dayworkout__order"
+        )
+        try:
+            return workouts[self.workout_index]
+        except IndexError:
+            return None
+
+    def get_next_workout(self):
+        """Move to the next workout and retrieve it."""
+        self._update_workout_day_week("next")
         return self.get_workout()
 
     def get_prev_workout(self):
-        week = get_object_or_404(
-            Week, routine=self.routine, week_number=self.week_number
-        )
-        day = get_object_or_404(Day, week=week, day_number=self.day_number)
-        workouts = Workout.objects.filter(dayworkout__day=day).order_by(
-            "dayworkout__order"
-        )
-
-        if self.workout_index == 0:
-            self.workout_index = len(workouts) - 1
-            self.day_number -= 1
-            if self.day_number < 1:
-                self.day_number = 7
-                self.week_number -= 1
-                weeks_in_routine = Week.objects.filter(routine=self.routine).count()
-                if self.week_number < 1:
-                    self.week_number = weeks_in_routine
-        else:
-            self.workout_index -= 1
-
-        self.save()
-
+        """Move to the previous workout and retrieve it."""
+        self._update_workout_day_week("prev")
         return self.get_workout()

@@ -59,8 +59,8 @@ class SettingsManager {
       radio.addEventListener("change", (e) => {
         const heightLabel = document.querySelector('label[for="height"]');
         const heightInput = document.querySelector('input[name="height"]');
-        const weightLabel = document.querySelector('label[for="body-weight"]');
-        const weightInput = document.querySelector('input[name="body-weight"]');
+        const weightLabel = document.querySelector('label[for="body_weight"]');
+        const weightInput = document.querySelector('input[name="body_weight"]');
 
         if (e.target.value === "Imperial") {
           heightLabel.textContent = heightLabel.textContent.replace(

@@ -1,0 +1,12 @@
+<div class="row row-center" id="{{ container_id }}">
+  <div class="pos-rel">
+    <label for="{{ id }}" class="hidden">{{ label }}</label>
+    <input id="{{ id }}" class="search hover-pointer" type="text" placeholder="{{ placeholder }}">
+    <div class="search-list {% if bottom %}search-list-bottom{% endif %} hidden col pos-abs border bg-secondary p-0_2 gap-sm">
+      {% for item in items %}
+        <div class="row row-align-center hover border p-0_2 {{ item_class }}">{{ item }}</div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include "base/cancel.html" %}
+</div>

@@ -22,7 +22,7 @@ class WorkoutMixin(ExerciseMixin):
         )
         if context["routine_settings"].routine:
             workout = context["routine_settings"].get_workout()
-            print(workout)
+
             if workout:
                 context["workout"] = workout.configure_workout()
                 context["workout"]["workout_name"] = workout.name

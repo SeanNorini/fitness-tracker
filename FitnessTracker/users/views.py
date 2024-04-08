@@ -10,7 +10,7 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from .forms import (
     LoginForm,
-    UserRegistrationForm,
+    RegistrationForm,
     UserBodyCompositionForm,
     ChangePasswordForm,
     ResetPasswordForm,
@@ -64,12 +64,12 @@ class UserLogoutView(View):
 
 class RegistrationView(FormView):
     template_name = "users/registration.html"
-    form_class = UserRegistrationForm
+    form_class = RegistrationForm
     form_class2 = UserBodyCompositionForm
     success_url = "/registration/success/"
 
     def post(self, request, *args, **kwargs):
-        user_form = UserRegistrationForm(request.POST)
+        user_form = RegistrationForm(request.POST)
         user_body_composition_form = UserBodyCompositionForm(request.POST)
 
         if user_form.is_valid() and user_body_composition_form.is_valid():

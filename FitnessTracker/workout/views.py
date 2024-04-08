@@ -129,7 +129,8 @@ class SelectWorkoutView(LoginRequiredMixin, TemplateView):
             )
         except Workout.DoesNotExist:
             return context
-        context["workout"] = workout.configure_workout
+        context["workout"] = workout.configure_workout()
+        context["workout"]["workout_name"] = self.kwargs["workout_name"]
         return context
 
 
@@ -415,7 +416,6 @@ class UpdateRoutineSettingsAPIView(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            print(serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -436,7 +436,6 @@ class GetRoutineWorkoutView(WorkoutMixin, TemplateView):
     template_name = "workout/workout_session.html"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
         direction = kwargs["direction"]
         routine_settings = RoutineSettings.objects.get(user=self.request.user)
 
@@ -444,4 +443,5 @@ class GetRoutineWorkoutView(WorkoutMixin, TemplateView):
             routine_settings.get_next_workout()
         elif direction == "prev":
             routine_settings.get_prev_workout()
+        context = super().get_context_data(**kwargs)
         return context

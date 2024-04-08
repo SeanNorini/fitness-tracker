@@ -133,6 +133,10 @@ hr {
   margin: 0.2rem 0;
 }
 
+ul {
+  margin-left: 1rem;
+}
+
 img {
   max-width: 100%;
 }

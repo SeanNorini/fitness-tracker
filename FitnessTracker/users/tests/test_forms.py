@@ -3,11 +3,6 @@ from users.forms import *
 from common.test_globals import *
 from django import forms
 
-MIN_LENGTH_NAME = 2
-MIN_LENGTH_PASSWORD = 8
-MAX_LENGTH_NAME_OR_PASSWORD = 100
-MAX_LENGTH_USERNAME_OR_EMAIL = 254
-
 
 class TestGetUsernameField(TestCase):
     def setUp(self):
@@ -157,10 +152,6 @@ class TestRegistrationForm(TestCase):
         self.assertIn('id="first_name"', form.as_p())
         self.assertIn('id="last_name"', form.as_p())
         self.assertIn('id="email"', form.as_p())
-        self.assertIn('id="gender"', form.as_p())
-        self.assertIn('id="height"', form.as_p())
-        self.assertIn('id="weight"', form.as_p())
-        self.assertIn('id="age"', form.as_p())
 
     def test_valid_data(self):
         form = RegistrationForm(data=REGISTRATION_FORM_FIELDS)
@@ -174,10 +165,6 @@ class TestRegistrationForm(TestCase):
             "first_name": "f",
             "last_name": "l",
             "email": "s@gmail.com",
-            "gender": "M",
-            "weight": "50",
-            "height": "20",
-            "age": "1",
         }
         form = LoginForm(data=form_data)
         self.assertTrue(form.is_valid())
@@ -190,10 +177,6 @@ class TestRegistrationForm(TestCase):
             "first_name": "A" * MAX_LENGTH_NAME_OR_PASSWORD,
             "last_name": "A" * MAX_LENGTH_NAME_OR_PASSWORD,
             "email": "A" * MAX_LENGTH_NAME_OR_PASSWORD,
-            "gender": "M",
-            "weight": "1000",
-            "height": "120",
-            "age": "120",
         }
         form = LoginForm(data=form_data)
         self.assertTrue(form.is_valid())
@@ -206,10 +189,6 @@ class TestRegistrationForm(TestCase):
             "first_name": "A",
             "last_name": "A",
             "email": "s@gmail.com",
-            "gender": "m",
-            "weight": "49",
-            "height": "19",
-            "age": "0",
         }
         form = RegistrationForm(data=form_data)
         expected_errors = {
@@ -218,10 +197,6 @@ class TestRegistrationForm(TestCase):
             "confirm_password": [
                 "Ensure this value has at least 8 characters (it has 7)."
             ],
-            "gender": ["Select a valid choice. m is not one of the available choices."],
-            "height": ["Ensure this value is greater than or equal to 20.0."],
-            "weight": ["Ensure this value is greater than or equal to 50.0."],
-            "age": ["Ensure this value is greater than or equal to 1."],
             "first_name": ["Ensure this value has at least 2 characters (it has 1)."],
             "last_name": ["Ensure this value has at least 2 characters (it has 1)."],
         }
@@ -235,10 +210,6 @@ class TestRegistrationForm(TestCase):
             "first_name": "A" * (MAX_LENGTH_NAME_OR_PASSWORD + 1),
             "last_name": "A" * (MAX_LENGTH_NAME_OR_PASSWORD + 1),
             "email": "A" * (MAX_LENGTH_USERNAME_OR_EMAIL - 9) + "@gmail.com",
-            "gender": "Male",
-            "weight": "1001",
-            "height": "121",
-            "age": "121",
         }
         form = RegistrationForm(data=form_data)
         expected_errors = {
@@ -252,12 +223,6 @@ class TestRegistrationForm(TestCase):
             ],
             "last_name": ["Ensure this value has at most 100 characters (it has 101)."],
             "email": ["Ensure this value has at most 254 characters (it has 255)."],
-            "gender": [
-                "Select a valid choice. Male is not one of the available choices."
-            ],
-            "height": ["Ensure this value is less than or equal to 120.0."],
-            "weight": ["Ensure this value is less than or equal to 1000.0."],
-            "age": ["Ensure this value is less than or equal to 120."],
         }
         self.assertDictEqual(form.errors, expected_errors)
 
@@ -289,10 +254,15 @@ class TestRegistrationForm(TestCase):
             "first_name": "",
             "last_name": "",
             "email": "s@gmail.com",
-            "gender": "",
-            "weight": "",
-            "height": "",
-            "age": "",
         }
         form = RegistrationForm(form_data)
         form.is_valid()
+
+
+class TestUserBodyCompositionForm(TestCase):
+    def test_form_widgets(self):
+        form = UserBodyCompositionForm()
+        self.assertIn('id="gender"', form.as_p())
+        self.assertIn('id="height"', form.as_p())
+        self.assertIn('id="body_weight"', form.as_p())
+        self.assertIn('id="age"', form.as_p())

@@ -1,12 +1,13 @@
 const measurementRadios = document.querySelectorAll(
-  'input[name="unit_of_measurement"]',
+  'input[name="system_of_measurement"]',
 );
+
 measurementRadios.forEach((radio) => {
   radio.addEventListener("change", (e) => {
     const heightLabel = document.querySelector('label[for="height"]');
     const heightInput = document.querySelector('input[name="height"]');
-    const weightLabel = document.querySelector('label[for="weight"]');
-    const weightInput = document.querySelector('input[name="weight"]');
+    const weightLabel = document.querySelector('label[for="body_weight"]');
+    const weightInput = document.querySelector('input[name="body_weight"]');
 
     if (e.target.value === "Imperial") {
       heightLabel.textContent = heightLabel.textContent.replace(
@@ -33,9 +34,19 @@ measurementRadios.forEach((radio) => {
     }
   });
 });
-document.getElementById("registration-form").addEventListener("submit", (e) => {
-  e.preventDefault();
-  // Pull data from form
+
+function addSaveRegistrationListener() {
+  document
+    .getElementById("registration-form")
+    .addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const formData = readRegistrationForm();
+      registerUser(formData);
+    });
+}
+
+function readRegistrationForm() {
   const formElements = document
     .querySelector("#registration-form")
     .querySelectorAll("input");
@@ -50,13 +61,25 @@ document.getElementById("registration-form").addEventListener("submit", (e) => {
   } else {
     formData.set("gender", "F");
   }
+
+  const systemOfMeasurement = document.querySelector(
+    "#system_of_measurement_0",
+  );
+  if (systemOfMeasurement.checked) {
+    formData.set("Imperial", "Imperial");
+  } else {
+    formData.set("Metric", "Metric");
+  }
+
   // Add CSRF token
   const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
   formData.append("csrfmiddlewaretoken", csrftoken);
 
-  document.body.style.cursor = "wait";
+  return formData;
+}
 
-  // Send form, redirect to index on success otherwise display error.
+function registerUser(formData) {
+  document.body.style.cursor = "wait";
   fetch(".", {
     method: "POST",
     body: formData,
@@ -66,5 +89,12 @@ document.getElementById("registration-form").addEventListener("submit", (e) => {
       document.body.style.cursor = "default";
       const container = document.querySelector(".container");
       container.innerHTML = data;
+
+      const errors = document.querySelector(".errorlist");
+      if (errors) {
+        addSaveRegistrationListener();
+      }
     });
-});
+}
+
+addSaveRegistrationListener();

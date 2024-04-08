@@ -98,7 +98,7 @@ class ChangePasswordForm(SetPasswordForm):
     current_password = get_password_field(label_prefix="Current ", id_prefix="current_")
 
 
-class UserRegistrationForm(forms.ModelForm):
+class RegistrationForm(forms.ModelForm):
     username = forms.CharField(
         min_length=2,
         max_length=254,
