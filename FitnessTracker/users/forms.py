@@ -3,7 +3,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.hashers import make_password
 
-from .models import User, UserBodyCompositionSetting, WorkoutSetting
+from .models import User, UserSettings
 
 
 def get_username_field():
@@ -42,6 +42,7 @@ def get_password_field(label_prefix="", id_prefix=""):
 def get_name_field(placeholder=""):
     return forms.CharField(
         label="Name",
+        min_length=2,
         max_length=100,
         required=False,
         widget=forms.TextInput(
@@ -64,38 +65,6 @@ def get_email_field(label_prefix="", id_prefix="", required=True):
             attrs={"id": f"{id_prefix}email", "placeholder": "example@gmail.com"}
         ),
     )
-
-
-class ResetPasswordForm(forms.Form):
-    username = get_username_field()
-
-
-class LoginForm(forms.Form):
-    username = get_username_field()
-    password = get_password_field()
-    remember_me = forms.BooleanField(
-        required=False, widget=forms.CheckboxInput(attrs={"id": "remember_me"})
-    )
-
-
-class SetPasswordForm(forms.Form):
-    new_password = get_password_field(label_prefix="New ", id_prefix="new_")
-    confirm_password = get_password_field(label_prefix="Confirm ", id_prefix="confirm_")
-
-    def clean(self):
-        cleaned_data = super().clean()
-        new_password = cleaned_data.get("new_password")
-        confirm_password = cleaned_data.get("confirm_password")
-
-        # Check if new password and confirm password match
-        if new_password and confirm_password and new_password != confirm_password:
-            self.add_error("new_password", "Passwords don't match. Please try again.")
-
-        return cleaned_data
-
-
-class ChangePasswordForm(SetPasswordForm):
-    current_password = get_password_field(label_prefix="Current ", id_prefix="current_")
 
 
 class RegistrationForm(forms.ModelForm):
@@ -150,7 +119,39 @@ class RegistrationForm(forms.ModelForm):
         return user
 
 
-class UserBodyCompositionForm(forms.ModelForm):
+class LoginForm(forms.Form):
+    username = get_username_field()
+    password = get_password_field()
+    remember_me = forms.BooleanField(
+        required=False, widget=forms.CheckboxInput(attrs={"id": "remember_me"})
+    )
+
+
+class SetPasswordForm(forms.Form):
+    new_password = get_password_field(label_prefix="New ", id_prefix="new_")
+    confirm_password = get_password_field(label_prefix="Confirm ", id_prefix="confirm_")
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password = cleaned_data.get("new_password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        # Check if new password and confirm password match
+        if new_password and confirm_password and new_password != confirm_password:
+            self.add_error("new_password", "Passwords don't match. Please try again.")
+
+        return cleaned_data
+
+
+class ChangePasswordForm(SetPasswordForm):
+    current_password = get_password_field(label_prefix="Current ", id_prefix="current_")
+
+
+class ResetPasswordForm(forms.Form):
+    username = get_username_field()
+
+
+class UserSettingsForm(forms.ModelForm):
     system_of_measurement = forms.ChoiceField(
         widget=forms.RadioSelect(attrs={"id": "system_of_measurement"}),
         choices=[("Imperial", "Imperial"), ("Metric", "Metric")],
@@ -232,7 +233,7 @@ class UserBodyCompositionForm(forms.ModelForm):
     )
 
     class Meta:
-        model = UserBodyCompositionSetting
+        model = UserSettings
         fields = [
             "system_of_measurement",
             "gender",
@@ -244,7 +245,16 @@ class UserBodyCompositionForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        measurement = cleaned_data.get("unit_of_measurement")
+        cleaned_data["system_of_measurement"] = (
+            cleaned_data.get("system_of_measurement")
+            if cleaned_data.get("system_of_measurement")
+            else "Imperial"
+        )
+        measurement = cleaned_data["system_of_measurement"]
+
+        cleaned_data["gender"] = (
+            "M" if not cleaned_data.get("gender") else cleaned_data.get("gender")
+        )
 
         # Check if height, weight, and age are not provided
         if not cleaned_data.get("height"):
@@ -283,17 +293,3 @@ class UpdateAccountForm(forms.ModelForm):
             self.add_error("confirm_email", "Emails don't match.")
 
         return cleaned_data
-
-
-class WorkoutSettingForm(forms.ModelForm):
-    class Meta:
-        model = WorkoutSetting
-        fields = ["auto_update_five_rep_max", "show_rest_timer", "show_workout_timer"]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["auto_update_five_rep_max"].label = (
-            "Update five rep max after workout (Only on increases)"
-        )
-        self.fields["show_rest_timer"].label = "Show rest timer after set"
-        self.fields["show_workout_timer"].label = "Show workout timer"

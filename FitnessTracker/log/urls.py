@@ -20,11 +20,6 @@ urlpatterns = [
         name="delete_weight_log",
     ),
     path(
-        "delete_workout_log/<int:pk>",
-        views.DeleteWorkoutLogView.as_view(),
-        name="delete_workout_log",
-    ),
-    path(
         "get_workout_log/<int:pk>",
         views.GetWorkoutLogView.as_view(),
         name="get_workout_log",

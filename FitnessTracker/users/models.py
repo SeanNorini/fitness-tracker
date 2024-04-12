@@ -22,23 +22,14 @@ class User(AbstractUser):
         default="last",
     )
 
+    @property
     def distance_unit(self):
-        system_of_measurement = (
-            UserBodyCompositionSetting.objects.filter(user=self.id)
-            .first()
-            .system_of_measurement
-        )
+        return UserSettings.get_distance_unit(self)
 
-        if system_of_measurement == "Imperial":
-            return "mi"
-        else:
-            return "km"
-
+    @property
     def weight_unit(self):
         system_of_measurement = (
-            UserBodyCompositionSetting.objects.filter(user=self.id)
-            .first()
-            .system_of_measurement
+            UserSettings.objects.filter(user=self.id).first().system_of_measurement
         )
 
         if system_of_measurement == "Imperial":
@@ -46,16 +37,17 @@ class User(AbstractUser):
         else:
             return "Kg"
 
-    def get_body_weight(self):
+    @property
+    def body_weight(self):
         return (
-            UserBodyCompositionSetting.objects.filter(user=self.id)
+            UserSettings.objects.filter(user=self.id)
             .order_by("-pk")
             .first()
             .body_weight
         )
 
 
-class UserBodyCompositionSetting(models.Model):
+class UserSettings(models.Model):
     GENDER_CHOICES = [
         ("M", "Male"),
         ("F", "Female"),
@@ -64,7 +56,7 @@ class UserBodyCompositionSetting(models.Model):
         ("Imperial", "Imperial"),
         ("Metric", "Metric"),
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="settings", on_delete=models.CASCADE)
     system_of_measurement = models.CharField(
         max_length=8, choices=MEASUREMENT_CHOICES, default="Imperial"
     )
@@ -82,16 +74,19 @@ class UserBodyCompositionSetting(models.Model):
         default=30, validators=[MinValueValidator(1), MaxValueValidator(120)]
     )
 
+    class Meta:
+        verbose_name_plural = "User Settings"
+
     @classmethod
     def update(cls, user):
-        user_body_composition_settings = cls.objects.filter(user=user).first()
+        user_settings, _ = cls.objects.get_or_create(user=user)
         most_recent_weight = (
             WeightLog.objects.filter(user=user).order_by("-date").first()
         )
 
-        user_body_composition_settings.body_weight = most_recent_weight.body_weight
-        user_body_composition_settings.body_fat = most_recent_weight.body_fat
-        user_body_composition_settings.save()
+        user_settings.body_weight = most_recent_weight.body_weight
+        user_settings.body_fat = most_recent_weight.body_fat
+        user_settings.save()
 
     @classmethod
     def get_unit_of_measurement(cls, user):
@@ -102,12 +97,16 @@ class UserBodyCompositionSetting(models.Model):
         )
         return unit_of_measurement
 
+    @classmethod
+    def get_distance_unit(cls, user):
+        system_of_measurement = (
+            cls.objects.filter(user=user).first().system_of_measurement
+        )
 
-class WorkoutSetting(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    auto_update_five_rep_max = models.BooleanField(default=False)
-    show_rest_timer = models.BooleanField(default=False)
-    show_workout_timer = models.BooleanField(default=False)
+        if system_of_measurement == "Imperial":
+            return "mi"
+        else:
+            return "km"
 
 
 class WeightLog(models.Model):
@@ -122,7 +121,7 @@ class WeightLog(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        UserBodyCompositionSetting.update(self.user)
+        UserSettings.update(self.user)
 
     class Meta:
         # Ensure only one weight entry per user per date

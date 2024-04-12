@@ -37,7 +37,7 @@ class NutritionTrackerView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
-        if request.headers.get("fetch") == "True":
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return render(request, "nutrition_tracker/nutrition.html", context)
         else:
             return render(request, "base/index.html", context)

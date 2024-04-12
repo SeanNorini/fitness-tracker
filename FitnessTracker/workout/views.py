@@ -4,24 +4,24 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import RetrieveAPIView, DestroyAPIView
 from .serializers import RoutineSerializer, RoutineSettingsSerializer
 
 from dateutil.relativedelta import relativedelta
 from matplotlib.ticker import MaxNLocator
 from django.db.models import Max
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, Http404
 from django.views.generic import TemplateView, FormView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import *
-from users.models import User, UserBodyCompositionSetting, WeightLog, WorkoutSetting
+from users.models import User, WeightLog
 from .forms import (
     WorkoutLogForm,
     ExerciseForm,
 )
-from users.forms import WorkoutSettingForm
+from .forms import WorkoutSettingsForm
 from .utils import *
 from matplotlib import pyplot as plt
 from io import BytesIO
@@ -111,7 +111,7 @@ class StatsView(ExerciseMixin, TemplateView):
             return HttpResponse(graph, content_type="image/png")
 
     def get(self, request, *args, **kwargs):
-        if request.headers.get("fetch") == "True":
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return render(
                 request, "workout/stats.html", self.get_context_data(**kwargs)
             )
@@ -145,16 +145,16 @@ class WorkoutView(WorkoutMixin, TemplateView):
 
         context["template_content"] = "workout/workout_session.html"
 
-        user_workout_settings = WorkoutSetting.objects.filter(
+        user_workout_settings, _ = WorkoutSettings.objects.get_or_create(
             user=self.request.user
-        ).first()
+        )
         context["show_workout_timer"] = user_workout_settings.show_workout_timer
         context["show_rest_timer"] = user_workout_settings.show_rest_timer
 
         return context
 
     def get(self, request, *args, **kwargs):
-        if request.headers.get("fetch") == "True":
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return render(
                 request,
                 "workout/workout_session.html",
@@ -209,6 +209,7 @@ class SaveWorkoutSessionView(LoginRequiredMixin, FormView):
             return JsonResponse({"success": False})
 
     def form_invalid(self, form):
+        print(form.errors)
         return JsonResponse({"error": "Invalid Form"})
 
 
@@ -218,10 +219,10 @@ class WorkoutSettingsView(WorkoutMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        user_workout_settings = WorkoutSetting.objects.filter(
+        user_workout_settings = WorkoutSettings.objects.filter(
             user=self.request.user
         ).first()
-        context["form"] = WorkoutSettingForm(instance=user_workout_settings)
+        context["form"] = WorkoutSettingsForm(instance=user_workout_settings)
         return context
 
 
@@ -296,11 +297,11 @@ class WorkoutSettingsSaveWorkoutView(LoginRequiredMixin, UpdateView):
 
 
 class WorkoutSettingsSaveWorkoutSettingsView(LoginRequiredMixin, FormView):
-    model = WorkoutSetting
-    form_class = WorkoutSettingForm
+    model = WorkoutSettings
+    form_class = WorkoutSettingsForm
 
     def form_valid(self, form):
-        workout_settings, created = WorkoutSetting.objects.get_or_create(
+        workout_settings, created = WorkoutSettings.objects.get_or_create(
             user=self.request.user
         )
         workout_settings.auto_update_five_rep_max = form.cleaned_data[
@@ -445,3 +446,21 @@ class GetRoutineWorkoutView(WorkoutMixin, TemplateView):
             routine_settings.get_prev_workout()
         context = super().get_context_data(**kwargs)
         return context
+
+
+class DeleteWorkoutLogAPIView(DestroyAPIView):
+    queryset = WorkoutLog.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.user != request.user:
+            return Response(
+                {"error": "Not authorized."}, status=status.HTTP_403_FORBIDDEN
+            )
+
+        self.perform_destroy(instance)
+        return Response(
+            {"success": "Workout log deleted successfully."},
+            status=status.HTTP_200_OK,
+        )

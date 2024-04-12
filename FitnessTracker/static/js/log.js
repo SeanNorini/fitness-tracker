@@ -207,35 +207,28 @@ class LogManager {
   deleteWorkoutLog(e) {
     const workoutLog = e.target.closest(".workout");
     const workoutLogPK = workoutLog.querySelector(".workout-log-pk").value;
-    const csrftoken = document.querySelector(
-      "[name=csrfmiddlewaretoken]",
-    ).value;
 
-    const formData = new FormData();
-    formData.append("csrfmiddlewaretoken", csrftoken);
-
-    const url = `${this.baseURL}/delete_workout_log/${workoutLogPK}`;
-    pageManager
-      .fetchData({
-        url: url,
-        method: "POST",
-        body: formData,
-        responseType: "json",
-      })
-      .then((response) => {
-        if (response.success) {
-          workoutLog.remove();
-          if (!document.querySelector(".workout")) {
-            this.updateLogIcons("exercise", "delete");
-            document
-              .querySelector(".workout-log-placeholder")
-              .classList.remove("hidden");
-          }
-        } else {
-          throw new Error("Failed to save weight log");
-        }
-      });
+    FetchUtils.apiFetch({
+      url: `${pageManager.baseURL}/workout/delete_workout_log/${workoutLogPK}`,
+      method: "DELETE",
+      successHandler: (response) => {
+        this.deleteWorkoutLogSuccessHandler(workoutLog);
+      },
+      errorHandler: (response) =>
+        pageManager.showTempPopupMessage("Error. Please Try Again.", 2000),
+    });
   }
+
+  deleteWorkoutLogSuccessHandler = (workoutLog) => {
+    workoutLog.remove();
+    if (!document.querySelector(".workout")) {
+      this.updateLogIcons("exercise", "delete");
+      document
+        .querySelector(".workout-log-placeholder")
+        .classList.remove("hidden");
+    }
+  };
+
   updateWorkoutLogs(workoutLogPK) {
     this.getWorkoutLog(workoutLogPK).then((workoutLogHTML) => {
       const workoutLogsContainer = document.getElementById("workout-log-info");

@@ -48,7 +48,7 @@ class SettingsManager {
   loadUserSettings() {
     pageManager.addBtnGroupToggleListeners(this.btnGroupHandler);
     this.accountSettingsListeners();
-    this.bodyCompositionSettingsListeners();
+    this.userSettingsListeners();
   }
 
   addLbsToKgListeners() {
@@ -89,60 +89,28 @@ class SettingsManager {
     });
   }
 
-  readBodyCompositionSettings() {
-    const formData = new FormData();
-    const formElements = document
-      .querySelector("#body-composition-form")
-      .querySelectorAll("input");
-    formElements.forEach((element) => {
-      formData.append(element.name, element.value);
+  updateUserSettings() {
+    const formData = FormUtils.getFormData("user-settings-form");
+    FetchUtils.apiFetch({
+      url: `${this.baseURL}/update_user_settings/`,
+      method: "PATCH",
+      body: formData,
+      successHandler: (response) => {
+        pageManager.showTempPopupMessage("User Settings Updated", 2000);
+      },
+      errorHandler: FormUtils.formErrorHandler,
     });
-
-    const gender = document.querySelector("#gender_0");
-    if (gender.checked) {
-      formData.set("gender", "M");
-    } else {
-      formData.set("gender", "F");
-    }
-
-    const systemOfMeasurement = document.querySelector(
-      "#system_of_measurement_0",
-    );
-    if (systemOfMeasurement.checked) {
-      formData.set("system_of_measurement", "Imperial");
-    } else {
-      formData.set("system_of_measurement", "Metric");
-    }
-
-    return formData;
   }
 
-  updateBodyCompositionSettings() {
-    const formData = this.readBodyCompositionSettings();
-    pageManager
-      .fetchData({
-        url: `${this.baseURL}/update_body_composition_settings/`,
-        method: "POST",
-        body: formData,
-        responseType: "text",
-      })
-      .then((contentHTML) => {
-        pageManager.updateContent(contentHTML, "body-composition-settings");
-        this.bodyCompositionSettingsListeners();
-      });
-  }
-  bodyCompositionSettingsListeners() {
+  userSettingsListeners() {
     this.addLbsToKgListeners();
-    this.addUpdateBodyCompositionListener();
+    this.addUpdateUserSettingsListener();
   }
 
-  addUpdateBodyCompositionListener() {
-    const updateBodyCompositionSettings = document.querySelector(
-      "#update-body-composition",
-    );
-    updateBodyCompositionSettings.addEventListener("click", (e) => {
-      const formData = this.readBodyCompositionSettings();
-      this.updateBodyCompositionSettings(formData);
+  addUpdateUserSettingsListener() {
+    const updateUserSettings = document.querySelector("#update-user-settings");
+    updateUserSettings.addEventListener("click", (e) => {
+      this.updateUserSettings();
     });
   }
 
@@ -180,7 +148,7 @@ class SettingsManager {
   openChangePassword() {
     pageManager
       .fetchData({
-        url: `${pageManager.baseURL}/user/change_password`,
+        url: `${pageManager.baseURL}/user/change_password_form`,
         method: "GET",
         responseType: "text",
       })
@@ -190,36 +158,25 @@ class SettingsManager {
       });
   }
 
-  readAccountSettings() {
-    const formData = new FormData();
-    const formElements = document
-      .querySelector("#account-settings-form")
-      .querySelectorAll("input");
-    formElements.forEach((element) => {
-      formData.append(element.name, element.value);
-    });
-    return formData;
-  }
   addUpdateAccountSettingsListener() {
-    const updateAccountSettings = document.querySelector("#update-settings");
+    const updateAccountSettings = document.querySelector("#update-account");
     updateAccountSettings.addEventListener("click", (e) => {
       this.updateAccountSettings();
     });
   }
 
   updateAccountSettings() {
-    const formData = this.readAccountSettings();
-    pageManager
-      .fetchData({
-        url: `${pageManager.baseURL}/user/settings/update_account_settings/`,
-        method: "POST",
-        body: formData,
-        responseType: "text",
-      })
-      .then((contentHTML) => {
-        pageManager.updateContent(contentHTML, "account-settings");
-        this.accountSettingsListeners();
-      });
+    const formData = FormUtils.getFormData("account-settings-form");
+    FormUtils.clearFormErrors();
+    FetchUtils.apiFetch({
+      url: `${pageManager.baseURL}/user/settings/update_account_settings/`,
+      method: "PATCH",
+      body: formData,
+      successHandler: (response) => {
+        pageManager.showTempPopupMessage("Account Updated.", 2000);
+      },
+      errorHandler: FormUtils.formErrorHandler,
+    });
   }
   accountSettingsListeners() {
     this.addDeleteAccountListener();
@@ -227,42 +184,18 @@ class SettingsManager {
     this.addUpdateAccountSettingsListener();
   }
 
-  readChangePasswordForm() {
-    const formData = new FormData();
-    const formElements = document
-      .querySelector("#change-password-form")
-      .querySelectorAll("input");
-    formElements.forEach((element) => {
-      formData.append(element.name, element.value);
-    });
-
-    const csrftoken = document.querySelector(
-      "[name=csrfmiddlewaretoken]",
-    ).value;
-    formData.append("csrfmiddlewaretoken", csrftoken);
-
-    return formData;
-  }
-
   changePassword() {
-    const formData = this.readChangePasswordForm();
-    pageManager
-      .fetchData({
-        url: `${pageManager.baseURL}/user/change_password/`,
-        method: "POST",
-        body: formData,
-        responseType: "text",
-      })
-      .then((contentHTML) => {
-        pageManager.updateContent(contentHTML, "content");
-        const error = document.querySelector(".errorlist");
-        if (error) {
-          this.changePasswordEventListeners();
-        } else {
-          pageManager.showTempPopupMessage("Password changed.", 2000);
-          this.initialize();
-        }
-      });
+    const formData = FormUtils.getFormData("change-password-form");
+    FormUtils.clearFormErrors();
+    FetchUtils.apiFetch({
+      url: `${pageManager.baseURL}/user/change_password/`,
+      method: "POST",
+      body: formData,
+      successHandler: (response) => {
+        pageManager.showTempPopupMessage("Password Updated.", 2000);
+      },
+      errorHandler: FormUtils.formErrorHandler,
+    });
   }
   addChangePasswordListener() {
     const changePassword = document.querySelector("#change-password");

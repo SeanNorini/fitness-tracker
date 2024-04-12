@@ -18,10 +18,6 @@ CREATE_USER = {
     "first_name": "first",
     "last_name": "last",
     "email": "new_user@gmail.com",
-    "gender": "M",
-    "weight": 150,
-    "height": 75,
-    "age": 28,
 }
 
 REGISTRATION_FORM_FIELDS = {
@@ -31,12 +27,14 @@ REGISTRATION_FORM_FIELDS = {
     "first_name": "first",
     "last_name": "last",
     "email": "smnorini@gmail.com",
+}
+
+USER_SETTINGS_FORM_FIELDS = {
     "gender": "M",
     "weight": "150",
     "height": "75",
     "age": "28",
 }
-
 
 CHANGE_PASSWORD_FORM_FIELDS = {
     "current_password": "new_user_password",

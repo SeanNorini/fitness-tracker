@@ -7,7 +7,7 @@ from calendar import HTMLCalendar, month_name
 from datetime import datetime
 from django.shortcuts import get_object_or_404
 
-from users.models import WeightLog, UserBodyCompositionSetting
+from users.models import WeightLog, UserSettings
 from workout.models import WorkoutLog, Workout, Exercise, get_attribute_list
 
 from workout.forms import WorkoutLogForm
@@ -41,7 +41,6 @@ class LogView(LoginRequiredMixin, TemplateView):
 
         modules = ["workout", "cardio", "nutrition", "log", "stats", "settings"]
         context["modules"] = modules
-        context["css_file"] = "log/css/log.css"
         return context
 
     def get(self, request, *args, **kwargs):
@@ -52,10 +51,8 @@ class LogView(LoginRequiredMixin, TemplateView):
         html_calendar = cal.formatmonth(context["year"], context["month"])
         context["calendar"] = html_calendar
 
-        if request.headers.get("fetch") == "True":
-
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return render(request, "log/log.html", context)
-
         context["template_content"] = "log/log.html"
         return render(request, "base/index.html", context)
 
@@ -198,13 +195,11 @@ class SaveWeightLogView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user_body_composition_settings = (
-            UserBodyCompositionSetting.objects.filter(user=self.request.user)
-            .order_by("-pk")
-            .first()
+        user_settings = (
+            UserSettings.objects.filter(user=self.request.user).order_by("-pk").first()
         )
 
-        context["user_body_composition_settings"] = user_body_composition_settings
+        context["user_settings"] = user_settings
 
         return context
 
@@ -231,19 +226,6 @@ class DeleteWeightLogView(LoginRequiredMixin, DeleteView):
         success = False
         if weight_log:
             weight_log.delete()
-            success = True
-        data = {"success": success}
-        return JsonResponse(data)
-
-
-class DeleteWorkoutLogView(LoginRequiredMixin, DeleteView):
-    model = WorkoutLog
-
-    def form_valid(self, request, *args, **kwargs):
-        workout_log = self.get_object()
-        success = False
-        if workout_log:
-            workout_log.delete()
             success = True
         data = {"success": success}
         return JsonResponse(data)

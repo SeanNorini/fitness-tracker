@@ -1,32 +1,35 @@
 <form class="col gap-lg" id="account-settings-form" method="POST">
   <h1 class="text-center">Account Settings</h1>
-  {% csrf_token %}
-  <div class="row gap-lg" id="name">
-    <div id="first_name" class="col gap-sm col-align-start">
-      {{ form.first_name.label_tag }}
-      {{ form.first_name }}
-      {{ form.first_name.errors }}
-    </div>
-    <div id="last_name" class="col col-justify-end">
-      {{ form.last_name }}
-      {{ form.last_name.errors }}
+  
+  <div class="col gap-sm" id="name">
+    <div>Name:</div>
+    <div class="row gap-lg" id="name">
+      <div id="first_name" class="col gap-sm col-align-start">
+        {{ form.first_name }}
+        <div class="errors"></div>
+      </div>
+      <div id="last_name" class="col">
+        {{ form.last_name }}
+        <div class="errors"></div>
+      </div>
     </div>
   </div>
   <div id="email" class="col gap-sm col-align-start">
     {{ form.email.label_tag }}
     {{ form.email }}
+    <div class="errors"></div>
   </div>
   <div id="confirm_email" class="col gap-sm col-align-start">
     {{ form.confirm_email.label_tag }}
     {{ form.confirm_email }}
-    {{ form.confirm_email.errors }}
+    <div class="errors"></div>
   </div>
   {% if message %}
     <div class="success-message row row-center text-green">{{ message }}</div>
   {% endif %}
   <div class="row row-justify-space-between">
     <div>
-      <button class="btn" id="update-settings" type="button">Update Account</button>
+      <button class="btn" id="update-account" type="button">Update Account</button>
     </div>
     <div>
       <button class="btn" id="delete-account" type="button">Delete Account</button>

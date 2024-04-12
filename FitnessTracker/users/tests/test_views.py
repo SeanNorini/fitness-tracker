@@ -1,3 +1,6 @@
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.test import APITestCase
+
 from users.models import User
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -12,39 +15,48 @@ from common.test_utils import (
     form_with_valid_csrf_token,
 )
 
+from users.forms import UpdateAccountForm, UserSettingsForm
+
 
 class TestUserViews(TestCase):
-    fixtures = ["default.json"]
 
     def setUp(self):
         self.user = User.objects.create_user(**CREATE_USER)
+        self.default_user = User.objects.create_user(username="default")
         self.registration = REGISTRATION_FORM_FIELDS
 
 
 class TestLoginView(TestUserViews):
 
     def test_user_already_authenticated(self):
-        # Verify redirect on user already logged in
-        self.client.force_login(self.user)
+        with patch(
+            "users.models.UserSettings"
+        ) as mock:  # Mocked to prevent model does not exist error
+            # Verify redirect on user already logged in
+            self.client.force_login(self.user)
 
-        response = self.client.get(reverse("login"))
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("workout"))
+            response = self.client.get(reverse("login"))
+            self.assertEqual(response.status_code, 302)
+            self.assertRedirects(response, reverse("workout"))
 
     def test_user_not_authenticated(self):
         # Verify login page loads
         response = self.client.get(reverse("login"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.resolver_match.view_name, "login")
+        self.assertTemplateUsed(response, "users/login.html")
 
     def test_valid_login(self):
-        # Verify redirect on valid login
-        response = self.client.post(
-            reverse("login"),
-            data=LOGIN_USER_FORM_FIELDS,
-        )
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("workout"))
+        with patch(
+            "users.models.UserSettings"
+        ) as mock:  # Mocked to prevent model does not exist error
+            # Verify redirect on valid login
+            response = self.client.post(
+                reverse("login"),
+                data=LOGIN_USER_FORM_FIELDS,
+            )
+            self.assertEqual(response.status_code, 302)
+            self.assertRedirects(response, reverse("workout"))
 
     def test_invalid_login(self):
         # Verify form loads again with field errors
@@ -71,7 +83,6 @@ class TestLoginView(TestUserViews):
 
 
 class TestLogoutView(TestUserViews):
-
     def test_user_already_authenticated(self):
         # Verify redirect on user already logged in
         self.client.force_login(self.user)
@@ -90,26 +101,30 @@ class TestLogoutView(TestUserViews):
 class TestRegistrationView(TestUserViews):
 
     def test_user_already_authenticated(self):
-        # Verify authenticated users redirected to index
-        self.client.force_login(self.user)
-        response = self.client.get(reverse("registration"))
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse("workout"))
+        with patch(
+            "users.models.UserSettings"
+        ) as mock:  # Mocked to prevent model does not exist error
+            # Verify authenticated users redirected to index
+            self.client.force_login(self.user)
+            response = self.client.get(reverse("registration"))
+            self.assertEqual(response.status_code, 302)
+            self.assertRedirects(response, reverse("workout"))
 
     def test_user_not_authenticated(self):
         response = self.client.get(reverse("registration"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.resolver_match.view_name, "registration")
+        self.assertTemplateUsed(response, "users/registration.html")
 
     def test_valid_registration(self):
-        with patch("users.views.send_activation_link") as send_activation_link:
+        with patch("users.utils.EmailService.send_activation_link") as email_service:
             response = self.client.post(
                 reverse("registration"),
                 data=REGISTRATION_FORM_FIELDS,
             )
             user = User.objects.get(username=REGISTRATION_FORM_FIELDS["username"])
             # Verify activation link function called
-            send_activation_link.assert_called_once_with(response.wsgi_request, user)
+            email_service.assert_called_once()
             # Check that registration was successful, confirmation message displayed.
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.resolver_match.view_name, "registration")
@@ -133,20 +148,25 @@ class TestRegistrationView(TestUserViews):
         self.assertTrue(form.errors)
 
     def test_without_csrf_token(self):
-        status_code = form_without_csrf_token("registration", REGISTRATION_FORM_FIELDS)
+        status_code = form_without_csrf_token(
+            "registration", {"username": USERNAME_VALID, "password": PASSWORD_VALID}
+        )
         self.assertEqual(status_code, 403)
 
     def test_invalid_csrf_token(self):
         status_code = form_with_invalid_csrf_token(
-            "registration", REGISTRATION_FORM_FIELDS
+            "registration", {"username": USERNAME_VALID, "password": PASSWORD_VALID}
         )
         self.assertEqual(status_code, 403)
 
     def test_valid_csrf_token(self):
-        status_code = form_with_valid_csrf_token(
-            "registration", REGISTRATION_FORM_FIELDS
-        )
-        self.assertEqual(status_code, 200)
+        with patch(
+            "users.utils.EmailService"
+        ) as mock:  # mocked to stop EmailService from running
+            status_code = form_with_valid_csrf_token(
+                "registration", {"username": USERNAME_VALID, "password": PASSWORD_VALID}
+            )
+            self.assertEqual(status_code, 200)
 
 
 class TestActivateView(TestUserViews):
@@ -160,6 +180,7 @@ class TestActivateView(TestUserViews):
         user = User.objects.get(username=self.user.username)
 
         self.assertTrue(user.is_active)
+        self.assertTemplateUsed(response, "users/activation_success.html")
 
     def test_invalid_activation(self) -> None:
         self.user.is_active = False
@@ -175,9 +196,25 @@ class TestActivateView(TestUserViews):
         self.assertTemplateUsed(response, "users/activation_failure.html")
 
 
-class TestChangePasswordView(TestUserViews):
+class TestChangePasswordFormView(TestUserViews):
     def setUp(self) -> None:
         super().setUp()
+        self.client.force_login(self.user)
+
+    def test_login_required(self) -> None:
+        self.client.logout()
+        response = self.client.get(reverse("change_password_form"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_correct_templated_rendered(self) -> None:
+        self.client.get(reverse("change_password_form"))
+        self.assertTemplateUsed("users/change_password_form.html")
+
+
+class TestChangePasswordAPIView(APITestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(**CREATE_USER)
+        self.default_user = User.objects.create_user(username="default")
         self.client.force_login(self.user)
 
     def test_change_password_success(self) -> None:
@@ -185,26 +222,14 @@ class TestChangePasswordView(TestUserViews):
             reverse("change_password"), data=CHANGE_PASSWORD_FORM_FIELDS
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.view_name, "change_password")
-        self.assertTemplateUsed(response, "users/change_password_done.html")
 
     def test_change_password_fail(self) -> None:
-        response = self.client.post(reverse("change_password"), data={})
+        response = self.client.post(
+            reverse("change_password"), data={"current_password": PASSWORD_INVALID}
+        )
         # Verify page reloads on form error
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.view_name, "change_password")
-        self.assertTemplateUsed(response, "users/change_password_form.html")
-
-        # Verify page has form context with errors
-        self.assertIn("form", response.context)
-        form = response.context["form"]
-        self.assertTrue(form.errors)
-
-    def test_login_required(self) -> None:
-        self.client.logout()
-        response = self.client.get(reverse("change_password"))
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.resolver_match.view_name, "change_password")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("Incorrect password", response.data.get("current_password", []))
 
     def test_without_csrf_token(self):
         status_code = form_without_csrf_token(
@@ -218,21 +243,29 @@ class TestChangePasswordView(TestUserViews):
         )
         self.assertEqual(status_code, 403)
 
-    def test_valid_csrf_token(self):
-        status_code = form_with_valid_csrf_token(
-            "change_password", CHANGE_PASSWORD_FORM_FIELDS, login=True
-        )
-        self.assertEqual(status_code, 200)
+    def test_login_required(self) -> None:
+        self.client.logout()
+        response = self.client.get(reverse("change_password"))
+        self.assertEqual(response.status_code, 403)
+
+    def test_valid_session_id(self):
+        with patch(
+            "users.models.UserSettings"
+        ) as mock:  # Mocked to prevent model does not exist error
+            response = self.client.post(
+                reverse("change_password"), data=CHANGE_PASSWORD_FORM_FIELDS
+            )
+            self.assertEqual(response.status_code, 200)
 
 
 class TestResetPasswordView(TestUserViews):
 
     def test_reset_password_valid_form(self) -> None:
-        with patch("users.views.send_reset_link") as send_reset_link:
+        with patch("users.utils.EmailService.send_reset_link") as email_service:
             response = self.client.post(
                 reverse("reset_password"), data={"username": USERNAME_VALID}
             )
-            send_reset_link.assert_called_once_with(response.wsgi_request, self.user)
+            email_service.assert_called_once()
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.resolver_match.view_name, "reset_password")
             self.assertTemplateUsed(response, "users/reset_password_request.html")
@@ -256,10 +289,13 @@ class TestResetPasswordView(TestUserViews):
         self.assertEqual(status_code, 403)
 
     def test_valid_csrf_token(self):
-        status_code = form_with_valid_csrf_token(
-            "reset_password", {"username": USERNAME_VALID}
-        )
-        self.assertEqual(status_code, 200)
+        with patch(
+            "users.views.EmailService"
+        ) as mock:  # Mocked to prevent EmailService from running
+            status_code = form_with_valid_csrf_token(
+                "reset_password", {"username": USERNAME_VALID}
+            )
+            self.assertEqual(status_code, 200)
 
 
 class TestResetPasswordConfirmView(TestUserViews):
@@ -331,3 +367,32 @@ class TestResetPasswordConfirmView(TestUserViews):
             },
         )
         self.assertEqual(response.status_code, 200)
+
+
+class TestUserSettingsView(TestUserViews):
+    def setUp(self):
+        super().setUp()
+        self.client.force_login(self.user)
+
+    def test_fetch_request_template(self):
+        response = self.client.get(
+            reverse("user_settings"), HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+        )
+        self.assertTemplateUsed(response, "users/settings.html")
+
+    def test_standard_request_template_and_context(self):
+        response = self.client.get(reverse("user_settings"))
+        self.assertTemplateUsed(response, "base/index.html")
+        self.assertIsInstance(response.context["form"], UpdateAccountForm)
+        self.assertIsInstance(response.context["user_settings_form"], UserSettingsForm)
+        self.assertIn("modules", response.context)
+        self.assertIn("template_content", response.context)
+        self.assertEqual(response.context["template_content"], "users/settings.html")
+
+
+class TestDeleteUserView(TestUserViews):
+    def test_delete_user(self):
+        self.client.force_login(self.user)
+        self.client.get(reverse("delete_account"))
+        with self.assertRaises(ObjectDoesNotExist):
+            User.objects.get(username=USERNAME_VALID)

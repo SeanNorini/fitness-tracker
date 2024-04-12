@@ -22,9 +22,16 @@ def form_with_invalid_csrf_token(page, form_data, login=False):
 
 def form_with_valid_csrf_token(page, form_data, login=False):
     client = Client(enforce_csrf_checks=True)
-    client.login(username=USERNAME_VALID, password=PASSWORD_VALID) if login else None
-    response = client.get(reverse(page))
-    csrf_token = response.context["csrf_token"]
+    if login:
+        client.login(username=USERNAME_VALID, password=PASSWORD_VALID)
+    client.get(reverse("login"))
+
+    csrf_token = (
+        client.cookies.get("csrftoken").value
+        if client.cookies.get("csrftoken")
+        else None
+    )
+
     response = client.post(
         reverse(page), data={**form_data, "csrfmiddlewaretoken": csrf_token}
     )

@@ -70,6 +70,8 @@ class WorkoutManager {
     if (e.target.classList.contains("workout-option")) {
       if (this.getSelectWorkoutConfirmation()) {
         this.fetchWorkout(e.target.textContent.trim());
+        this.selectWorkoutSearchBar.searchInput.value =
+          e.target.textContent.trim();
         this.unsavedChanges = false;
       }
     }
@@ -341,11 +343,24 @@ class WorkoutManager {
       });
   }
 
+  workoutNotInList(workoutName) {
+    const workouts = document.querySelectorAll(".workout-option");
+    workouts.forEach((workout) => {
+      if (workout.textContent.trim() === workoutName) {
+        return true;
+      }
+    });
+    return false;
+  }
+
   readCurrentWorkout(exercises) {
     const workoutFormData = new FormData();
 
     // Add workout name
-    const workoutName = document.getElementById("select-workout").value;
+    let workoutName = document.getElementById("select-workout").value;
+    if (workoutName === "Rest Day" || this.workoutNotInList()) {
+      workoutName = "Custom Workout";
+    }
     workoutFormData.append("workout_name", workoutName);
 
     // Add exercise sets

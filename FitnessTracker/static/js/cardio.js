@@ -39,17 +39,17 @@ class CardioManager {
   }
 
   readCardioSessionForm() {
-    const formData = new FormData();
+    const formData = {};
 
     const formInputs = document.querySelectorAll("input");
     formInputs.forEach((input) => {
       if (!input.readOnly) {
-        formData.append(input.name, input.value);
+        formData[input.name] = input.value;
       }
     });
     const date = this.inputSpinner.spinners["8"].getDateObj();
 
-    let hours = parseInt(formData.get("hours"));
+    let hours = parseInt(formData["hours"]);
 
     if (formData["period"] === "AM") {
       hours = hours < 12 ? hours : 0;
@@ -58,38 +58,27 @@ class CardioManager {
     }
 
     date.setHours(hours);
-    date.setMinutes(formData.get("minutes"));
-    formData.append("datetime", date.toISOString());
+    date.setMinutes(formData["minutes"]);
+    formData["datetime"] = date.toISOString();
 
     return formData;
   }
 
   saveCardioSession() {
     const formData = this.readCardioSessionForm();
-
-    pageManager
-      .fetchData({
-        url: `${this.baseURL}/save_cardio_session/`,
-        method: "POST",
-        body: formData,
-        responseType: "json",
-      })
-      .then((response) => {
-        if (response.success) {
-          pageManager.showTempPopupMessage("Cardio Session Saved.", 2000);
-        } else {
-          pageManager.showTempPopupMessage(
-            "Error Saving Cardio Session. Please Try Again.",
-            2000,
-          );
-        }
-      })
-      .catch(() => {
+    console.log(JSON.stringify(formData));
+    FetchUtils.apiFetch({
+      url: `${this.baseURL}/create_cardio_log/`,
+      method: "POST",
+      body: formData,
+      successHandler: () =>
+        pageManager.showTempPopupMessage("Cardio Session Saved.", 2000),
+      errorHandler: () =>
         pageManager.showTempPopupMessage(
           "Error Saving Cardio Session. Please Try Again.",
           2000,
-        );
-      });
+        ),
+    });
   }
 
   addSaveCardioListener() {
@@ -174,7 +163,7 @@ class CardioManager {
   getSummaries(selectedRange) {
     return pageManager
       .fetchData({
-        url: `${this.baseURL}/get_cardio_summaries/${selectedRange}/`,
+        url: `${this.baseURL}/get_cardio_log_summaries/${selectedRange}/`,
         method: "GET",
         responseType: "json",
       })
@@ -212,9 +201,9 @@ class CardioManager {
     this.updateSummaryHeaders(selectedRange, containers);
     containers.forEach((container, index) => {
       const distance = container.querySelector(".distance");
-      distance.textContent = `${response["summaries"][index]["avg_distance"]} ${distanceUnit}`;
+      distance.textContent = `${response["summaries"][index]["average_distance"]} ${distanceUnit}`;
       const duration = container.querySelector(".duration");
-      duration.textContent = response["summaries"][index]["avg_duration"];
+      duration.textContent = response["summaries"][index]["average_duration"];
       const pace = container.querySelector(".pace");
       pace.textContent = response["summaries"][index]["pace"];
       const calories = container.querySelector(".calories");

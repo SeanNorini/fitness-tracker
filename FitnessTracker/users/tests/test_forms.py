@@ -50,6 +50,9 @@ class TestGetUsernameField(TestCase):
         form.is_valid()
         self.assertEqual(form.errors["username"], ["This field is required."])
 
+    def test_username_field_type(self):
+        self.assertIsInstance(self.field.widget, forms.TextInput)
+
 
 class TestGetPasswordField(TestCase):
     def setUp(self):
@@ -95,6 +98,58 @@ class TestGetPasswordField(TestCase):
         form = LoginForm({})
         form.is_valid()
         self.assertEqual(form.errors["password"], ["This field is required."])
+
+    def test_username_field_type(self):
+        self.assertIsInstance(self.field.widget, forms.PasswordInput)
+
+
+class TestGetNameField(TestCase):
+    def setUp(self):
+        self.form = RegistrationForm()
+        self.field = self.form.fields["first_name"]
+
+    def test_field_attrs(self):
+        self.assertEqual(self.field.min_length, MIN_LENGTH_NAME)
+        self.assertEqual(self.field.max_length, MAX_LENGTH_NAME_OR_PASSWORD)
+        self.assertEqual(self.field.label, "Name")
+        self.assertEqual(self.field.widget.attrs["id"], "first_name")
+        self.assertEqual(self.field.widget.attrs["name"], "first_name")
+        self.assertEqual(self.field.widget.attrs["maxlength"], "100")
+        self.assertFalse(self.field.required)
+
+    def test_valid_min_value(self):
+        form = RegistrationForm({"first_name": "A" * MIN_LENGTH_NAME})
+        form.is_valid()
+        self.assertNotIn("first_name", self.form.errors)
+
+    def test_valid_max_value(self):
+        form = RegistrationForm({"first_name": "A" * MAX_LENGTH_NAME_OR_PASSWORD})
+        form.is_valid()
+        self.assertNotIn("first_name", self.form.errors)
+
+    def test_invalid_min_value(self):
+        form = RegistrationForm({"first_name": "A" * (MIN_LENGTH_NAME - 1)})
+        form.is_valid()
+        self.assertEqual(
+            form.errors["first_name"],
+            ["Ensure this value has at least 2 characters (it has 1)."],
+        )
+
+    def test_invalid_max_value(self):
+        form = RegistrationForm({"first_name": "A" * (MAX_LENGTH_NAME_OR_PASSWORD + 1)})
+        form.is_valid()
+        self.assertEqual(
+            form.errors["first_name"],
+            ["Ensure this value has at most 100 characters (it has 101)."],
+        )
+
+    def test_missing_required_values(self):
+        form = RegistrationForm({})
+        form.is_valid()
+        self.assertNotIn("first_name", self.form.errors)
+
+    def test_username_field_type(self):
+        self.assertIsInstance(self.field.widget, forms.TextInput)
 
 
 class TestLoginForm(TestCase):
@@ -259,10 +314,72 @@ class TestRegistrationForm(TestCase):
         form.is_valid()
 
 
-class TestUserBodyCompositionForm(TestCase):
+class TestUserSettingsForm(TestCase):
     def test_form_widgets(self):
-        form = UserBodyCompositionForm()
+        form = UserSettingsForm()
         self.assertIn('id="gender"', form.as_p())
         self.assertIn('id="height"', form.as_p())
         self.assertIn('id="body_weight"', form.as_p())
         self.assertIn('id="age"', form.as_p())
+
+    def test_valid_data(self):
+        form = UserSettingsForm(data=USER_SETTINGS_FORM_FIELDS)
+        self.assertTrue(form.is_valid())
+
+    def test_valid_min_values(self):
+        form_data = {"height": 20, "body_weight": 30, "body_fat": 5, "age": 1}
+        form = UserSettingsForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+    def test_valid_max_values(self):
+        form_data = {"height": 270, "body_weight": 1000, "body_fat": 60, "age": 120}
+        form = UserSettingsForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_min_values(self):
+        form_data = {"height": 19, "body_weight": 29, "body_fat": 4, "age": 0}
+        form = UserSettingsForm(data=form_data)
+        expected_errors = {
+            "height": ["Ensure this value is greater than or equal to 20.0."],
+            "body_weight": ["Ensure this value is greater than or equal to 30.0."],
+            "body_fat": ["Ensure this value is greater than or equal to 5.0."],
+            "age": ["Ensure this value is greater than or equal to 1."],
+        }
+        self.assertDictEqual(form.errors, expected_errors)
+
+    def test_invalid_max_values(self):
+        form_data = {"height": 271, "body_weight": 1001, "body_fat": 61, "age": 121}
+        form = UserSettingsForm(data=form_data)
+        expected_errors = {
+            "height": ["Ensure this value is less than or equal to 270.0."],
+            "body_weight": ["Ensure this value is less than or equal to 1000.0."],
+            "body_fat": ["Ensure this value is less than or equal to 60.0."],
+            "age": ["Ensure this value is less than or equal to 120."],
+        }
+        self.assertDictEqual(form.errors, expected_errors)
+
+    def test_missing_values(self):
+        form = UserSettingsForm(data={})
+        self.assertTrue(form.is_valid())
+
+    def test_default_values(self):
+        form = UserSettingsForm({})
+        form.is_valid()
+        expected_data = {
+            "gender": "M",
+            "system_of_measurement": "Imperial",
+            "height": 70,
+            "body_weight": 160,
+            "body_fat": 20,
+            "age": 30,
+        }
+        self.assertDictEqual(form.cleaned_data, expected_data)
+
+
+class TestUpdateAccountForm(TestCase):
+    def test_form_widgets(self):
+        form = UpdateAccountForm()
+        self.assertIn('id="first_name"', form.as_p())
+        self.assertIn('id="last_name"', form.as_p())
+        self.assertIn('id="email"', form.as_p())
+        self.assertIn('id="confirm_email"', form.as_p())

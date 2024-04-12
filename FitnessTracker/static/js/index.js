@@ -46,7 +46,7 @@ class PageManager {
         fetch(`${this.baseURL}/${module.id}`, {
           method: "GET",
           headers: {
-            Fetch: "True",
+            "X-Requested-With": "XMLHttpRequest",
           },
         })
           .then((response) => response.text())
@@ -279,7 +279,7 @@ class PageManager {
     return fetch(args.url, {
       method: args.method,
       headers: {
-        fetch: "True",
+        "X-Requested-With": "XMLHttpRequest",
         "X-CSRFTOKEN": pageManager.csrftoken,
         ...args.headers,
       },
@@ -288,6 +288,7 @@ class PageManager {
       if (response.ok) {
         return response[args.responseType]();
       } else {
+        console.log(response.json());
         throw new Error("Network response was not ok");
       }
     });
@@ -381,3 +382,88 @@ class Collapsible {
 }
 
 const pageManager = new PageManager();
+
+class FormUtils {
+  static getFormData(formID, blankFields = false, postprocessFunc = null) {
+    const formData = {};
+
+    // Get form inputs
+    const formElements = document
+      .getElementById(formID)
+      .querySelectorAll("input");
+    formElements.forEach((element) => {
+      // Read inputs if not null or blankFields = true
+      if (element.type === "radio") {
+        if (element.checked) {
+          formData[element.name] = element.value;
+        }
+      } else if (element.value || blankFields) {
+        formData[element.name] = element.value;
+      }
+
+      // Run optional function for additional processing
+      if (postprocessFunc) {
+        postprocessFunc();
+      }
+    });
+
+    return formData;
+  }
+
+  static clearFormErrors() {
+    // Clears all form errors on the page
+    const errors = document.querySelectorAll(".errors");
+    errors.forEach((error) => {
+      error.innerHTML = "";
+    });
+  }
+
+  static formErrorHandler(response) {
+    // Iterate over errors from django response
+    Object.entries(response).forEach(([key, value]) => {
+      // Gather error fields
+      const errorField = document.getElementById(key).querySelector(".errors");
+
+      // Create error container
+      const ul = document.createElement("ul");
+      ul.classList.add("text-red", "text-sm");
+      value.forEach((error) => {
+        // Add errors to container
+        const li = document.createElement("li");
+        li.textContent = error;
+        ul.appendChild(li);
+      });
+      // Add container to error field
+      errorField.appendChild(ul);
+    });
+  }
+}
+class FetchUtils {
+  static apiFetch(args) {
+    fetch(args.url, {
+      method: args.method,
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFTOKEN": pageManager.csrftoken,
+        "Content-Type": "application/json",
+        ...args.headers,
+      },
+      body: JSON.stringify(args.body),
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((response) => {
+            console.log("fdsfsd");
+            args.successHandler(response);
+          });
+        } else {
+          response.json().then((response) => {
+            args.errorHandler(response);
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Server did not respond.", error);
+      });
+  }
+}

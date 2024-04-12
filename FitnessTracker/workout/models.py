@@ -1,4 +1,3 @@
-from datetime import timedelta
 from typing import Type
 from django.db import models, transaction
 from django.db.models import Q
@@ -7,7 +6,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
-from users.models import WorkoutSetting
 
 
 def get_default_user():
@@ -40,24 +38,6 @@ def get_attribute_list(model_class, user, attribute_name):
     attribute_values.update(default_user_values - user_values)
 
     return sorted(list(attribute_values))
-
-
-def get_time_from_duration(duration):
-    if duration == 0:
-        return 0, 0, 0
-    hours = int(duration // 3600)
-    minutes = int((duration % 3600) // 60)
-    seconds = int(duration % 60)
-
-    return hours, minutes, seconds
-
-
-def format_duration(duration):
-    hours, minutes, seconds = get_time_from_duration(duration)
-    if hours > 0:
-        return f"{hours}' {minutes:02}' {seconds:02}\""
-    else:
-        return f"{minutes}' {seconds:02}\""
 
 
 # Create your models here.
@@ -238,6 +218,7 @@ class WorkoutLog(models.Model):
                         WorkoutSet.save_workout_set(self, exercise, exercise_sets)
             return True
         except Exception as e:
+            print(e)
             return False
 
     def update_workout_session(self, exercises):
@@ -299,148 +280,12 @@ class WorkoutSet(models.Model):
             )
 
             user = workout_log.user
-            user_workout_settings = WorkoutSetting.objects.filter(user=user).first()
+            user_workout_settings = WorkoutSettings.objects.filter(user=user).first()
 
             if user_workout_settings.auto_update_five_rep_max:
                 update_five_rep_max = exercise.update_five_rep_max(weight, reps)
             if update_five_rep_max:
                 workout_log.workout.update_five_rep_max(exercise)
-
-
-class CardioLog(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    datetime = models.DateTimeField()
-    duration = models.DurationField(default=timedelta(minutes=30))
-    distance = models.FloatField(
-        validators=[MinValueValidator(0), MaxValueValidator(99.99)],
-    )
-
-    @classmethod
-    def get_logs(cls, user, date_range):
-        return cls.group_by_day(
-            cls.objects.filter(user=user, datetime__date__range=date_range).order_by(
-                "datetime"
-            )
-        )
-
-    @staticmethod
-    def group_by_day(logs):
-
-        if len(logs) == 1:
-            return [logs]
-        elif len(logs) == 0:
-            return None
-
-        days = []
-        current_day = [logs[0]]
-
-        for i in range(1, len(logs)):
-            if logs[i].datetime.date() != current_day[0].datetime.date():
-                days.append(current_day)
-                current_day = [logs[i]]
-            else:
-                current_day.append(logs[i])
-        days.append(current_day)
-        return days
-
-    @staticmethod
-    def get_daily_summary(user, logs):
-        summary = {
-            "date": logs[0].datetime.date(),
-            "total_distance": 0,
-            "total_duration": 0,
-        }
-
-        for log in logs:
-            summary["total_distance"] += log.distance
-            summary["total_duration"] += log.duration.total_seconds()
-
-        summary["duration"] = format_duration(summary["total_duration"])
-
-        body_weight = user.get_body_weight()
-        if user.distance_unit == "mi":
-            calories_burned = (summary["total_distance"] * 0.57) * (body_weight * 2.2)
-        else:
-            calories_burned = (summary["total_distance"] * 1.036) * body_weight
-        summary["calories_burned"] = int(calories_burned)
-
-        if summary["total_distance"] > 0:
-            summary["pace"] = format_duration(
-                summary["total_duration"] // summary["total_distance"]
-            )
-        else:
-            summary["pace"] = "N/A"
-
-        return summary
-
-    @staticmethod
-    def get_range_summary(summaries):
-        total_distance = 0
-        total_duration = 0
-        total_summaries = 0
-        calories_burned = 0
-
-        for summary in summaries:
-            total_distance += summary["total_distance"]
-            total_duration += summary["total_duration"]
-            calories_burned += summary["calories_burned"]
-            total_summaries += 1
-
-        return {
-            "total_distance": total_distance,
-            "total_duration": total_duration,
-            "calories_burned": int(calories_burned / total_summaries),
-            "avg_distance": round(total_distance / total_summaries, 2),
-            "avg_duration": format_duration(int(total_duration / total_summaries)),
-            "pace": format_duration(total_duration // total_distance),
-        }
-
-    @classmethod
-    def get_summary(cls, user, date_range):
-        logs = cls.get_logs(user, date_range)
-        if not logs:
-            return {
-                "avg_distance": 0,
-                "avg_duration": "N/A",
-                "calories_burned": 0,
-                "pace": "N/A",
-            }
-        summary = cls.get_daily_summary(user, logs[0])
-        return summary
-
-    @classmethod
-    def get_summary_for_range(cls, user, date_range):
-        days = cls.get_logs(user, date_range)
-        if days:
-            summaries = [cls.get_daily_summary(user, day) for day in days]
-        else:
-            return {
-                "avg_distance": 0,
-                "avg_duration": "N/A",
-                "calories_burned": 0,
-                "pace": "N/A",
-            }
-        return cls.get_range_summary(summaries)
-
-    @classmethod
-    def get_graph_values(cls, user, date_range):
-        days = cls.get_logs(user, date_range)
-        if days:
-            summaries = [cls.get_daily_summary(user, day) for day in days]
-            dates = []
-            distances = []
-            paces = []
-            for summary in summaries:
-                if summary["total_distance"] == 0:
-                    continue
-
-                dates.append(summary["date"].strftime("%m/%d"))
-                distances.append(summary["total_distance"])
-                paces.append(summary["total_duration"] // summary["total_distance"])
-        else:
-            return None, None, None
-
-        return dates, distances, paces
 
 
 class Routine(models.Model):
@@ -527,6 +372,9 @@ class RoutineSettings(models.Model):
     workout_index = models.PositiveSmallIntegerField(default=0)
     last_completed = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        verbose_name_plural = "Routine Settings"
+
     def _update_workout_day_week(self, direction):
         """Update workout_index, day_number, and week_number based on direction.
 
@@ -583,3 +431,13 @@ class RoutineSettings(models.Model):
         """Move to the previous workout and retrieve it."""
         self._update_workout_day_week("prev")
         return self.get_workout()
+
+
+class WorkoutSettings(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    auto_update_five_rep_max = models.BooleanField(default=False)
+    show_rest_timer = models.BooleanField(default=False)
+    show_workout_timer = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name_plural = "Workout Settings"

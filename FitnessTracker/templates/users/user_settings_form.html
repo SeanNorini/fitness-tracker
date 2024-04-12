@@ -1,40 +1,42 @@
-
-<form class="col gap-lg" id="body-composition-form" method="POST">
-  <h1 class="text-center">Body Composition</h1>
+<form class="col gap-lg" id="user-settings-form" method="POST">
+  <h1 class="text-center">User Settings</h1>
   {% csrf_token %}
   <div id="optional">*Optional, default values shown will be used for calculations if left unset.</div>
   <div class="row">
     <div class="col gap-md">
-      {{ form2.system_of_measurement.label_tag }}
-      {{ form2.system_of_measurement }}
+      {{ user_settings_form.system_of_measurement.label_tag }}
+      {{ user_settings_form.system_of_measurement }}
+      <div class="errors"></div>
     </div>
     <div class="col gap-md" id="gender">
-      {{ form2.gender.label_tag }}
-      {{ form2.gender }}
+      {{ user_settings_form.gender.label_tag }}
+      {{ user_settings_form.gender }}
+      <div class="errors"></div>
     </div>
   </div>
   <div id="age" class="col gap-sm">
-    {{ form2.age.label_tag }}
-    {{ form2.age }}
-    {{ form2.age.errors }}
+    {{ user_settings_form.age.label_tag }}
+    {{ user_settings_form.age }}
+    <div class="errors"></div>
   </div>
   <div id="height" class="col gap-sm">
-    {{ form2.height.label_tag }}
-    {{ form2.height }}
-    {{ form2.height.errors }}
+    {{ user_settings_form.height.label_tag }}
+    {{ user_settings_form.height }}
+    <div class="errors"></div>
   </div>
   <div id="body-weight" class="col gap-sm">
-    {{ form2.body_weight.label_tag }}
-    {{ form2.body_weight }}
-    {{ form2.body_weight.errors }}
+    {{ user_settings_form.body_weight.label_tag }}
+    {{ user_settings_form.body_weight }}
+    <div class="errors"></div>
   </div>
   <div id="body-fat" class="col gap-sm">
-    {{ form2.body_fat.label_tag }}
-    {{ form2.body_fat }}
-    {{ form2.body_fat.errors }}
+    {{ user_settings_form.body_fat.label_tag }}
+    {{ user_settings_form.body_fat }}
+    <div class="errors"></div>
   </div>
   {% if message %}
     <div class="success-message row row-center text-green">{{ message }}</div>
   {% endif %}
-  <button class="btn" id="update-body-composition" type="button">Update Body Composition</button>
+  <button class="btn" id="update-user-settings" type="button">Update User Settings</button>
 </form>
+

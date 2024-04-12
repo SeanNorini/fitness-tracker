@@ -105,4 +105,9 @@ urlpatterns = [
         views.GetRoutineWorkoutView.as_view(),
         name="get_routine_workout",
     ),
+    path(
+        "workout/delete_workout_log/<int:pk>",
+        views.DeleteWorkoutLogAPIView.as_view(),
+        name="delete_workout_log",
+    ),
 ]

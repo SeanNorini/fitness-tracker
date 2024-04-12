@@ -14,6 +14,7 @@ class Spinner {
       : false;
     this.numberLength = options.leadingZeroes ? options.leadingZeroes[1] : 0;
     this.animate = options.animate ?? true;
+    this.prevValue = null;
     this.spinning = false;
     this.initialized = false;
     this.styles = this.getDefaultStyles(options.styles);
@@ -25,17 +26,29 @@ class Spinner {
       return styles;
     }
 
-    const defaultStyles = {
+    return {
       all: { color: "#8f8f8f" },
       input: { color: "#f5f5f5" },
     };
-
-    return defaultStyles;
   }
 
   initialize(options) {
     this.setValueRange(options.valueRange);
 
+    this.setStartValue(options);
+    this.update(0);
+    this.setElementStyles();
+    if (this.type === "date") {
+      console.log(this.inputElement, this.inputElement.value);
+    }
+    this.prevValue = this.inputElement.value;
+    if (this.type !== "date") {
+      this.addInputHandler();
+    }
+    this.initialized = true;
+  }
+
+  setStartValue(options) {
     if (this.type === "range") {
       this.setRangeStartValue(options.inputStartValue);
     } else if (this.type === "list") {
@@ -44,11 +57,46 @@ class Spinner {
       this.startDate = new Date();
       this.startDate.setDate(this.startDate.getDate() - this.inputElementIndex);
     }
+  }
+
+  addInputHandler() {
+    this.inputElement.addEventListener("blur", this.inputHandler);
+    this.inputElement.addEventListener("keydown", this.inputHandler);
+  }
+
+  inputHandler = (e) => {
+    if (e.type === "blur" || e.key === "Enter") {
+      if (this.type === "range") {
+        this.validateRangeInput();
+      } else if (this.type === "list") {
+        this.validateListInput();
+      }
+      this.updateAfterInput();
+    }
+  };
+
+  updateAfterInput() {
+    this.prevValue = this.inputElement.value;
+    this.setStartValue({ inputStartValue: this.prevValue });
     this.update(0);
+    this.triggerInputChange(this.inputElement);
+  }
 
-    this.setElementStyles();
+  validateRangeInput() {
+    const value = this.inputElement.value;
+    if (
+      value < this.minValue ||
+      value > this.maxValue ||
+      value % this.increment !== 0
+    ) {
+      this.inputElement.value = this.prevValue;
+    }
+  }
 
-    this.initialized = true;
+  validateListInput() {
+    if (!this.valueRange.includes(this.inputElement.value)) {
+      this.inputElement.value = this.prevValue;
+    }
   }
 
   getDate() {
@@ -139,6 +187,7 @@ class Spinner {
     } else if (this.type === "date") {
       this.updateDateSpinner(mouseDelta);
     }
+    this.prevValue = this.inputElement.value;
     this.triggerInputChange(this.inputElement);
   }
 
@@ -292,10 +341,10 @@ class Spinner {
 
   triggerInputChange(element) {
     const event = new Event("input", {
-      bubbles: true, // Ensure the event bubbles up the DOM tree
-      cancelable: true, // Allow the event to be canceled if needed
+      bubbles: true,
+      cancelable: true,
     });
-    element.dispatchEvent(event); // Dispatch the custom input event
+    element.dispatchEvent(event);
   }
 }
 class InputSpinner {
@@ -315,9 +364,9 @@ class InputSpinner {
 
   new(options) {
     this.createSpinner(options);
-    this.addMouseListeners("mousedown", this.mousedownHandler);
-    this.addMouseListeners("wheel", this.mousewheelHandler);
-    this.addMouseListeners("contextmenu", this.contextmenuHandler);
+    this.addListeners("mousedown", this.mousedownHandler);
+    this.addListeners("wheel", this.mousewheelHandler);
+    this.addListeners("contextmenu", this.contextmenuHandler);
   }
 
   timePreset(startID = 0) {
@@ -383,7 +432,7 @@ class InputSpinner {
     });
   }
 
-  addMouseListeners(listenerType, handler) {
+  addListeners(listenerType, handler) {
     this.currSpinner.elements.forEach((element) => {
       element.addEventListener(listenerType, handler);
     });
