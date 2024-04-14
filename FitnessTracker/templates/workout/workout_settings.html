@@ -10,26 +10,19 @@
     <button id="save-workout-settings" class="btn" type="button">Save Settings</button>
   </div>
 
-<div class="row row-lg row-justify-space-between row-align-center bg-primary border radius-3 p">
-    <div>
-      <label for="date" class="hidden">Select Date</label>
-      <input type="date" id="date" readonly>
-    </div>
-    <div class="row row-center row-nowrap">
-      <div class="col border radius-2 bg-tertiary p-0_2">
-        <label for="select-workout" class="hidden">Select Workout</label>
-        <select id="select-workout" class="border radius-2 bg-secondary text-md text-primary px">
-          <option value="Custom Workout" selected>Select A Workout</option>
-          {% for workout_name in workouts %}
-              <option>{{ workout_name }}</option>
-          {% endfor %}
-        </select>
-      </div>
+<div class="row row-lg row-align-center row-justify-space-between bg-primary border radius-3 p">
+    <div class="row row-align-center row-justify-space-between row-nowrap full-width">
+      {% include "base/search_bar_with_popup.html" with 
+        container_id="select-workout-search-bar"
+        id="select-workout" 
+        label="Select Workout Search Bar" 
+        placeholder="Select A Workout"
+        value=workout.workout_name
+        items=workouts 
+        item_class="workout-option" 
+      %}
       <div>
-        <span class="material-symbols-outlined tooltip">
-          help
-        </span>
-        <div id="workout-tooltip" class="text-center bg-blue">To create or edit exercises, workouts, or your routine, go to settings.</div>
+        <button type="button" class="btn" id="save-workout">Save Workout</button>
       </div>
     </div>
   </div>
@@ -39,24 +32,18 @@
   </div>
   <div class="row row-lg bg-primary border radius-3 p gap-xl">
     <div class="row row-align-center row-justify-space-between gap-md full-width">
-      <div class="row row-center" id="add-exercise-search-bar">
-        <div class="pos-rel">
-          <label for="add-exercise" class="hidden">Add Exercise Search Bar</label>
-          <input id="add-exercise" class="search hover-pointer" type="text" placeholder="Select An Exercise">
-          <div class="search-list search-list-bottom hidden col pos-abs border bg-secondary p-0_2 gap-sm">
-            {% for exercise in exercises %}
-              <div class="row row-align-center hover border p-0_2 exercise-option">{{ exercise }}</div>
-            {% endfor %}
-          </div>
-        </div>
-        <div class="text-xxl text-red hover-pointer">
-          <span class="clear material-symbols-outlined">
-            cancel
-          </span>
-        </div>
+      {% include "base/search_bar_with_popup.html" with 
+        container_id="add-exercise-search-bar" 
+        id="add-exercise" 
+        label="Add Exercise Search Bar" 
+        placeholder="Select An Exercise" 
+        items=exercises 
+        item_class="exercise-option"
+        bottom=True
+      %}
+      <div>
+        <button type="button" class="btn" id="delete-workout">Delete Workout</button>
       </div>
-    <div>
-      <button type="button" class="btn" id="save-workout">Save Workout</button>
-    </div></div>
+    </div>
   </div>
 </form>

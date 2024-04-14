@@ -71,11 +71,7 @@ class EmailService:
         return render_to_string(
             template_name,
             {
-                "name": (
-                    self.user.first_name
-                    if template_name.endswith("registration_email.html")
-                    else self.user.username
-                ),
+                "name": self.user.username,
                 "email": self.user.email,
                 "domain": self.domain,
                 "uid": self.uid,

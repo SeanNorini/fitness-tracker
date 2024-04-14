@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from .serializers import CardioLogSerializer
 from .services import get_cardio_log_summaries
 from matplotlib.ticker import MaxNLocator
 from matplotlib import pyplot as plt
@@ -8,7 +7,6 @@ from io import BytesIO
 import base64
 import matplotlib
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 import pandas as pd
@@ -60,7 +58,7 @@ def plot_graph(graph_data):
         ax.xaxis.set_major_locator(MaxNLocator(10))
         ax.yaxis.set_major_locator(MaxNLocator(10))
     plt.yticks(color="#f5f5f5", fontsize=14)
-    ax.tick_params(colors="#f5f5f5")
+    ax.tick_params(axis="y", labelsize=24, colors="#f5f5f5")
     for spine in ax.spines.values():
         spine.set_edgecolor("#f5f5f5")
 
@@ -76,7 +74,7 @@ def plot_graph(graph_data):
     return img_base64
 
 
-class CardioView(TemplateView):
+class CardioTemplateView(TemplateView):
     template_name = "cardio/cardio.html"
 
     def get_context_data(self, **kwargs):
@@ -98,7 +96,7 @@ class CardioView(TemplateView):
             return render(request, "base/index.html", context)
 
 
-class GetCardioLogSummariesAPIView(APIView):
+class CardioLogSummariesAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
@@ -114,11 +112,3 @@ class GetCardioLogSummariesAPIView(APIView):
         }
 
         return Response(data)
-
-
-class CreateCardioLogAPIView(CreateAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = CardioLogSerializer
-
-    def get_serializer_context(self):
-        return {"user": self.request.user}

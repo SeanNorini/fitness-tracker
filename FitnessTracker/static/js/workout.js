@@ -292,7 +292,7 @@ class WorkoutManager {
   addSaveWorkoutBtnListener() {
     const saveWorkoutBtn = document.querySelector("#save-workout");
     saveWorkoutBtn.addEventListener("click", () => {
-      this.saveWorkout();
+      this.saveWorkout(this.saveWorkoutSuccessHandler);
     });
   }
 
@@ -307,41 +307,36 @@ class WorkoutManager {
     return exercises;
   }
 
-  saveWorkout() {
+  saveWorkout(successHandler, errorHandler = null) {
     // Verify form has exercises to save
     const exercises = this.validateWorkoutForm();
+    if (exercises.length === 0) {
+      return;
+    }
+
     // Gather form data
     const formData = this.readCurrentWorkout(exercises);
 
-    if (exercises.length === 0) {
-      return Promise.resolve({ formEmpty: true });
-    }
-
     // Send workout data and display response
-    const url = `${this.baseURL}/save_workout_session`;
-    return pageManager
-      .fetchData({
-        url: url,
-        method: "POST",
-        responseType: "json",
-        body: formData,
-      })
-      .then((workoutSaved) => {
-        if (workoutSaved.formEmpty) {
-          return;
-        }
-
-        if (workoutSaved) {
-          pageManager.showTempPopupMessage("Workout saved.", 2500);
-          return { success: true, pk: workoutSaved.pk };
-        } else if (!workoutSaved.formEmpty) {
-          pageManager.showTempPopupMessage(
-            "Problem saving workout, please try again.",
-            2500,
-          );
-        }
-      });
+    FetchUtils.apiFetch({
+      url: `${pageManager.baseURL}/log/workout_log/`,
+      method: "POST",
+      body: formData,
+      successHandler: (response) => successHandler(response),
+      errorHandler: (response) => {
+        this.saveWorkoutErrorHandler(response);
+      },
+    });
   }
+
+  saveWorkoutSuccessHandler(response) {
+    pageManager.showTempPopupMessage("Workout Saved", 2000);
+  }
+
+  saveWorkoutErrorHandler = (response) => {
+    console.log(response);
+    pageManager.showTempPopupErrorMessages(response, 2000);
+  };
 
   workoutNotInList(workoutName) {
     const workouts = document.querySelectorAll(".workout-option");
@@ -351,6 +346,55 @@ class WorkoutManager {
       }
     });
     return false;
+  }
+
+  readCurrentWorkout(exercises) {
+    // Add workout name
+    let workoutName = document.getElementById("select-workout").value;
+    if (workoutName === "Rest Day" || this.workoutNotInList()) {
+      workoutName = "Custom Workout";
+    }
+    const workoutData = { workout_name: workoutName, workout_exercises: [] };
+    const dateInput = document.getElementById("date");
+    workoutData["date"] = dateInput.value;
+    workoutData["total_time"] = "0";
+
+    exercises.forEach((exercise, index) => {
+      const exerciseName = exercise
+        .querySelector(".exercise-name")
+        .textContent.trim();
+
+      workoutData["workout_exercises"].push({
+        [exerciseName]: { reps: [], weights: [] },
+      });
+
+      const exerciseSets = exercise.querySelectorAll(".set");
+      exerciseSets.forEach((exerciseSet) => {
+        let setWeight = exerciseSet.querySelector(".weight").value;
+        if (setWeight === "") {
+          setWeight = 0;
+        }
+
+        let setReps = exerciseSet.querySelector(".reps").value;
+        if (setReps === "") {
+          setReps = 0;
+        }
+        workoutData["workout_exercises"][index][exerciseName]["weights"].push(
+          setWeight,
+        );
+        workoutData["workout_exercises"][index][exerciseName]["reps"].push(
+          setReps,
+        );
+      });
+    });
+    return workoutData;
+  }
+}
+
+class WorkoutSettingsManager extends WorkoutManager {
+  constructor() {
+    super();
+    this.baseURL = pageManager.baseURL + "/workout/workout_settings";
   }
 
   readCurrentWorkout(exercises) {
@@ -399,20 +443,7 @@ class WorkoutManager {
     const dateInput = document.getElementById("date");
     workoutFormData.append("date", dateInput.value);
 
-    // Add CSRF token
-    const csrftoken = document.querySelector(
-      "[name=csrfmiddlewaretoken]",
-    ).value;
-    workoutFormData.append("csrfmiddlewaretoken", csrftoken);
-
     return workoutFormData;
-  }
-}
-
-class WorkoutSettingsManager extends WorkoutManager {
-  constructor() {
-    super();
-    this.baseURL = pageManager.baseURL + "/workout/workout_settings";
   }
 
   addExerciseContainerListeners(container) {
@@ -568,7 +599,6 @@ class WorkoutSettingsManager extends WorkoutManager {
   }
 
   addWorkoutContainerListeners() {
-    this.addSelectWorkoutListener();
     this.addSaveWorkoutSettingsListener();
     this.addSaveWorkoutBtnListener();
   }
@@ -741,12 +771,22 @@ class WorkoutSettingsManager extends WorkoutManager {
 
 class WorkoutLogManager extends WorkoutManager {
   initialize() {
-    this.addSelectWorkoutListener();
-    this.addWorkoutListeners();
     this.setDate();
-    this.previousWorkoutSelectValue =
-      document.getElementById("select-workout").value;
+    this.addSaveWorkoutBtnListener();
+
     this.dragAndDrop.initialize("-20rem");
+
+    this.selectWorkoutSearchBar = new SearchBar_(
+      this.selectWorkoutSearchHandler.bind(this),
+    );
+    this.selectWorkoutSearchBar.initialize("select-workout-search-bar");
+
+    this.addExerciseSearchBar = new SearchBar_(
+      this.addExerciseSearchHandler.bind(this),
+    );
+    this.addExerciseSearchBar.initialize("add-exercise-search-bar");
+
+    this.addWorkoutListeners();
   }
 
   setDate() {
@@ -757,31 +797,35 @@ class WorkoutLogManager extends WorkoutManager {
     document.getElementById("date").valueAsDate = new Date(year, month, day);
   }
 
-  updateWorkoutLog(workoutLogPK) {
+  updateWorkoutLog(workoutLogPK, successHandler) {
     // Verify form has exercises to save
     const exercises = this.validateWorkoutForm();
+    if (exercises.length === 0) {
+      return;
+    }
 
     // Gather form data
     const formData = this.readCurrentWorkout(exercises);
 
-    formData.append("pk", document.querySelector(".workout-log-pk").value);
+    FetchUtils.apiFetch({
+      url: `${pageManager.baseURL}/log/workout_log/${workoutLogPK}/`,
+      method: "PATCH",
+      body: formData,
+      successHandler: (response) => successHandler(response),
+      errorHandler: (response) =>
+        pageManager.showTempPopupMessage(
+          "Update Failed. Please Try Again.",
+          2000,
+        ),
+    });
+  }
 
-    if (exercises.length === 0) {
-      return Promise.resolve({ formEmpty: true });
-    }
+  saveWorkout(successHandler, errorHandler = null) {
+    return super.saveWorkout(successHandler);
+  }
 
-    // Send workout data and display response
-    const url = `${pageManager.baseURL}/log/update_workout_log/${workoutLogPK}/`;
-    return pageManager
-      .fetchData({
-        url: url,
-        method: "POST",
-        responseType: "json",
-        body: formData,
-      })
-      .then((response) => {
-        return response;
-      });
+  addSaveWorkoutBtnListener() {
+    return;
   }
 }
 

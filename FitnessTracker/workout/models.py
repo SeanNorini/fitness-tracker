@@ -1,29 +1,19 @@
 from typing import Type
 from django.db import models, transaction
-from django.db.models import Q
+from django.db.models import Q, When, Case
 from users.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 
 
-def get_default_user():
-    return User.objects.get(username="default")
-
-
-def validate_date(date):
-    if date > timezone.now().date():
-        raise ValidationError("Date cannot be in the future.")
-
-    one_year_ago = timezone.now().date() - timezone.timedelta(days=365)
-    if date < one_year_ago:
-        raise ValidationError("Date cannot be earlier than one year ago.")
-
-
 def get_attribute_list(model_class, user, attribute_name):
-    default_user = get_default_user()
-    objects = model_class.objects.filter(Q(user=user) | Q(user=default_user)).distinct()
+    default_user = User.default_user()
+
+    objects = model_class.objects.filter(
+        Q(user=user) | Q(user=default_user.id)
+    ).distinct()
 
     attribute_values = set()
     user_values = set(objects.filter(user=user).values_list(attribute_name, flat=True))
@@ -51,17 +41,13 @@ class Exercise(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, null=False, blank=False)
-    five_rep_max = models.DecimalField(
+    five_rep_max = models.FloatField(
         default=0,
-        max_digits=6,
-        decimal_places=2,
         validators=[MaxValueValidator(1500), MinValueValidator(0)],
     )
 
-    default_weight = models.DecimalField(
+    default_weight = models.FloatField(
         default=0,
-        max_digits=6,
-        decimal_places=2,
         validators=[MaxValueValidator(1500), MinValueValidator(0)],
     )
 
@@ -79,14 +65,16 @@ class Exercise(models.Model):
         unique_together = ("user", "name")
 
     def sets(self):
-        return [
-            {
-                "weight": self.default_weight,
-                "reps": self.default_reps,
-                "amount": self.default_weight,
-                "modifier": self.default_modifier,
-            }
-        ]
+        return {
+            "weights": [self.default_weight],
+            "reps": [self.default_reps],
+            "amount": self.default_weight,
+            "modifier": self.default_modifier,
+        }
+
+    @property
+    def set(self):
+        return {"weight": self.default_weight, "reps": self.default_reps}
 
     def save(self, *args, **kwargs):
         self.name = self.name.title()
@@ -101,7 +89,7 @@ class Exercise(models.Model):
 
     @classmethod
     def get_exercise(cls, user, exercise_name):
-        exercise_name = exercise_name.strip()
+        exercise_name = exercise_name.strip().title()
         exercise, created = cls.objects.get_or_create(user=user, name=exercise_name)
         return exercise
 
@@ -140,16 +128,37 @@ class Workout(models.Model):
 
     @classmethod
     def get_workout(cls, user, workout_name) -> Type["Workout"]:
-        default_user = User.objects.get(username="default")
-        try:
-            workout = cls.objects.get(name__iexact=workout_name, user=user)
-        except ObjectDoesNotExist:
-            workout = cls.objects.get(name__iexact=workout_name, user=default_user)
+        # Get default user
+        default_user = User.default_user()
+
+        # Get workout for user or default user, prioritizing user
+        workout = (
+            cls.objects.filter(
+                Q(name__iexact=workout_name), Q(user=user) | Q(user=default_user.id)
+            )
+            .annotate(
+                priority=Case(
+                    When(user=user, then=1),
+                    When(user=default_user.id, then=2),
+                    default=3,
+                )
+            )
+            .order_by("priority")
+            .first()
+        )
+
+        # If workout does not exist, get custom workout
+        if not workout:
+            workout, _ = cls.objects.get_or_create(
+                user=default_user, name="Custom Workout"
+            )
+
         return workout
 
     def configure_workout(self) -> dict:
         workout_config = {"exercises": []}
-        for exercise in self.config["exercises"]:
+
+        for exercise in self.config.get("exercises", []):
             exercise_sets = self.configure_exercise(
                 exercise["five_rep_max"], exercise["sets"]
             )
@@ -201,93 +210,6 @@ class Workout(models.Model):
                 self.save()
 
 
-class WorkoutLog(models.Model):
-    workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateField(default=timezone.now, validators=[validate_date])
-    total_time = models.IntegerField(default=0)
-
-    def save_workout_session(self, exercises):
-        try:
-            with transaction.atomic():
-                self.save()
-                for exercise in exercises:
-                    for exercise_name, exercise_sets in exercise.items():
-                        exercise = Exercise.get_exercise(self.user, exercise_name)
-
-                        WorkoutSet.save_workout_set(self, exercise, exercise_sets)
-            return True
-        except Exception as e:
-            print(e)
-            return False
-
-    def update_workout_session(self, exercises):
-        self.exercises = None
-        workout_sets = WorkoutSet.objects.filter(workout_log=self)
-        for workout_set in workout_sets:
-            workout_set.delete()
-
-        return self.save_workout_session(exercises)
-
-    def generate_workout_log(self):
-        workout_log = {
-            "pk": self.pk,
-            "workout_name": self.workout.name,
-            "total_time": self.total_time,
-            "exercises": [],
-        }
-
-        workout_sets = WorkoutSet.objects.filter(workout_log=self).order_by("pk")
-        exercise_summary = {"name": workout_sets[0].exercise.name, "sets": []}
-        for workout_set in workout_sets:
-            if exercise_summary["name"] != workout_set.exercise.name:
-                workout_log["exercises"].append(exercise_summary)
-                exercise_summary = {"name": workout_set.exercise.name, "sets": []}
-            weight = str(workout_set.weight).rstrip("0").rstrip(".")
-            exercise_summary["sets"].append(
-                {"weight": weight, "reps": workout_set.reps}
-            )
-
-        workout_log["exercises"].append(exercise_summary)
-
-        return workout_log
-
-
-class WorkoutSet(models.Model):
-    workout_log = models.ForeignKey(WorkoutLog, on_delete=models.CASCADE)
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-    weight = models.DecimalField(
-        max_digits=6,
-        decimal_places=2,
-        validators=[MaxValueValidator(1500), MinValueValidator(0)],
-    )
-    reps = models.PositiveIntegerField(
-        validators=[MaxValueValidator(100), MinValueValidator(0)]
-    )
-
-    @classmethod
-    def save_workout_set(cls, workout_log, exercise, exercise_sets):
-        update_five_rep_max = False
-        for i in range(len(exercise_sets["weight"])):
-            weight = float(exercise_sets["weight"][i])
-            reps = int(exercise_sets["reps"][i])
-
-            cls.objects.create(
-                workout_log=workout_log,
-                exercise=exercise,
-                weight=weight,
-                reps=reps,
-            )
-
-            user = workout_log.user
-            user_workout_settings = WorkoutSettings.objects.filter(user=user).first()
-
-            if user_workout_settings.auto_update_five_rep_max:
-                update_five_rep_max = exercise.update_five_rep_max(weight, reps)
-            if update_five_rep_max:
-                workout_log.workout.update_five_rep_max(exercise)
-
-
 class Routine(models.Model):
     name = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -303,9 +225,9 @@ class Routine(models.Model):
         user_routines = Routine.objects.filter(user=user)
         routine_list = user_routines.values_list("name", flat=True)
 
-        default_user_routines = Routine.objects.filter(user=get_default_user()).exclude(
-            name__in=routine_list
-        )
+        default_user_routines = Routine.objects.filter(
+            user=User.default_user().id
+        ).exclude(name__in=routine_list)
 
         return list(user_routines) + list(default_user_routines)
 

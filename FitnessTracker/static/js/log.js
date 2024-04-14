@@ -105,6 +105,21 @@ class LogManager {
       });
   }
 
+  openUpdateWorkoutLogPopup(e) {
+    const workoutLog = e.target.closest(".workout");
+    this.workoutLogPK = workoutLog.querySelector(".workout-log-pk").value;
+    const url = `${this.baseURL}/update_workout_log_template/${this.workoutLogPK}/`;
+    pageManager
+      .fetchData({ url: url, method: "GET", responseType: "text" })
+      .then((updateWorkoutLogHTML) => {
+        pageManager.updateContent(updateWorkoutLogHTML, "add-log-content");
+        pageManager.openPopup("add-log-popup");
+        document.getElementById("date").style.pointerEvents = "none";
+        this.loadWorkoutLogManager();
+        this.addUpdateWorkoutLogBtnListener();
+      });
+  }
+
   addDailyLogPopupListeners() {
     this.addWeightLogBtnListener();
     this.deleteWeightLogBtnListener();
@@ -121,69 +136,18 @@ class LogManager {
   }
 
   addEditWorkoutLogBtnListener(workoutLogElement) {
-    const editWorkoutLogBtn =
+    const updateWorkoutLogBtn =
       workoutLogElement.querySelector(".edit-workout-log");
-    editWorkoutLogBtn.addEventListener("click", (e) => {
-      this.openEditWorkoutLogPopup(e);
+    updateWorkoutLogBtn.addEventListener("click", (e) => {
+      this.openUpdateWorkoutLogPopup(e);
     });
   }
 
-  openEditWorkoutLogPopup(e) {
-    const workoutLog = e.target.closest(".workout");
-    const workoutLogPK = workoutLog.querySelector(".workout-log-pk").value;
-    const url = `${this.baseURL}/edit_workout_log/${workoutLogPK}`;
-    pageManager
-      .fetchData({ url: url, method: "GET", responseType: "text" })
-      .then((editWorkoutLogHTML) => {
-        pageManager.updateContent(editWorkoutLogHTML, "add-log-content");
-        pageManager.openPopup("add-log-popup");
-        document.getElementById("date").style.pointerEvents = "none";
-        this.loadWorkoutLogManager();
-        this.addUpdateWorkoutLogBtnListener();
-      });
-  }
   addUpdateWorkoutLogBtnListener() {
     const updateWorkoutBtn = document.getElementById("save-workout");
-    updateWorkoutBtn.textContent = "Update Workout Session";
+    updateWorkoutBtn.textContent = "Update Workout Log";
     updateWorkoutBtn.addEventListener("click", (e) => {
       this.updateWorkoutLog(e);
-    });
-  }
-
-  updateWorkoutLog(e) {
-    const workoutContainer = document.querySelector(".exercises");
-    const workoutLogPK =
-      workoutContainer.querySelector(".workout-log-pk").value;
-    this.workoutLogManager.updateWorkoutLog(workoutLogPK).then((response) => {
-      if (response.success) {
-        pageManager.currentPopup
-          .querySelector(".close-popup-container")
-          .click();
-        this.updateWorkoutLogInfo(workoutLogPK);
-      }
-    });
-  }
-
-  updateWorkoutLogInfo(updatedWorkoutLogPK) {
-    this.getWorkoutLog(updatedWorkoutLogPK).then((updatedWorkoutLog) => {
-      const workoutLogs = document.querySelectorAll(".workout");
-      workoutLogs.forEach((workoutLog) => {
-        const workoutLogPK = workoutLog.querySelector(".workout-log-pk").value;
-        if (workoutLogPK === updatedWorkoutLogPK) {
-          const workoutLogTemplate = document.createElement("template");
-
-          workoutLogTemplate.innerHTML = updatedWorkoutLog.trim();
-          const workoutLogElement = workoutLogTemplate.content.firstChild;
-          workoutLog.replaceWith(workoutLogElement);
-          this.addDeleteWorkoutLogBtnListener(workoutLogElement);
-          this.addEditWorkoutLogBtnListener(workoutLogElement);
-          pageManager.addCollapsibleListener(
-            workoutLogElement,
-            ".workout-name",
-            ".workout-info",
-          );
-        }
-      });
     });
   }
 
@@ -204,30 +168,40 @@ class LogManager {
     this.addAddWorkoutLogBtnListener();
   }
 
-  deleteWorkoutLog(e) {
-    const workoutLog = e.target.closest(".workout");
-    const workoutLogPK = workoutLog.querySelector(".workout-log-pk").value;
-
-    FetchUtils.apiFetch({
-      url: `${pageManager.baseURL}/workout/delete_workout_log/${workoutLogPK}`,
-      method: "DELETE",
-      successHandler: (response) => {
-        this.deleteWorkoutLogSuccessHandler(workoutLog);
-      },
-      errorHandler: (response) =>
-        pageManager.showTempPopupMessage("Error. Please Try Again.", 2000),
-    });
+  updateWorkoutLog(e) {
+    this.workoutLogManager.updateWorkoutLog(
+      this.workoutLogPK,
+      this.updateWorkoutLogSuccessHandler,
+    );
   }
 
-  deleteWorkoutLogSuccessHandler = (workoutLog) => {
-    workoutLog.remove();
-    if (!document.querySelector(".workout")) {
-      this.updateLogIcons("exercise", "delete");
-      document
-        .querySelector(".workout-log-placeholder")
-        .classList.remove("hidden");
-    }
+  updateWorkoutLogSuccessHandler = (response) => {
+    pageManager.currentPopup.querySelector(".close-popup-container").click();
+    this.updateWorkoutLogInfo(response);
   };
+
+  updateWorkoutLogInfo(response) {
+    this.getWorkoutLog(response["pk"]).then((updatedLog) => {
+      const workoutLogs = document.querySelectorAll(".workout");
+      workoutLogs.forEach((workoutLog) => {
+        const workoutLogPK = workoutLog.querySelector(".workout-log-pk").value;
+        if (workoutLogPK === response["pk"]) {
+          const workoutLogTemplate = document.createElement("template");
+
+          workoutLogTemplate.innerHTML = updatedLog.trim();
+          const workoutLogElement = workoutLogTemplate.content.firstChild;
+          workoutLog.replaceWith(workoutLogElement);
+          this.addDeleteWorkoutLogBtnListener(workoutLogElement);
+          this.addEditWorkoutLogBtnListener(workoutLogElement);
+          pageManager.addCollapsibleListener(
+            workoutLogElement,
+            ".workout-name",
+            ".workout-info",
+          );
+        }
+      });
+    });
+  }
 
   updateWorkoutLogs(workoutLogPK) {
     this.getWorkoutLog(workoutLogPK).then((workoutLogHTML) => {
@@ -251,7 +225,7 @@ class LogManager {
   }
 
   getWorkoutLog(workoutLogPK) {
-    const url = `${this.baseURL}/get_workout_log/${workoutLogPK}`;
+    const url = `${this.baseURL}/workout_log_template/${workoutLogPK}`;
     return pageManager
       .fetchData({
         url: url,
@@ -263,17 +237,52 @@ class LogManager {
       });
   }
 
+  deleteWorkoutLog(e) {
+    const workoutLog = e.target.closest(".workout");
+    const workoutLogPK = workoutLog.querySelector(".workout-log-pk").value;
+
+    FetchUtils.apiFetch({
+      url: `${this.baseURL}/workout_log/${workoutLogPK}`,
+      method: "DELETE",
+      successHandler: (response) => {
+        this.deleteWorkoutLogSuccessHandler(workoutLog);
+      },
+      errorHandler: (response) =>
+        pageManager.showTempPopupMessage("Error. Please Try Again.", 2000),
+    });
+  }
+
+  deleteWorkoutLogSuccessHandler = (workoutLog) => {
+    workoutLog.remove();
+    if (!document.querySelector(".workout")) {
+      this.updateLogIcons("exercise", "delete");
+      document
+        .querySelector(".workout-log-placeholder")
+        .classList.remove("hidden");
+    }
+  };
+
+  saveWorkout() {
+    this.workoutLogManager.saveWorkout(this.saveWorkoutSuccessHandler);
+  }
+
+  saveWorkoutSuccessHandler = (response) => {
+    pageManager.currentPopup.querySelector(".close-popup-container").click();
+    this.updateLogIcons("exercise", "add");
+    this.updateWorkoutLogs(response.pk);
+  };
+
   addWeightLogBtnListener() {
     const addWeightLogBtn = document.querySelector(".add-weight-log");
     addWeightLogBtn.addEventListener("click", (e) => {
-      const url = `${this.baseURL}/save_weight_log/`;
+      const url = `${this.baseURL}/weight_log_template/`;
       pageManager
         .fetchData({ url: url, method: "GET", responseType: "text" })
         .then((addWeightLogHTML) => {
           pageManager.updateContent(addWeightLogHTML, "add-log-content");
           pageManager.openPopup("add-log-popup");
           this.updateWeightLogHeader();
-          this.addSaveWeightLogListener();
+          this.addUpsertWeightLogListener();
         });
     });
   }
@@ -285,33 +294,25 @@ class LogManager {
     });
   }
 
-  deleteWeightLog() {
-    const weightLogPK = document.getElementById("weight-log-pk");
-    const csrftoken = document.querySelector(
-      "[name=csrfmiddlewaretoken]",
-    ).value;
+  deleteWeightLogSuccessHandler = (response) => {
+    this.updateLogIcons("monitor_weight", "delete");
+    this.toggleInfoPlaceholder("weight-log", "on");
+    const addWeightLogBtn = document.querySelector(".add-weight-log");
+    addWeightLogBtn.textContent = "Add Weight Entry";
+  };
 
-    const formData = new FormData();
-    formData.append("csrfmiddlewaretoken", csrftoken);
+  deleteWeightLog(e) {
+    const weightLogPK = document.getElementById("weight-log-pk").value;
 
-    const url = `${this.baseURL}/delete_weight_log/${weightLogPK.value}`;
-    pageManager
-      .fetchData({
-        url: url,
-        method: "POST",
-        body: formData,
-        responseType: "json",
-      })
-      .then((response) => {
-        if (response.success) {
-          this.updateLogIcons("monitor_weight", "delete");
-          this.toggleInfoPlaceholder("weight-log", "on");
-          const addWeightLogBtn = document.querySelector(".add-weight-log");
-          addWeightLogBtn.textContent = "Add Weight Entry";
-        } else {
-          throw new Error("Failed to save weight log");
-        }
-      });
+    FetchUtils.apiFetch({
+      url: `${this.baseURL}/weight_log/${weightLogPK}`,
+      method: "DELETE",
+      successHandler: (response) => {
+        this.deleteWeightLogSuccessHandler(response);
+      },
+      errorHandler: (response) =>
+        pageManager.showTempPopupMessage("Error. Please Try Again.", 2000),
+    });
   }
 
   addAddWorkoutLogBtnListener() {
@@ -334,7 +335,7 @@ class LogManager {
   }
 
   loadWorkoutLogManager() {
-    const script = pageManager.addScript("/static/workout/js/workout.js");
+    const script = pageManager.addScript("/static/js/workout.js");
     if (script) {
       script.onload = () => {
         this.workoutLogManager = new WorkoutLogManager();
@@ -364,49 +365,39 @@ class LogManager {
     });
   }
 
-  saveWorkout() {
-    this.workoutLogManager.saveWorkout().then((workoutSaved) => {
-      if (workoutSaved.success) {
-        pageManager.currentPopup
-          .querySelector(".close-popup-container")
-          .click();
-        this.updateLogIcons("exercise", "add");
-        this.updateWorkoutLogs(workoutSaved.pk);
-      }
-    });
-  }
-
-  saveWeightLog() {
+  upsertWeightLog() {
+    let pk = document.querySelector("#weight-log-pk").value;
     const bodyWeight = document.getElementById("body-weight").value;
     const bodyFat = document.getElementById("body-fat").value;
     const date = document.getElementById("log-popup-date").textContent;
-    const csrftoken = document.querySelector(
-      "[name=csrfmiddlewaretoken]",
-    ).value;
 
-    const formData = new FormData();
-    formData.append("body_weight", bodyWeight);
-    formData.append("body_fat", bodyFat);
-    formData.append("date", date);
-    formData.append("csrfmiddlewaretoken", csrftoken);
+    const formData = {
+      body_weight: bodyWeight,
+      body_fat: bodyFat,
+      date: date,
+    };
 
-    const url = `${this.baseURL}/save_weight_log/`;
-    pageManager
-      .fetchData({
-        url: url,
-        method: "POST",
-        body: formData,
-        responseType: "json",
-      })
-      .then((response) => {
-        if (response.success) {
-          this.updateWeightLog(bodyWeight, bodyFat, response["pk"]);
-          this.updateLogIcons("monitor_weight", "add");
-        } else {
-          throw new Error("Failed to save weight log");
-        }
-      });
+    let method = "POST";
+    if (pk) {
+      method = "PUT";
+      pk = pk + "/";
+    }
+
+    FetchUtils.apiFetch({
+      url: `${this.baseURL}/weight_log/${pk}`,
+      method: method,
+      body: formData,
+      successHandler: (response) =>
+        this.upsertWeightLogSuccessHandler(response, bodyWeight, bodyFat),
+      errorHandler: (response) =>
+        pageManager.showTempPopupMessage("Error. Please Try Again", 2000),
+    });
   }
+
+  upsertWeightLogSuccessHandler = (response, bodyWeight, bodyFat) => {
+    this.updateWeightLog(bodyWeight, bodyFat, response["id"]);
+    this.updateLogIcons("monitor_weight", "add");
+  };
 
   updateWeightLog(bodyWeight, bodyFat, pk) {
     const bodyWeightElement = document.querySelector(".body-weight");
@@ -440,12 +431,12 @@ class LogManager {
       deleteBtn.classList.remove("hidden");
     }
   }
-  addSaveWeightLogListener() {
+  addUpsertWeightLogListener() {
     const saveWeightLogButton = document.getElementById("save-weight-log");
     saveWeightLogButton.addEventListener("click", (e) => {
       e.stopPropagation();
       pageManager.currentPopup.querySelector(".close-popup-container").click();
-      this.saveWeightLog();
+      this.upsertWeightLog();
     });
   }
 

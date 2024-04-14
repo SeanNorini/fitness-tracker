@@ -1,14 +1,13 @@
 from rest_framework.test import APITestCase, APIRequestFactory
+from log.models import WeightLog
 from users.serializers import (
     UpdateUserAccountSettingsSerializer,
-    WeightLogSerializer,
     UpdateUserSettingsSerializer,
 )
-from users.models import User, WeightLog, UserSettings
+from users.models import User, UserSettings
 from common.test_globals import *
 from django.utils import timezone
 from rest_framework.test import APIClient
-
 
 class UpdateUserAccountSettingsSerializerTest(APITestCase):
 
@@ -56,33 +55,7 @@ class UpdateUserAccountSettingsSerializerTest(APITestCase):
 
         self.assertEqual(data["email"], self.user.email)
         self.assertEqual(data["first_name"], self.user.first_name)
-        self.assertEqual(data["last_name"], self.user.last_name)
-
-
-class TestWeightLogSerializer(APITestCase):
-    def setUp(self) -> None:
-        self.user = User.objects.create_user(**CREATE_USER)
-        self.weight_log = WeightLog.objects.create(
-            user=self.user, body_weight=150, body_fat=18, date=timezone.localdate()
-        )
-
-    def test_expected_fields(self) -> None:
-        serializer = WeightLogSerializer(instance=self.weight_log)
-        data = serializer.data
-
-        self.assertEqual(
-            set(data.keys()),
-            {"id", "user", "body_weight", "body_fat", "date"},
-        )
-
-    def test_weight_log_field_content(self) -> None:
-        serializer = WeightLogSerializer(instance=self.weight_log)
-        data = serializer.data
-
-        self.assertEqual(data["user"], self.weight_log.user.pk)
-        self.assertEqual(data["body_weight"], self.weight_log.body_weight)
-        self.assertEqual(data["body_fat"], self.weight_log.body_fat)
-        self.assertEqual(data["date"], str(self.weight_log.date))
+        self.assertEqual(data["last_name"], self.user.last_name
 
 
 class UpdateUserSettingsSerializerTest(APITestCase):

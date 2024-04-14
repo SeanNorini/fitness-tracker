@@ -1,11 +1,23 @@
 import json
 from datetime import date
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import RetrieveAPIView, DestroyAPIView
-from .serializers import RoutineSerializer, RoutineSettingsSerializer
+from rest_framework.generics import (
+    RetrieveAPIView,
+    DestroyAPIView,
+    CreateAPIView,
+    UpdateAPIView,
+)
+
+from common.permissions import IsOwner
+from log.models import WorkoutSet, WeightLog
+from .serializers import (
+    RoutineSerializer,
+    RoutineSettingsSerializer,
+    ExerciseSerializer,
+)
 
 from dateutil.relativedelta import relativedelta
 from matplotlib.ticker import MaxNLocator
@@ -16,9 +28,7 @@ from django.views.generic import TemplateView, FormView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import *
-from users.models import User, WeightLog
 from .forms import (
-    WorkoutLogForm,
     ExerciseForm,
 )
 from .forms import WorkoutSettingsForm
@@ -131,6 +141,7 @@ class SelectWorkoutView(LoginRequiredMixin, TemplateView):
             return context
         context["workout"] = workout.configure_workout()
         context["workout"]["workout_name"] = self.kwargs["workout_name"]
+        context["workout"]["pk"] = workout.pk
         return context
 
 
@@ -169,10 +180,10 @@ class AddExerciseView(LoginRequiredMixin, TemplateView):
     template_name = "workout/exercise.html"
 
     def get_context_data(self, **kwargs):
-        exercise = Exercise.get_exercise(self.request.user, self.kwargs["exercise"])
-
         context = super().get_context_data(**kwargs)
-        context["exercise"] = exercise
+        exercise = Exercise.get_exercise(self.request.user, self.kwargs["exercise"])
+        context["exercise_name"] = exercise.name
+        context["sets"] = exercise.sets()
 
         return context
 
@@ -185,32 +196,11 @@ class AddSetView(LoginRequiredMixin, TemplateView):
 
         exercise_name = self.kwargs.get("exercise_name")
         exercise = Exercise.get_exercise(self.request.user, exercise_name)
-
-        context["set"] = exercise.sets()[0]
+        exercise_set = exercise.set
+        context["weight"] = exercise_set["weight"]
+        context["reps"] = exercise_set["reps"]
 
         return context
-
-
-class SaveWorkoutSessionView(LoginRequiredMixin, FormView):
-    form_class = WorkoutLogForm
-
-    def form_valid(self, form, *args, **kwargs):
-        workout_log = form.save(commit=False)
-        workout_log.user = self.request.user
-        workout_log.workout = Workout.get_workout(
-            self.request.user, form.cleaned_data["workout_name"]
-        )
-
-        success = workout_log.save_workout_session(form.cleaned_data["exercises"])
-
-        if success:
-            return JsonResponse({"success": True, "pk": workout_log.pk})
-        else:
-            return JsonResponse({"success": False})
-
-    def form_invalid(self, form):
-        print(form.errors)
-        return JsonResponse({"error": "Invalid Form"})
 
 
 class WorkoutSettingsView(WorkoutMixin, TemplateView):
@@ -358,6 +348,25 @@ class ExerciseSettingsDeleteExerciseView(LoginRequiredMixin, DeleteView):
         return JsonResponse({"success": True})
 
 
+class ExerciseViewSet(viewsets.ModelViewSet):
+    queryset = Exercise.objects.all()
+    serializer_class = ExerciseSerializer
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def update(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user != request.user:
+            obj.pk = None
+            obj.user = request.user
+            obj.save()
+        serializer = self.get_serializer(obj, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_update(serializer)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class RoutineSettingsView(WorkoutMixin, TemplateView):
     template_name = "workout/routine.html"
 
@@ -446,21 +455,3 @@ class GetRoutineWorkoutView(WorkoutMixin, TemplateView):
             routine_settings.get_prev_workout()
         context = super().get_context_data(**kwargs)
         return context
-
-
-class DeleteWorkoutLogAPIView(DestroyAPIView):
-    queryset = WorkoutLog.objects.all()
-    permission_classes = [IsAuthenticated]
-
-    def delete(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if instance.user != request.user:
-            return Response(
-                {"error": "Not authorized."}, status=status.HTTP_403_FORBIDDEN
-            )
-
-        self.perform_destroy(instance)
-        return Response(
-            {"success": "Workout log deleted successfully."},
-            status=status.HTTP_200_OK,
-        )

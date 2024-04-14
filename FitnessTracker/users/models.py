@@ -46,6 +46,15 @@ class User(AbstractUser):
             .body_weight
         )
 
+    @classmethod
+    def default_user(cls):
+        user, created = User.objects.get_or_create(
+            username="default", email="default@doesnotexist.com"
+        )
+        if created:
+            user_settings = UserSettings.objects.create(user=user)
+        return user
+
 
 class UserSettings(models.Model):
     GENDER_CHOICES = [
@@ -78,51 +87,18 @@ class UserSettings(models.Model):
         verbose_name_plural = "User Settings"
 
     @classmethod
-    def update(cls, user):
+    def update(cls, user, body_weight, body_fat):
         user_settings, _ = cls.objects.get_or_create(user=user)
-        most_recent_weight = (
-            WeightLog.objects.filter(user=user).order_by("-date").first()
-        )
-
-        user_settings.body_weight = most_recent_weight.body_weight
-        user_settings.body_fat = most_recent_weight.body_fat
+        user_settings.body_weight = body_weight
+        user_settings.body_fat = body_fat
         user_settings.save()
 
     @classmethod
-    def get_unit_of_measurement(cls, user):
-        unit_of_measurement = (
-            cls.objects.filter(user=user)
-            .values_list("unit_of_measurement", flat=True)
-            .first()
-        )
-        return unit_of_measurement
-
-    @classmethod
     def get_distance_unit(cls, user):
-        system_of_measurement = (
-            cls.objects.filter(user=user).first().system_of_measurement
-        )
+        user_settings, _ = cls.objects.get_or_create(user=user)
+        system_of_measurement = user_settings.system_of_measurement
 
         if system_of_measurement == "Imperial":
             return "mi"
         else:
             return "km"
-
-
-class WeightLog(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    body_weight = models.FloatField(
-        validators=[MinValueValidator(30.0), MaxValueValidator(1000.0)],
-    )
-    body_fat = models.FloatField(
-        validators=[MinValueValidator(5.0), MaxValueValidator(60.0)],
-    )
-    date = models.DateField()
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        UserSettings.update(self.user)
-
-    class Meta:
-        # Ensure only one weight entry per user per date
-        unique_together = ("user", "date")

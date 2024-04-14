@@ -38,9 +38,6 @@ class Spinner {
     this.setStartValue(options);
     this.update(0);
     this.setElementStyles();
-    if (this.type === "date") {
-      console.log(this.inputElement, this.inputElement.value);
-    }
     this.prevValue = this.inputElement.value;
     if (this.type !== "date") {
       this.addInputHandler();

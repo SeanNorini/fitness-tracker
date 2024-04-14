@@ -311,6 +311,25 @@ class PageManager {
     }, duration);
   }
 
+  showTempPopupErrorMessages(messages, duration) {
+    // Display popup message
+    const popupElement = document.getElementById("popup-message");
+    const container = document.createElement("div");
+    Object.values(messages).forEach((message) => {
+      const element = document.createElement("div");
+      element.textContent = message;
+      container.appendChild(element);
+    });
+    popupElement.innerHTML = "";
+    popupElement.appendChild(container);
+    popupElement.style.display = "flex";
+
+    // Close message after duration
+    setTimeout(function () {
+      popupElement.style.display = "none";
+    }, duration);
+  }
+
   addCollapsibleListener(element, controllerSelector, collapsibleSelector) {
     const controllerElement = element.querySelector(controllerSelector);
     controllerElement.addEventListener("click", (e) => {
@@ -323,26 +342,6 @@ class PageManager {
     const elementTemplate = document.createElement("template");
     elementTemplate.innerHTML = contentHTML.trim();
     return elementTemplate.content.firstChild;
-  }
-
-  updateDropdownMenu(options) {
-    const { option, action, selector, placeholderOption = "" } = options;
-    const newOption = document.createElement("option");
-    newOption.textContent = option;
-
-    const dropdownMenu = document.querySelector(selector);
-    if (action === "add") {
-      dropdownMenu.appendChild(newOption);
-      newOption.selected = true;
-    } else {
-      const menuOptions = dropdownMenu.querySelectorAll("option");
-      menuOptions.forEach((menuOption) => {
-        if (menuOption.textContent === option) {
-          menuOption.remove();
-          dropdownMenu.value = placeholderOption;
-        }
-      });
-    }
   }
 }
 
@@ -452,10 +451,16 @@ class FetchUtils {
     })
       .then((response) => {
         if (response.ok) {
-          response.json().then((response) => {
-            console.log("fdsfsd");
-            args.successHandler(response);
-          });
+          if (
+            response.status === 204 ||
+            response.headers.get("Content-Length") === "0"
+          ) {
+            args.successHandler({});
+          } else {
+            response.json().then((response) => {
+              args.successHandler(response);
+            });
+          }
         } else {
           response.json().then((response) => {
             args.errorHandler(response);
@@ -466,4 +471,11 @@ class FetchUtils {
         console.error("Server did not respond.", error);
       });
   }
+}
+
+function capitalize(str) {
+  return str
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
 }

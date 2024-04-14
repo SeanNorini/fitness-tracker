@@ -1,5 +1,5 @@
 <div class="weight-log-info{% if not weight_log %} hidden{% endif %}">
-  <input type="hidden" id="weight-log-pk" value="{{ weight_log.pk|default:"0" }}">
+  <input type="hidden" id="weight-log-pk" value="{{ weight_log.pk|default:"" }}">
   <div class="body-weight">
     Body Weight - {{ weight_log.body_weight|default:"0" }}
     {{ user.weight_unit }}

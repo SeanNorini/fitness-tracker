@@ -68,7 +68,7 @@ class CardioManager {
     const formData = this.readCardioSessionForm();
     console.log(JSON.stringify(formData));
     FetchUtils.apiFetch({
-      url: `${this.baseURL}/create_cardio_log/`,
+      url: `${pageManager.baseURL}/log/cardio_log/`,
       method: "POST",
       body: formData,
       successHandler: () =>
@@ -163,7 +163,7 @@ class CardioManager {
   getSummaries(selectedRange) {
     return pageManager
       .fetchData({
-        url: `${this.baseURL}/get_cardio_log_summaries/${selectedRange}/`,
+        url: `${this.baseURL}/cardio_log_summaries/${selectedRange}/`,
         method: "GET",
         responseType: "json",
       })

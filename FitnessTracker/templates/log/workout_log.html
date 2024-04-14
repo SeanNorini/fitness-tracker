@@ -1,20 +1,21 @@
+{% load custom_filters %}
 <div class="workout col">
-  <input type="hidden" class="workout-log-pk" value="{{ workout_log.pk|default:"0" }}">
+  <input type="hidden" class="workout-log-pk" value="{{ workout_log.pk|default:'0' }}">
   <div class="workout-name">{{ workout_log.workout_name }}</div>
-  <hr>
+  <hr class="half-width">
   <div class="col workout-info py hidden">
     {% if workout_log.total_time != 0 %}
     <div>Total time: {{ workout_log.total_time }}</div>
     {% endif %}
-    {% for exercise in workout_log.exercises %}
-      <div class="col">{{ exercise.name }}</div>
-      <hr>
-      {% for set in exercise.sets %}
+    {% for exercise_name, sets in workout_log.exercises.items %}
+      <div class="col">{{ exercise_name }}</div>
+      <hr class="half-width">
+      {% for weight, reps in sets.weights|zip_lists:sets.reps %}
         <div>
-          {{ set.weight }}
+          {{ weight }}
           {{ user.weight_unit }}
           &nbsp;x&nbsp;
-          {{ set.reps }}
+          {{ reps }}
         </div>
       {% endfor %}
       {% if not forloop.last %}

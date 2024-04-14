@@ -1,115 +1,87 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse
+from django.db.migrations import serializer
+from django.http import JsonResponse
 from django.shortcuts import render
-from django.views import View
-from django.views.generic import TemplateView, FormView, DeleteView, UpdateView
-from calendar import HTMLCalendar, month_name
+from django.views.generic import TemplateView
+from calendar import month_name
 from datetime import datetime
-from django.shortcuts import get_object_or_404
-
-from users.models import WeightLog, UserSettings
-from workout.models import WorkoutLog, Workout, Exercise, get_attribute_list
-
-from workout.forms import WorkoutLogForm
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
+from common.permissions import IsOwner
+from rest_framework.generics import (
+    RetrieveAPIView,
+    DestroyAPIView,
+    CreateAPIView,
+    UpdateAPIView,
+)
+from rest_framework.response import Response
+from rest_framework import status, viewsets
+from .utils import Calendar
+from users.models import UserSettings
+from workout.models import Workout, Exercise, get_attribute_list
+from .serializers import CardioLogSerializer, WorkoutLogSerializer, WeightLogSerializer
+from .models import WorkoutLog, CardioLog, WeightLog
 
 
 # Create your views here.
 class LogView(LoginRequiredMixin, TemplateView):
+    def get_date(self):
+        try:
+            year = int(self.kwargs.get("year", ""))
+            month = int(self.kwargs.get("month", ""))
+            if 1 <= month <= 12:
+                return year, month
+            else:
+                raise ValueError("Month out of range")
+        except (ValueError, TypeError):
+            return datetime.now().year, datetime.now().month
+
+    def get_workout_logs(self, user, year, month):
+        return WorkoutLog.objects.filter(user=user, date__year=year, date__month=month)
+
+    def get_weight_logs(self, user, year, month):
+        return WeightLog.objects.filter(user=user, date__year=year, date__month=month)
+
+    def get_cardio_logs(self, user, year, month):
+        return CardioLog.objects.filter(
+            user=user, datetime__year=year, datetime__month=month
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["year"], context["month"] = self.get_date()
 
-        # Get date from user, return current month on error.
-        try:
-            context["year"] = int(self.kwargs.get("year"))
-            context["month"] = int(self.kwargs.get("month"))
-            if context["month"] < 1 or context["month"] > 12:
-                raise ValueError("Invalid month")
-        except (ValueError, TypeError):
-            context["year"] = datetime.now().year
-            context["month"] = datetime.now().month
-
-        context["workout_logs"] = WorkoutLog.objects.filter(
-            user=self.request.user,
-            date__year=context["year"],
-            date__month=context["month"],
+        user = self.request.user
+        context["workout_logs"] = self.get_workout_logs(
+            user, context["year"], context["month"]
         )
-        context["weight_logs"] = WeightLog.objects.filter(
-            user=self.request.user,
-            date__year=context["year"],
-            date__month=context["month"],
+        context["weight_logs"] = self.get_weight_logs(
+            user, context["year"], context["month"]
+        )
+        context["cardio_logs"] = self.get_cardio_logs(
+            user, context["year"], context["month"]
         )
 
         modules = ["workout", "cardio", "nutrition", "log", "stats", "settings"]
         context["modules"] = modules
+
+        calendar = Calendar(
+            workout_logs=context["workout_logs"],
+            weight_logs=context["weight_logs"],
+            cardio_logs=context["cardio_logs"],
+        )
+        context["calendar"] = calendar.formatmonth(
+            year=context["year"], month=context["month"]
+        )
         return context
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        cal = LogHTMLCalendar(
-            workout_logs=context["workout_logs"], weight_logs=context["weight_logs"]
-        )
-        html_calendar = cal.formatmonth(context["year"], context["month"])
-        context["calendar"] = html_calendar
 
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return render(request, "log/log.html", context)
         context["template_content"] = "log/log.html"
         return render(request, "base/index.html", context)
-
-
-class LogHTMLCalendar(HTMLCalendar):
-    def __init__(self, firstweekday=6, workout_logs=None, weight_logs=None):
-        super().__init__(firstweekday)
-        self.workout_logs = workout_logs
-        self.weight_logs = weight_logs
-
-    def formatday(self, day, weekday):
-        workout_log = self.workout_logs.filter(date__day=day).first()
-        weight_log = self.weight_logs.filter(date__day=day).first()
-
-        if day == 0:
-            day_format = (
-                '<td class="noday">&nbsp;</td>'  # If day is 0, display an empty cell
-            )
-        else:
-            day_format = f'<td class="{self.cssclasses[weekday]} day" data-day="{day}"><div>{day}</div>'
-            if workout_log is not None:
-                day_format += '<div><span class="material-symbols-outlined exercise-icon text-xl">exercise</span></div>'
-            if weight_log is not None:
-                day_format += (
-                    f'<div><span class="material-symbols-outlined monitor_weight-icon text-xl">'
-                    f"monitor_weight</span></div>"
-                )
-
-            day_format += "</td>"
-        return day_format
-
-    def formatmonth(self, year, month, withyear=True):
-        # Get the calendar table with the month's days
-        cal = super().formatmonth(year, month, withyear)
-
-        # Add a CSS class to the table
-        cal = cal.replace(
-            '<table border="0" cellpadding="0" cellspacing="0" class="month">',
-            '<table class="month">',
-        )
-
-        cal = cal.replace(
-            f'class="month"',
-            f"class='row row-justify-space-between row-align-center full-width month p-0_2'",
-        )
-
-        current_month = month_name[month]
-        cal = cal.replace(
-            f"{current_month} {year}",
-            f'<div><span class="material-symbols-outlined hover border bg-tertiary text-xl" id="nav-prev">'
-            f"navigate_before</span></div>"
-            f'<div id="month-name" data-month={month} data-year={year}>{current_month} {year}</div>'
-            f'<div><span class="material-symbols-outlined hover border bg-tertiary text-xl" id="nav-next">'
-            f"navigate_next</span></div>",
-        )
-
-        return cal
 
 
 class DailyLogView(TemplateView):
@@ -126,71 +98,22 @@ class DailyLogView(TemplateView):
 
         workout_logs = WorkoutLog.objects.filter(user=self.request.user, date=date)
         context["workout_logs"] = [
-            workout_log.generate_workout_log() for workout_log in workout_logs
+            WorkoutLogSerializer(instance=workout_log).data
+            for workout_log in workout_logs
         ]
 
         weight_log = WeightLog.objects.filter(user=self.request.user, date=date).first()
         context["weight_log"] = weight_log
 
-        return context
-
-
-class EditWorkoutLogView(LoginRequiredMixin, TemplateView):
-    template_name = "workout/workout_session.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        pk = self.kwargs.get("pk")
-        workout_log = WorkoutLog.objects.filter(user=self.request.user, pk=pk).first()
-        context["workout"] = workout_log.generate_workout_log()
-
-        context["workouts"] = get_attribute_list(Workout, self.request.user, "name")
-        context["exercises"] = get_attribute_list(Exercise, self.request.user, "name")
-
-        return context
-
-
-class UpdateWorkoutLogView(LoginRequiredMixin, UpdateView):
-    model = WorkoutLog
-    form_class = WorkoutLogForm
-
-    def form_valid(self, form):
-        workout_log = form.save(commit=False)
-        workout_log.user = self.request.user
-        workout_log.workout = Workout.get_workout(
-            self.request.user, form.cleaned_data["workout_name"]
+        cardio_logs = CardioLog.objects.filter(
+            user=self.request.user, datetime__date=date
         )
-
-        success = workout_log.update_workout_session(form.cleaned_data["exercises"])
-
-        if success:
-            return JsonResponse({"success": True})
-        else:
-            return JsonResponse({"success": False})
-
-    def form_invalid(self, form):
-        return JsonResponse({"error": "Invalid Form"})
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        # Filter the queryset to objects belonging to the current user
-        return queryset.filter(user=self.request.user)
-
-
-class GetWorkoutLogView(TemplateView):
-    template_name = "log/workout_log.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        pk = self.kwargs["pk"]
-        workout_log = WorkoutLog.objects.get(pk=pk, user=self.request.user)
-        context["workout_log"] = workout_log.generate_workout_log()
+        context["cardio_logs"] = cardio_logs
 
         return context
 
 
-class SaveWeightLogView(TemplateView):
+class WeightLogTemplateView(TemplateView):
     template_name = "log/save_weight_log.html"
 
     def get_context_data(self, **kwargs):
@@ -198,34 +121,64 @@ class SaveWeightLogView(TemplateView):
         user_settings = (
             UserSettings.objects.filter(user=self.request.user).order_by("-pk").first()
         )
-
         context["user_settings"] = user_settings
 
         return context
 
-    def post(self, request, *args, **kwargs):
-        body_weight = request.POST.get("body_weight")
-        body_fat = request.POST.get("body_fat")
-        date = request.POST.get("date")
-        date = datetime.strptime(date, "%B %d, %Y")
 
-        weight_log, created = WeightLog.objects.update_or_create(
-            user=self.request.user,
-            date=date,
-            defaults={"body_weight": body_weight, "body_fat": body_fat},
-        )
+class WeightLogViewSet(viewsets.ModelViewSet):
+    queryset = WeightLog.objects.all()
+    serializer_class = WeightLogSerializer
+    permission_classes = [IsAuthenticated, IsOwner]
 
-        return JsonResponse({"success": True, "pk": weight_log.pk})
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
 
 
-class DeleteWeightLogView(LoginRequiredMixin, DeleteView):
-    model = WeightLog
+class WorkoutLogTemplateView(TemplateView):
+    template_name = "log/workout_log.html"
 
-    def form_valid(self, request, *args, **kwargs):
-        weight_log = self.get_object()
-        success = False
-        if weight_log:
-            weight_log.delete()
-            success = True
-        data = {"success": success}
-        return JsonResponse(data)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pk = self.kwargs["pk"]
+        workout_log = WorkoutLog.objects.get(pk=pk, user=self.request.user)
+        context["workout_log"] = WorkoutLogSerializer(instance=workout_log).data
+        return context
+
+
+class UpdateWorkoutLogTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = "workout/workout_session.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pk = self.kwargs.get("pk")
+        workout_log = WorkoutLog.objects.filter(user=self.request.user, pk=pk).first()
+        context["workout"] = WorkoutLogSerializer(instance=workout_log).data
+
+        context["workouts"] = get_attribute_list(Workout, self.request.user, "name")
+        context["exercises"] = get_attribute_list(Exercise, self.request.user, "name")
+        return context
+
+
+class WorkoutLogViewSet(viewsets.ModelViewSet):
+    queryset = WorkoutLog.objects.all()
+    serializer_class = WorkoutLogSerializer
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+
+class CardioLogViewSet(viewsets.ModelViewSet):
+    queryset = CardioLog.objects.all()
+    permission_classes = [IsAuthenticated, IsOwner]
+    serializer_class = CardioLogSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)

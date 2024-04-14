@@ -1,6 +1,13 @@
 from django.urls import re_path, path
 from . import views
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import WorkoutLogViewSet, WeightLogViewSet, CardioLogViewSet
 
+router = DefaultRouter()
+router.register(r"workout_log", WorkoutLogViewSet)
+router.register(r"weight_log", WeightLogViewSet)
+router.register(r"cardio_log", CardioLogViewSet)
 
 urlpatterns = [
     re_path(
@@ -13,25 +20,20 @@ urlpatterns = [
         views.DailyLogView.as_view(),
         name="daily_log",
     ),
-    path("save_weight_log/", views.SaveWeightLogView.as_view(), name="save_weight_log"),
     path(
-        "delete_weight_log/<int:pk>",
-        views.DeleteWeightLogView.as_view(),
-        name="delete_weight_log",
+        "weight_log_template/",
+        views.WeightLogTemplateView.as_view(),
+        name="weight_log_template",
     ),
     path(
-        "get_workout_log/<int:pk>",
-        views.GetWorkoutLogView.as_view(),
+        "workout_log_template/<int:pk>",
+        views.WorkoutLogTemplateView.as_view(),
         name="get_workout_log",
     ),
     path(
-        "edit_workout_log/<int:pk>/",
-        views.EditWorkoutLogView.as_view(),
-        name="edit_workout_log",
+        "update_workout_log_template/<int:pk>/",
+        views.UpdateWorkoutLogTemplateView.as_view(),
+        name="update_workout_log_template",
     ),
-    path(
-        "update_workout_log/<int:pk>/",
-        views.UpdateWorkoutLogView.as_view(),
-        name="update_workout_log",
-    ),
+    path("", include(router.urls)),
 ]

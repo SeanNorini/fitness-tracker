@@ -87,6 +87,43 @@ class SearchBar_ {
     });
   }
 
+  deleteItem(itemName) {
+    const element = this.itemExists(itemName);
+    if (element) {
+      element.remove();
+    }
+  }
+
+  addItem(itemName, itemClass) {
+    if (!this.itemExists(itemName)) {
+      const element = document.createElement("div");
+      element.textContent = capitalize(itemName);
+      element.classList.add(
+        "row",
+        "row-align-center",
+        "hover",
+        "border",
+        "p-0_2",
+        itemClass,
+      );
+      this.searchList.appendChild(element);
+      return true;
+    }
+    return false;
+  }
+
+  itemExists(itemName) {
+    const items = this.searchList.querySelectorAll("div");
+    for (const itemElement of items) {
+      if (
+        itemElement.textContent.trim().toLowerCase() === itemName.toLowerCase()
+      ) {
+        return itemElement;
+      }
+    }
+    return null;
+  }
+
   debounce(func, delay) {
     let timer;
     return function () {

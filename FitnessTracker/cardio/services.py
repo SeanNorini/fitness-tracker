@@ -2,7 +2,7 @@ from datetime import timedelta
 from django.db.models import Sum
 from django.db.models.functions import TruncDay
 from django.utils import timezone
-from .models import CardioLog
+from log.models import CardioLog
 from .utils import (
     format_duration,
     get_calories_burned,

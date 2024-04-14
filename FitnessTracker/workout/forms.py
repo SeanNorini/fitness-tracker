@@ -2,18 +2,7 @@ from django import forms
 from datetime import datetime, timedelta
 
 from django.core.validators import MaxValueValidator
-from workout.models import WorkoutLog, Exercise, WorkoutSettings
-
-
-class WorkoutLogForm(forms.ModelForm):
-    date = forms.DateField()
-    workout_name = forms.CharField(max_length=50)
-    exercises = forms.JSONField()
-    total_time = forms.IntegerField()
-
-    class Meta:
-        model = WorkoutLog
-        fields = ("date", "total_time")
+from workout.models import Exercise, WorkoutSettings
 
 
 class ExerciseForm(forms.ModelForm):

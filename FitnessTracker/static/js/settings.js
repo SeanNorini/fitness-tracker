@@ -117,25 +117,27 @@ class SettingsManager {
   addDeleteAccountListener() {
     const deleteAccount = document.querySelector("#delete-account");
     deleteAccount.addEventListener("click", (e) => {
-      const confirm = this.getAccountDeleteConfirmation();
-      if (confirm) {
-        window.location.href = `${pageManager.baseURL}/user/delete_account`;
-      }
-    });
-  }
-
-  getAccountDeleteConfirmation() {
-    let confirm;
-    do {
-      confirm = window.prompt(
+      const confirmation = window.prompt(
         "WARNING! This will permanently delete your account and any " +
           "associated records. Type 'delete' to confirm.",
       );
-      if (confirm !== null) {
-        confirm = confirm.toLowerCase();
+      if (confirmation) {
+        FetchUtils.apiFetch({
+          url: `${pageManager.baseURL}/user/delete_account`,
+          method: "DELETE",
+          body: { confirmation: confirmation },
+          successHandler: () => {
+            window.location.href = `${pageManager.baseURL}/user/login`;
+          },
+          errorHandler: (response) => {
+            pageManager.showTempPopupMessage(
+              "Confirmation Must Be Entered Exactly. Account Not Deleted",
+              2000,
+            );
+          },
+        });
       }
-    } while (confirm !== "delete" && confirm !== null);
-    return confirm;
+    });
   }
 
   addOpenChangePasswordListener() {

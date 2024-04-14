@@ -9,11 +9,21 @@ class ExerciseSettingsManager {
       .then((contentHTML) => {
         pageManager.updateContent(contentHTML, "settings");
         this.loadExerciseSettingsEventListeners();
+        this.addExerciseSearchBar = new SearchBar_(
+          this.addExerciseSearchHandler.bind(this),
+        );
+        this.addExerciseSearchBar.initialize("add-exercise-search-bar");
       });
   }
 
+  addExerciseSearchHandler = (e) => {
+    if (e.target.classList.contains("exercise-option")) {
+      const exerciseName = e.target.textContent.trim();
+      this.fetchExercise(exerciseName);
+    }
+  };
+
   loadExerciseSettingsEventListeners() {
-    this.addExerciseSelectMenuListener();
     this.addNewExerciseListener();
     this.addSaveExerciseListener();
     this.addDeleteExerciseListener();
@@ -28,107 +38,74 @@ class ExerciseSettingsManager {
   }
 
   deleteExercise() {
+    const exerciseName = document.getElementById("exercise-name").value;
     const exercisePK = document.getElementById("exercise-pk").value;
-    const exerciseName = document.getElementById("select-exercise").value;
-    pageManager
-      .fetchData({
-        url: `${pageManager.baseURL}/workout/exercise_settings/delete_exercise/${exerciseName}/${exercisePK}`,
-        method: "POST",
-        responseType: "json",
-      })
-      .then((response) => {
-        if (response.success) {
-          pageManager.showTempPopupMessage("Exercise Deleted.", 2000);
-          document.querySelector(".exercise").remove();
-          pageManager.updateDropdownMenu({
-            option: exerciseName,
-            action: "remove",
-            selector: "#select-exercise",
-            placeholder: "Select an Exercise",
-          });
-        }
-      });
+
+    FetchUtils.apiFetch({
+      url: `${pageManager.baseURL}/workout/exercises/${exercisePK}`,
+      method: "DELETE",
+      successHandler: (response) => {
+        this.addExerciseSearchBar.deleteItem(exerciseName);
+      },
+      errorHandler: (response) => {
+        pageManager.showTempPopupMessage("Error. Please Try Again", 2000);
+      },
+    });
   }
 
   addNewExerciseListener() {
     document.getElementById("new-exercise").addEventListener("click", (e) => {
-      this.addNewExercise();
+      const exerciseName = capitalize(prompt("Please enter name of exercise:"));
+
+      // Check if a name was entered
+      if (exerciseName) {
+        if (
+          !this.addExerciseSearchBar.addItem(exerciseName, "exercise-option")
+        ) {
+          pageManager.showTempPopupMessage(
+            `${exerciseName} Already Exists`,
+            2000,
+          );
+        }
+        this.fetchExercise(exerciseName);
+      }
     });
-  }
-
-  addNewExercise() {
-    const exerciseName = prompt("Please enter name of exercise:");
-
-    // Check if a name was entered
-    if (exerciseName) {
-      pageManager.updateDropdownMenu({
-        option: exerciseName,
-        action: "add",
-        selector: "#select-exercise",
-      });
-      this.fetchExercise();
-    }
   }
 
   addSaveExerciseListener() {
     const saveExerciseButton = document.getElementById("save-exercise");
     saveExerciseButton.addEventListener("click", (e) => {
-      this.saveExerciseSettings();
+      this.saveExercise();
     });
   }
 
-  readExerciseSettings() {
-    const formData = new FormData();
-    const fiveRepMax = document.getElementById("five-rep-max").value;
-    const defaultWeight = document.getElementById("default-weight").value;
-    const defaultReps = document.getElementById("default-reps").value;
-    const exerciseName = document.getElementById("select-exercise").value;
-
-    formData.append("csrfmiddlewaretoken", pageManager.csrftoken);
-    formData.append("five_rep_max", fiveRepMax);
-    formData.append("default_weight", defaultWeight);
-    formData.append("default_reps", defaultReps);
-    formData.append("name", exerciseName);
-
-    return formData;
-  }
-
-  validExerciseSettings() {
+  exerciseExists() {
     const exercise = document.querySelector(".exercise");
     return !!exercise;
   }
 
-  saveExerciseSettings() {
-    if (this.validExerciseSettings()) {
-      const formData = this.readExerciseSettings();
-      pageManager
-        .fetchData({
-          url: `${pageManager.baseURL}/workout/exercise_settings/edit_exercise/${formData.get("name")}`,
-          method: "POST",
-          body: formData,
-          responseType: "json",
-        })
-        .then((response) => {
-          if (response.success === true) {
-            pageManager.showTempPopupMessage("Exercise Saved.", 2000);
-          }
-        });
-    } else {
-      pageManager.showTempPopupMessage("No Exercise Selected.", 2000);
+  saveExercise() {
+    if (this.exerciseExists()) {
+      const formData = FormUtils.getFormData("exercise", true);
+
+      FetchUtils.apiFetch({
+        url: `${pageManager.baseURL}/workout/exercises/${formData["exercise-pk"]}/`,
+        method: "PUT",
+        body: formData,
+        successHandler: this.saveExerciseSuccessHandler,
+        errorHandler: (response) =>
+          pageManager.showTempPopupMessage("Error. Please Try Again", 2000),
+      });
     }
   }
 
-  addExerciseSelectMenuListener() {
-    const selectMenu = document.getElementById("select-exercise");
-    selectMenu.addEventListener("change", (e) => {
-      this.fetchExercise();
-    });
-  }
+  saveExerciseSuccessHandler = (response) => {
+    const exercisePK = document.getElementById("exercise-pk");
+    exercisePK.value = response["id"];
+    pageManager.showTempPopupMessage("Exercise Saved", 2000);
+  };
 
-  fetchExercise() {
-    const selectMenu = document.getElementById("select-exercise");
-    const exerciseName = selectMenu.value;
-
+  fetchExercise(exerciseName) {
     pageManager
       .fetchData({
         url: `${pageManager.baseURL}/workout/exercise_settings/edit_exercise/${exerciseName}`,

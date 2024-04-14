@@ -1,7 +1,14 @@
 from rest_framework import serializers
-from .models import Routine, Week, Day, Workout, RoutineSettings, DayWorkout
-from django.shortcuts import get_object_or_404
-from django.db import IntegrityError
+from .models import (
+    Routine,
+    Week,
+    Day,
+    Workout,
+    RoutineSettings,
+    DayWorkout,
+    Exercise,
+)
+from django.db import IntegrityError, transaction
 
 
 class DaySerializer(serializers.ModelSerializer):
@@ -101,3 +108,18 @@ class RoutineSettingsSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         instance.save()
         return instance
+
+
+class ExerciseSerializer(serializers.ModelSerializer):
+
+    def to_internal_value(self, data):
+        data["id"] = data.pop("exercise-pk")
+        data["name"] = data.pop("exercise-name")
+        data["five_rep_max"] = data.pop("five-rep-max")
+        data["default_weight"] = data.pop("default-weight")
+        data["default_reps"] = data.pop("default-reps")
+        return data
+
+    class Meta:
+        model = Exercise
+        fields = "__all__"

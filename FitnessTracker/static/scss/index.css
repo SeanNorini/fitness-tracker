@@ -41,10 +41,7 @@
 }
 
 .popup {
-  position: fixed;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: absolute;
   padding: 0.5rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
@@ -150,6 +147,18 @@ input[type=date] {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+}
+
+.date-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.date-wrapper span {
+  position: absolute;
+  right: 10px; /* Adjust based on padding and size of your icon */
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none; /* Ensures the input field is clickable */
 }
 
 /*# sourceMappingURL=index.css.map */

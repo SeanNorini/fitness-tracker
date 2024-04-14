@@ -1,5 +1,5 @@
 {% load static %}
-<input type="hidden" class="workout_log_pk" value="{{ workout.pk }}">
+<input type="hidden" class="workout-log-pk" value="{{ workout.pk }}">
 
 
 <div class="col col-center" id="message">
@@ -11,7 +11,7 @@
 </div>
 
 {% if workout %}
-  {% for exercise in workout.exercises %}
+  {% for exercise_name, sets in workout.exercises.items %}
     {% include "workout/exercise.html" %}
   {% endfor %}
 {% endif %}

@@ -29,7 +29,7 @@ urlpatterns = [
         name="reset_password_confirm",
     ),
     path("settings/", views.SettingsView.as_view(), name="user_settings"),
-    path("delete_account/", views.DeleteUserView.as_view(), name="delete_account"),
+    path("delete_account/", views.DeleteUserAPIView.as_view(), name="delete_account"),
     path(
         "settings/update_account_settings/",
         views.UpdateAccountSettingsAPIView.as_view(),

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "workout",
     "nutrition_tracker",
     "users.apps.UsersConfig",
+    "common",
     "rest_framework",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -133,7 +134,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-LOGIN_URL = "/user/login"
+LOGIN_URL = "/user/login/"
 
 FIXTURE_DIRS = ((BASE_DIR / "fixtures"),)
 

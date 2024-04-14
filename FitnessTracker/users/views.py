@@ -4,12 +4,12 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.db import transaction
 from django.shortcuts import render, redirect, reverse
-from django.views.generic import FormView, View, DeleteView
+from django.views.generic import FormView, View
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework.response import Response
-from rest_framework.generics import UpdateAPIView
+from rest_framework.generics import UpdateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
@@ -23,7 +23,7 @@ from .forms import (
     UpdateAccountForm,
 )
 from workout.models import WorkoutSettings
-from .models import User, UserSettings, WeightLog
+from .models import User, UserSettings
 from .serializers import (
     UpdateUserAccountSettingsSerializer,
     UpdateUserSettingsSerializer,
@@ -100,10 +100,10 @@ class RegistrationView(FormView):
                 user_settings.save()
 
                 WorkoutSettings.objects.create(user=user)
-
+                self.request.user = user
                 # Send email activation link
                 self.email_service.send_activation_link()
-                self.request.user = user
+
                 # Return confirmation template
                 return render(self.request, "users/registration_success.html")
 
@@ -285,11 +285,25 @@ class SettingsView(LoginRequiredMixin, FormView):
         return [self.template_name]
 
 
-class DeleteUserView(LoginRequiredMixin, DeleteView):
-    def get(self, request, *args, **kwargs):
+class DeleteUserAPIView(DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        confirmation = request.data.get("confirmation", "")
+        if confirmation != "delete":
+            return Response(
+                {
+                    "error": "Error, confirmation must be entered exactly. Account not deleted."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         user = request.user
         user.delete()
-        return redirect("login")
+        return Response(
+            {"message": "Account successfully deleted."},
+            status=status.HTTP_200_OK,
+        )
 
 
 class UpdateAccountSettingsAPIView(UpdateAPIView):

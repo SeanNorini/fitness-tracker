@@ -1,5 +1,9 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
+
+router = DefaultRouter()
+router.register(r"exercises", views.ExerciseViewSet)
 
 urlpatterns = [
     path("workout/", views.WorkoutView.as_view(), name="workout"),
@@ -14,11 +18,6 @@ urlpatterns = [
         "workout/select_workout/<str:workout_name>",
         views.SelectWorkoutView.as_view(),
         name="select_workout",
-    ),
-    path(
-        "workout/save_workout_session",
-        views.SaveWorkoutSessionView.as_view(),
-        name="save_workout_session",
     ),
     path(
         "workout/add_set/<str:exercise_name>",
@@ -105,9 +104,5 @@ urlpatterns = [
         views.GetRoutineWorkoutView.as_view(),
         name="get_routine_workout",
     ),
-    path(
-        "workout/delete_workout_log/<int:pk>",
-        views.DeleteWorkoutLogAPIView.as_view(),
-        name="delete_workout_log",
-    ),
+    path("workout/", include(router.urls)),
 ]

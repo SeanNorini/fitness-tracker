@@ -50,22 +50,3 @@ class TestGetCardioLogSummariesAPIView(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("summaries", response.data)
         self.assertIn("graph", response.data)
-
-
-class TestCreateCardioLogAPIView(TestCase):
-    def setUp(self):
-        self.user = User.objects.create_user(username="testuser")
-        self.client = APIClient()
-        self.client.force_authenticate(user=self.user)
-        self.url = reverse("create_cardio_log")
-
-    def test_create_cardio_log(self):
-        data = {
-            "datetime": "2024-04-12T01:17:38.246Z",
-            "duration-minutes": "30",
-            "distance-integer": "5",
-        }
-        response = self.client.post(self.url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(CardioLog.objects.count(), 1)
-        self.assertEqual(CardioLog.objects.first().distance, 5.0)

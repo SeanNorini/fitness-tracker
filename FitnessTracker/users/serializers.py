@@ -1,5 +1,8 @@
 from rest_framework import serializers
-from .models import User, UserSettings, WeightLog
+
+from log.models import WeightLog
+from log.serializers import WeightLogSerializer
+from .models import User, UserSettings
 from django.utils import timezone
 
 
@@ -22,12 +25,6 @@ class UpdateUserAccountSettingsSerializer(serializers.ModelSerializer):
         return value
 
 
-class WeightLogSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = WeightLog
-        fields = "__all__"
-
-
 class UpdateUserSettingsSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -48,7 +45,7 @@ class UpdateUserSettingsSerializer(serializers.ModelSerializer):
         weight_log_data = {
             "body_weight": validated_data.get("body_weight", None),
             "body_fat": validated_data.get("body_fat", None),
-            "user": self.context["request"].user.pk,
+            "user": self.context["request"].user,
             "date": timezone.localdate(),
         }
 
