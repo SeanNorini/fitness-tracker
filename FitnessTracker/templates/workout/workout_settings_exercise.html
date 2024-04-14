@@ -1,13 +1,28 @@
 <div class="drag-and-drop-element exercise col-lg gap-md border bg-secondary p">
   <div class="col col-align-center gap-md">
-    <div class="row row row-center gap-md">
-      <div class="exercise-name drag-and-drop-handlebar">
-        {{ exercise.name }}
-      </div>
-      <div>
+    <div class="row full-width gap-md">
+      <div class="row row-center full-width">
+        <div class="exercise-name drag-and-drop-handlebar">
+          <input type="hidden" name="exercise-pk" value="{{ exercise.pk }}">
+          {{ exercise.name }}
+        </div>
+        <div>
           <span class="material-symbols-outlined delete-exercise hover-red text-xxl">
             delete
           </span>
+        </div>
+      </div>
+      <div>
+        <span class="material-symbols-outlined tooltip">
+          help
+        </span>
+        <div class="modifier-tooltip bg-blue tooltip-message">
+          Determines set weight based on your five rep max.<br>
+          Exact: Exact value with no modification.<br>
+          %: A percentage of your five rep max.<br>
+          +: Adds a flat value to your five rep max.<br>
+          -: Subtracts a flat value from your five rep max.
+        </div>
       </div>
     </div>
     <div class="row row-center gap-lg">
@@ -17,9 +32,15 @@
     </div>
     <hr class="hr-half-width">
     <div class="sets col col-align-center gap-md">
-      {% for exercise_set in exercise.sets %}
-        {% include 'workout/workout_settings_set.html' %}
-      {% endfor %}
+      {% if workout %}
+        {% for exercise_set in exercise.sets %}
+          {% include 'workout/workout_settings_set.html' %}
+        {% endfor %}
+      {% else %}
+        {% with exercise_set=exercise.exercise_set %}
+          {% include 'workout/workout_settings_set.html' %}
+        {% endwith %}
+      {% endif %}
     </div>
     <hr class="hr-half-width">
     <div class="row row-center text-md">

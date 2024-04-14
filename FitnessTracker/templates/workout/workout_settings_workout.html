@@ -1,4 +1,13 @@
 {% load static %}
-{% for exercise in workout.exercises %}
+<input type="hidden" id="workout-pk" value="{{ workout.pk }}">
+<input type="hidden" id="workout-name" value="{{ workout.name|default:'Custom Workout' }}">
+<div class="col col-center" id="message">
+  {% if workout.workout_name == "Rest Day" %}
+    <h1>Rest Day</h1>
+  {% else %}
+    Please select a workout or add an exercise to get started.
+  {% endif %}
+</div>
+{% for exercise in workout %}
   {% include "workout/workout_settings_exercise.html" %}
 {% endfor %}

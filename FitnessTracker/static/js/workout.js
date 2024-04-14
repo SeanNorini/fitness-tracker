@@ -18,13 +18,11 @@ class WorkoutManager {
     this.dragAndDrop.initialize();
 
     this.selectWorkoutSearchBar = new SearchBar_(
-      this.selectWorkoutSearchHandler.bind(this),
+      this.selectWorkoutSearchHandler,
     );
     this.selectWorkoutSearchBar.initialize("select-workout-search-bar");
 
-    this.addExerciseSearchBar = new SearchBar_(
-      this.addExerciseSearchHandler.bind(this),
-    );
+    this.addExerciseSearchBar = new SearchBar_(this.addExerciseSearchHandler);
     this.addExerciseSearchBar.initialize("add-exercise-search-bar");
 
     const routine = document.getElementById("routine");
@@ -334,7 +332,6 @@ class WorkoutManager {
   }
 
   saveWorkoutErrorHandler = (response) => {
-    console.log(response);
     pageManager.showTempPopupErrorMessages(response, 2000);
   };
 
@@ -397,55 +394,6 @@ class WorkoutSettingsManager extends WorkoutManager {
     this.baseURL = pageManager.baseURL + "/workout/workout_settings";
   }
 
-  readCurrentWorkout(exercises) {
-    const workoutFormData = new FormData();
-
-    // Add workout name
-    let workoutName = document.getElementById("select-workout").value;
-    if (workoutName === "Rest Day" || this.workoutNotInList()) {
-      workoutName = "Custom Workout";
-    }
-    workoutFormData.append("workout_name", workoutName);
-
-    // Add exercise sets
-    const workoutExercises = [];
-    exercises.forEach((exercise) => {
-      const weights = [];
-      const reps = [];
-      const exerciseName = exercise
-        .querySelector(".exercise-name")
-        .textContent.trim();
-
-      const exerciseSets = exercise.querySelectorAll(".set");
-      exerciseSets.forEach((exerciseSet) => {
-        let setWeight = exerciseSet.querySelector(".weight").value;
-        if (setWeight === "") {
-          setWeight = 0;
-        }
-        weights.push(setWeight);
-
-        let setReps = exerciseSet.querySelector(".reps").value;
-        if (setReps === "") {
-          setReps = 0;
-        }
-        reps.push(setReps);
-      });
-      let currentExercise = {};
-      currentExercise[exerciseName] = { weight: weights, reps: reps };
-      workoutExercises.push(currentExercise);
-    });
-    workoutFormData.append("exercises", JSON.stringify(workoutExercises));
-
-    // Add total time
-    workoutFormData.append("total_time", "0");
-
-    // Add date
-    const dateInput = document.getElementById("date");
-    workoutFormData.append("date", dateInput.value);
-
-    return workoutFormData;
-  }
-
   addExerciseContainerListeners(container) {
     this.addDeleteExerciseSetListener(container);
     this.addAddExerciseSetListener(container);
@@ -477,13 +425,9 @@ class WorkoutSettingsManager extends WorkoutManager {
     // On blur or keyup, update weight input to nearest .25 and update set calculation
     const roundedFloatInput = exerciseSet.querySelector("input.round-float");
     roundedFloatInput.addEventListener("blur", (e) => {
-      if (
-        roundedFloatInput.value &&
-        !isNaN(parseFloat(roundedFloatInput.value))
-      ) {
-        roundedFloatInput.value =
-          Math.round(parseFloat(roundedFloatInput.value) / 0.25) * 0.25;
-      }
+      let value = parseFloat(roundedFloatInput.value);
+      value = this.validateNumberInput(value, 0, 1500);
+      roundedFloatInput.value = Math.round(value / 0.25) * 0.25;
     });
 
     roundedFloatInput.addEventListener("keyup", (e) => {
@@ -500,16 +444,21 @@ class WorkoutSettingsManager extends WorkoutManager {
       "input.round-integer",
     );
     roundedIntegerInput.addEventListener("keyup", (e) => {
-      if (
-        roundedIntegerInput.value &&
-        !isNaN(parseFloat(roundedIntegerInput.value))
-      ) {
-        const roundedValue =
-          Math.round(parseFloat(roundedIntegerInput.value) * 4) / 4;
-        roundedIntegerInput.value = roundedValue.toFixed(0);
-      }
+      let value = parseInt(roundedIntegerInput.value);
+      value = this.validateNumberInput(value, 0, 100);
+      roundedIntegerInput.value = value;
       this.triggerUpdateSet(e);
     });
+  }
+
+  validateNumberInput(value, min, max) {
+    if (isNaN(value) || value < min) {
+      value = min;
+    }
+    if (value > max) {
+      value = max;
+    }
+    return value;
   }
 
   addModifierInputListener(exerciseSet) {
@@ -532,25 +481,27 @@ class WorkoutSettingsManager extends WorkoutManager {
 
   addFiveRepMaxListener(inputFiveRepMax) {
     //
-    inputFiveRepMax.addEventListener("keyup", (e) => {
-      // Round five rep max to nearest .25
-      if (inputFiveRepMax.value && !isNaN(parseFloat(inputFiveRepMax.value))) {
-        const roundedValue =
-          Math.round(parseFloat(inputFiveRepMax.value) * 4) / 4;
-        inputFiveRepMax.value = roundedValue.toFixed(2);
+    inputFiveRepMax.addEventListener("blur", this.fiveRepMaxHandler);
+    inputFiveRepMax.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        this.fiveRepMaxHandler(e);
       }
-
-      // Update set calculations for exercise
-      const exerciseSets = inputFiveRepMax
-        .closest(".exercise-container")
-        .querySelectorAll(".set");
-      exerciseSets.forEach((exerciseSet) => {
-        const amountInput = exerciseSet.querySelector(".amount");
-        const event = new KeyboardEvent("keyup", { key: "Enter" });
-        amountInput.dispatchEvent(event);
-      });
     });
   }
+
+  fiveRepMaxHandler = (e) => {
+    let value = parseFloat(e.target.value);
+    value = this.validateNumberInput(value, 0, 1500);
+    e.target.value = Math.round(value / 0.25) * 0.25;
+
+    // Update set calculations for exercise
+    const exerciseSets = e.target.closest(".exercise").querySelectorAll(".set");
+    exerciseSets.forEach((exerciseSet) => {
+      const amountInput = exerciseSet.querySelector(".amount");
+      const event = new KeyboardEvent("keyup", { key: "Enter" });
+      amountInput.dispatchEvent(event);
+    });
+  };
 
   updateSet(e) {
     // Get inputs to calculate set
@@ -570,7 +521,7 @@ class WorkoutSettingsManager extends WorkoutManager {
         break;
       case "percentage":
         calculateSetContainer.textContent =
-          `${(fiveRepMax * (amount / 100)).toFixed(2)} ` +
+          `${(Math.round(fiveRepMax * (amount / 100)) * 0.25) / 0.25} ` +
           `${weightUnit} x ${reps}`;
         break;
       case "increment":
@@ -592,9 +543,16 @@ class WorkoutSettingsManager extends WorkoutManager {
       .then((contentHTML) => {
         pageManager.updateContent(contentHTML, "settings");
         this.addWorkoutContainerListeners();
-        this.previousWorkoutSelectValue =
-          document.getElementById("select-workout").value;
         this.dragAndDrop.initialize();
+        this.selectWorkoutSearchBar = new SearchBar_(
+          this.selectWorkoutSearchHandler,
+        );
+        this.selectWorkoutSearchBar.initialize("select-workout-search-bar");
+
+        this.addExerciseSearchBar = new SearchBar_(
+          this.addExerciseSearchHandler,
+        );
+        this.addExerciseSearchBar.initialize("add-exercise-search-bar");
       });
   }
 
@@ -634,12 +592,7 @@ class WorkoutSettingsManager extends WorkoutManager {
     );
     const showRestTimer = document.getElementById("id_show_rest_timer");
     const showWorkoutTimer = document.getElementById("id_show_workout_timer");
-    const csrftoken = document.querySelector(
-      "[name=csrfmiddlewaretoken]",
-    ).value;
 
-    // Append data to form
-    formData.append("csrfmiddlewaretoken", csrftoken);
     formData.append("auto_update_five_rep_max", autoUpdateFiveRepMax.checked);
     formData.append("show_rest_timer", showRestTimer.checked);
     formData.append("show_workout_timer", showWorkoutTimer.checked);
@@ -668,54 +621,45 @@ class WorkoutSettingsManager extends WorkoutManager {
         }
       });
   }
-  saveWorkout() {
+  saveWorkout(successHandler, errorHandler = null) {
+    const exercises = this.validateWorkoutForm();
+    if (exercises.length === 0) {
+      return;
+    }
+
     // Get data from current workout
     const formData = this.readCurrentWorkout();
-    const workoutName = formData.get("workout_name");
+    const method = this.overwrite ? "PUT" : "POST";
+    const pk = this.overwrite
+      ? document.getElementById("workout-pk").value + "/"
+      : "";
+    if (!formData) {
+      pageManager.showTempPopupMessage(
+        "Workout Not Saved. Please Enter A Workout Name",
+        2000,
+      );
+      return;
+    }
 
-    // Send workout data and display response
-    pageManager
-      .fetchData({
-        url: `${this.baseURL}/save_workout/`,
-        method: "POST",
-        body: formData,
-        responseType: "json",
-      })
-      .then((response) => {
-        if (response.success) {
-          pageManager.showTempPopupMessage("Workout saved.", 2500);
-          if (this.newWorkout) {
-            this.updateWorkoutList(workoutName);
-          }
-        }
-      });
-  }
-
-  updateWorkoutList(workoutName) {
-    const selectOption = document.createElement("option");
-    selectOption.value = workoutName;
-    selectOption.innerText = workoutName;
-    const selectWorkoutMenu = document.getElementById("select-workout");
-    selectWorkoutMenu.appendChild(selectOption);
-    selectWorkoutMenu.value = workoutName;
-    this.newWorkout = false;
-    this.unsavedChanges = false;
+    FetchUtils.apiFetch({
+      url: `${pageManager.baseURL}/workout/workouts/${pk}`,
+      method: method,
+      body: formData,
+      successHandler: (response) => {
+        pageManager.showTempPopupMessage("Workout Saved", 2000);
+        this.selectWorkoutSearchBar.addItem(formData["name"], "workout-option");
+      },
+      errorHandler: {},
+    });
   }
 
   readCurrentWorkout(exercises) {
-    const workoutData = new FormData();
-    const csrftoken = document.querySelector(
-      "[name=csrfmiddlewaretoken]",
-    ).value;
-    workoutData.append("csrfmiddlewaretoken", csrftoken);
-    const workoutSelect = document.getElementById("select-workout");
-
     // Get workout name, returns null if user didn't confirm
-    const workoutName = this.saveWorkoutConfirmation(workoutSelect);
+    const workoutName = this.saveWorkoutConfirmation();
     if (workoutName === null || workoutName.trim() === "") {
       return;
     }
-    workoutData.append("workout_name", workoutName);
+    const workoutData = { name: workoutName, exercises: [], config: [] };
 
     // Iterate form fields and populate FormData
     const workoutExercises = document.querySelectorAll(".exercise");
@@ -726,8 +670,12 @@ class WorkoutSettingsManager extends WorkoutManager {
       const fiveRepMax = parseFloat(
         exercise.querySelector("input.max-rep").value,
       );
+      const exercisePK = exercise.querySelector("[name='exercise-pk']").value;
+      workoutData["exercises"].push(exercisePK);
+
       const currentExercise = {
         name: exerciseName,
+        pk: exercisePK,
         five_rep_max: fiveRepMax,
         sets: [],
       };
@@ -744,13 +692,13 @@ class WorkoutSettingsManager extends WorkoutManager {
         currentExercise["sets"].push(currentSet);
       });
 
-      workoutData.append("exercises", JSON.stringify(currentExercise));
+      workoutData["config"].push(currentExercise);
     });
     return workoutData;
   }
 
-  saveWorkoutConfirmation(workoutSelect) {
-    let workoutName = workoutSelect.value.trim();
+  saveWorkoutConfirmation() {
+    let workoutName = document.getElementById("workout-name").value;
     let confirm = null;
     if (workoutName !== "Custom Workout") {
       confirm = window.confirm(
@@ -762,9 +710,17 @@ class WorkoutSettingsManager extends WorkoutManager {
       workoutName = window.prompt(
         `Please enter a name for the new workout or close this window to cancel.`,
       );
-      this.newWorkout = true;
     }
 
+    if (
+      confirm === null &&
+      this.selectWorkoutSearchBar.itemExists(workoutName)
+    ) {
+      this.saveWorkoutConfirmation();
+    }
+    if (confirm) {
+      this.overwrite = true;
+    }
     return workoutName;
   }
 }

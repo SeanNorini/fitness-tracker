@@ -46,6 +46,7 @@ class ExerciseSettingsManager {
       method: "DELETE",
       successHandler: (response) => {
         this.addExerciseSearchBar.deleteItem(exerciseName);
+        document.getElementById("exercise").remove();
       },
       errorHandler: (response) => {
         pageManager.showTempPopupMessage("Error. Please Try Again", 2000);
@@ -87,6 +88,7 @@ class ExerciseSettingsManager {
   saveExercise() {
     if (this.exerciseExists()) {
       const formData = FormUtils.getFormData("exercise", true);
+      console.log(formData);
 
       FetchUtils.apiFetch({
         url: `${pageManager.baseURL}/workout/exercises/${formData["exercise-pk"]}/`,
@@ -113,7 +115,7 @@ class ExerciseSettingsManager {
         responseType: "text",
       })
       .then((contentHTML) => {
-        pageManager.updateContent(contentHTML, "exercise");
+        pageManager.updateContent(contentHTML, "exercises-container");
       });
   }
 }

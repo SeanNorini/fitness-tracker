@@ -23,6 +23,7 @@ from .serializers import (
     RoutineSerializer,
     RoutineSettingsSerializer,
     ExerciseSerializer,
+    WorkoutSerializer,
 )
 from .forms import (
     ExerciseForm,
@@ -59,9 +60,6 @@ def plot_graph(stat_name, values, dates):
     buffer.seek(0)
 
     return buffer.getvalue()
-
-
-# Create your views here.
 
 
 class StatsView(ExerciseMixin, TemplateView):
@@ -135,6 +133,7 @@ class SelectWorkoutView(LoginRequiredMixin, TemplateView):
         context["workout"] = workout.configure_workout()
         context["workout"]["workout_name"] = self.kwargs["workout_name"]
         context["workout"]["pk"] = workout.pk
+
         return context
 
 
@@ -176,7 +175,10 @@ class AddExerciseView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         exercise = Exercise.get_exercise(self.request.user, self.kwargs["exercise"])
         context["exercise_name"] = exercise.name
-        context["sets"] = exercise.sets()
+        context["sets"] = {
+            "weights": [exercise.default_weight],
+            "reps": [exercise.default_reps],
+        }
 
         return context
 
@@ -189,9 +191,8 @@ class AddSetView(LoginRequiredMixin, TemplateView):
 
         exercise_name = self.kwargs.get("exercise_name")
         exercise = Exercise.get_exercise(self.request.user, exercise_name)
-        exercise_set = exercise.set
-        context["weight"] = exercise_set["weight"]
-        context["reps"] = exercise_set["reps"]
+        context["weight"] = exercise.default_weight
+        context["reps"] = exercise.default_reps
 
         return context
 
@@ -228,11 +229,7 @@ class WorkoutSettingsAddSetView(LoginRequiredMixin, TemplateView):
         exercise = Exercise.get_exercise(
             self.request.user, self.kwargs["exercise_name"]
         )
-        context["exercise_set"] = {
-            "amount": exercise.default_weight,
-            "reps": exercise.default_reps,
-            "modifier": exercise.default_modifier,
-        }
+        context["exercise_set"] = exercise.exercise_set
 
         return context
 
@@ -251,32 +248,18 @@ class WorkoutSettingsAddExerciseView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class WorkoutSettingsSaveWorkoutView(LoginRequiredMixin, UpdateView):
-    model = Workout
+class WorkoutViewSet(viewsets.ModelViewSet):
+    queryset = Workout.objects.all()
+    serializer_class = WorkoutSerializer
+    permission_classes = [IsAuthenticated, IsOwner]
 
-    def post(self, request, *args, **kwargs):
-        workout_name = request.POST.get("workout_name").title()
-        workout, created = Workout.objects.get_or_create(
-            user=self.request.user, name=workout_name
-        )
+    def perform_create(self, serializer):
+        instance = serializer.save(user=self.request.user)
+        for exercise in instance.config:
 
-        exercise_list = [
-            json.loads(exercise) for exercise in request.POST.getlist("exercises")
-        ]
-
-        workout.config = {"exercises": exercise_list}
-
-        for exercise in exercise_list:
-
-            exercise, created = Exercise.objects.get_or_create(
-                user=self.request.user, name=exercise["name"]
-            )
-            if created or exercise not in workout.exercises.all():
-                workout.exercises.add(exercise)
-
-        workout.save()
-
-        return JsonResponse({"success": True}, safe=False)
+            obj = Exercise.objects.get(name=exercise["name"], user=self.request.user)
+            obj.five_rep_max = exercise["five_rep_max"]
+            obj.save()
 
 
 class WorkoutSettingsSaveWorkoutSettingsView(LoginRequiredMixin, FormView):
@@ -311,34 +294,6 @@ class EditExerciseView(LoginRequiredMixin, FormView):
         context["exercise"] = Exercise.get_exercise(self.request.user, exercise_name)
 
         return context
-
-    def form_valid(self, form):
-        exercise = Exercise.get_exercise(
-            user=self.request.user, exercise_name=form.cleaned_data["name"].title()
-        )
-
-        exercise.default_reps = form.cleaned_data["default_reps"]
-        exercise.default_weight = form.cleaned_data["default_weight"]
-        exercise.five_rep_max = form.cleaned_data["five_rep_max"]
-        exercise.save()
-        return JsonResponse({"success": True}, safe=False)
-
-
-class ExerciseSettingsDeleteExerciseView(LoginRequiredMixin, DeleteView):
-    model = Exercise
-
-    def get_object(self, queryset=None):
-        exercise_name = self.kwargs.get("exercise_name")
-        pk = self.kwargs.get("pk")
-        exercise = Exercise.objects.filter(
-            user=self.request.user, pk=pk, name=exercise_name
-        ).first()
-        return exercise
-
-    def post(self, request, *args, **kwargs):
-        obj = self.get_object()
-        obj.delete()
-        return JsonResponse({"success": True})
 
 
 class ExerciseViewSet(viewsets.ModelViewSet):
@@ -399,7 +354,7 @@ class GetRoutineAPIView(RetrieveAPIView):
 
     def get_queryset(self):
         return Routine.objects.filter(
-            Q(user=self.request.user) | Q(user=get_default_user())
+            Q(user=self.request.user) | Q(user=User.default_user())
         )
 
 

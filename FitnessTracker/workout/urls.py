@@ -4,6 +4,7 @@ from . import views
 
 router = DefaultRouter()
 router.register(r"exercises", views.ExerciseViewSet)
+router.register(r"workouts", views.WorkoutViewSet)
 
 urlpatterns = [
     path("workout/", views.WorkoutView.as_view(), name="workout"),
@@ -45,11 +46,6 @@ urlpatterns = [
         name="workout_settings_add_set",
     ),
     path(
-        "workout/workout_settings/save_workout/",
-        views.WorkoutSettingsSaveWorkoutView.as_view(),
-        name="workout_settings_save_workout",
-    ),
-    path(
         "workout/workout_settings/save_workout_settings/",
         views.WorkoutSettingsSaveWorkoutSettingsView.as_view(),
         name="workout_settings_save_workout",
@@ -63,11 +59,6 @@ urlpatterns = [
         "workout/exercise_settings/edit_exercise/<str:exercise_name>",
         views.EditExerciseView.as_view(),
         name="edit_exercise",
-    ),
-    path(
-        "workout/exercise_settings/delete_exercise/<str:exercise_name>/<int:pk>",
-        views.ExerciseSettingsDeleteExerciseView.as_view(),
-        name="exercise_settings_delete_exercise",
     ),
     path(
         "workout/routine_settings/",

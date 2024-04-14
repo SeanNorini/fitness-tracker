@@ -63,17 +63,14 @@ class Exercise(models.Model):
     class Meta:
         unique_together = ("user", "name")
 
-    def sets(self):
+    @property
+    def exercise_set(self):
         return {
-            "weights": [self.default_weight],
-            "reps": [self.default_reps],
-            "amount": self.default_weight,
+            "weight": self.default_weight,
+            "reps": self.default_reps,
+            "amount": 100,
             "modifier": self.default_modifier,
         }
-
-    @property
-    def set(self):
-        return {"weight": self.default_weight, "reps": self.default_reps}
 
     def save(self, *args, **kwargs):
         self.name = self.name.title()
@@ -157,50 +154,34 @@ class Workout(models.Model):
     def configure_workout(self) -> dict:
         workout_config = {"exercises": []}
 
-        for exercise in self.config.get("exercises", []):
-            exercise_sets = self.configure_exercise(
+        for exercise in self.config:
+            weights, reps = self.configure_exercise(
                 exercise["five_rep_max"], exercise["sets"]
             )
+
             workout_config["exercises"].append(
-                {
-                    "name": exercise["name"],
-                    "sets": exercise_sets,
-                }
+                {exercise["name"]: {"weights": weights, "reps": reps}}
             )
 
         return workout_config
 
     @staticmethod
     def configure_exercise(five_rep_max, exercise_sets):
-        configured_sets = []
+        weights, reps = [], []
         for exercise_set in exercise_sets:
+            weight = 0
             match exercise_set["modifier"]:
                 case "exact":
-                    configured_sets.append(
-                        {"weight": exercise_set["amount"], "reps": exercise_set["reps"]}
-                    )
+                    weight = exercise_set["amount"]
                 case "percentage":
-                    configured_sets.append(
-                        {
-                            "weight": (exercise_set["amount"] / 100) * five_rep_max,
-                            "reps": exercise_set["reps"],
-                        }
-                    )
+                    weight = (exercise_set["amount"] / 100) * five_rep_max
                 case "increment":
-                    configured_sets.append(
-                        {
-                            "weight": five_rep_max + exercise_set["amount"],
-                            "reps": exercise_set["reps"],
-                        }
-                    )
+                    weight = five_rep_max + exercise_set["amount"]
                 case "decrement":
-                    configured_sets.append(
-                        {
-                            "weight": five_rep_max - exercise_set["amount"],
-                            "reps": exercise_set["reps"],
-                        }
-                    )
-        return configured_sets
+                    weight = five_rep_max - exercise_set["amount"]
+            weights.append(weight)
+            reps.append(exercise_set["reps"])
+        return weights, reps
 
     def update_five_rep_max(self, exercise):
         for workout_exercise in self.config["exercises"]:

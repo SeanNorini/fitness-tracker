@@ -5,7 +5,7 @@ from workout.models import Exercise, WorkoutSettings
 class ExerciseForm(forms.ModelForm):
     class Meta:
         model = Exercise
-        fields = ["name", "five_rep_max", "default_weight", "default_reps"]
+        fields = ["name", "five_rep_max"]
 
 
 class WorkoutSettingsForm(forms.ModelForm):

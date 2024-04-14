@@ -48,9 +48,7 @@ class User(AbstractUser):
 
     @classmethod
     def default_user(cls):
-        user, created = User.objects.get_or_create(
-            username="default", email="default@doesnotexist.com"
-        )
+        user, created = User.objects.get_or_create(username="default")
         if created:
             user_settings = UserSettings.objects.create(user=user)
         return user

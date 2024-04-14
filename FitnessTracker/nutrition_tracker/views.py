@@ -118,10 +118,10 @@ class FetchNutritionSummaryAPIView(APIView):
                 daily_calories_list.append((log.date, daily_calories))
 
             user_summary = {
-                "avg_protein": total_protein / num_logs,
-                "avg_carbs": total_carbs / num_logs,
-                "avg_calories": total_calories // num_logs,
-                "avg_fat": total_fat / num_logs,
+                "avg_protein": round(total_protein / num_logs, 1),
+                "avg_carbs": round(total_carbs / num_logs, 1),
+                "avg_calories": round(total_calories // num_logs, 1),
+                "avg_fat": round(total_fat / num_logs, 1),
                 "pie_chart": pie_chart(total_protein, total_carbs, total_fat),
                 "bar_chart": bar_chart(daily_calories_list),
             }
