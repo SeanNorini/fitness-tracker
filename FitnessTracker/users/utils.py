@@ -1,12 +1,12 @@
-import os
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-import six
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+import six
+import os
 
 
 class EmailService:

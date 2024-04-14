@@ -1,6 +1,5 @@
-from django.urls import re_path, path
 from . import views
-from django.urls import path, include
+from django.urls import re_path, path, include
 from rest_framework.routers import DefaultRouter
 from .views import WorkoutLogViewSet, WeightLogViewSet, CardioLogViewSet
 

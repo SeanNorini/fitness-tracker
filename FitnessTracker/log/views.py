@@ -1,24 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.migrations import serializer
-from django.http import JsonResponse
-from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.shortcuts import render
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
 from calendar import month_name
 from datetime import datetime
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import ValidationError
 from common.permissions import IsOwner
-from rest_framework.generics import (
-    RetrieveAPIView,
-    DestroyAPIView,
-    CreateAPIView,
-    UpdateAPIView,
-)
-from rest_framework.response import Response
-from rest_framework import status, viewsets
 from .utils import Calendar
-from users.models import UserSettings
 from workout.models import Workout, Exercise, get_attribute_list
+from users.models import UserSettings
 from .serializers import CardioLogSerializer, WorkoutLogSerializer, WeightLogSerializer
 from .models import WorkoutLog, CardioLog, WeightLog
 

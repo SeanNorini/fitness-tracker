@@ -1,11 +1,10 @@
-from typing import Type
-from django.db import models, transaction
-from django.db.models import Q, When, Case
-from users.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.utils import timezone
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
+from django.db.models import Q, When, Case
+from django.db import models
+from django.utils import timezone
+from typing import Type
+from users.models import User
 
 
 def get_attribute_list(model_class, user, attribute_name):

@@ -1,16 +1,22 @@
-import json
-from datetime import date
+from django.views.generic import TemplateView, FormView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Max
+from django.shortcuts import render
+from django.http import JsonResponse, HttpResponse
 from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import (
     RetrieveAPIView,
-    DestroyAPIView,
-    CreateAPIView,
-    UpdateAPIView,
 )
-
+from dateutil.relativedelta import relativedelta
+from datetime import date
+import matplotlib
+from matplotlib import pyplot as plt
+from matplotlib.ticker import MaxNLocator
+from io import BytesIO
+import json
 from common.permissions import IsOwner
 from log.models import WorkoutSet, WeightLog
 from .serializers import (
@@ -18,27 +24,14 @@ from .serializers import (
     RoutineSettingsSerializer,
     ExerciseSerializer,
 )
-
-from dateutil.relativedelta import relativedelta
-from matplotlib.ticker import MaxNLocator
-from django.db.models import Max
-from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse, Http404
-from django.views.generic import TemplateView, FormView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
-
-from .models import *
 from .forms import (
     ExerciseForm,
 )
 from .forms import WorkoutSettingsForm
 from .utils import *
-from matplotlib import pyplot as plt
-from io import BytesIO
-import matplotlib
+from .mixins import ExerciseMixin, WorkoutMixin
 
 matplotlib.use("Agg")
-from .mixins import ExerciseMixin, WorkoutMixin
 
 
 def plot_graph(stat_name, values, dates):

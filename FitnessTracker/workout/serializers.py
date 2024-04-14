@@ -8,7 +8,6 @@ from .models import (
     DayWorkout,
     Exercise,
 )
-from django.db import IntegrityError, transaction
 
 
 class DaySerializer(serializers.ModelSerializer):

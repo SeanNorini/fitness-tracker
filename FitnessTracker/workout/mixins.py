@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-
 from workout.models import Exercise, Workout, RoutineSettings
 
 

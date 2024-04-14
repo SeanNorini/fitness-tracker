@@ -1,13 +1,13 @@
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.password_validation import validate_password
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.views.generic import FormView, View
 from django.core.exceptions import ValidationError
+from django.shortcuts import render, redirect, reverse
 from django.db.models import Q
 from django.db import transaction
-from django.shortcuts import render, redirect, reverse
-from django.views.generic import FormView, View
-from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
-from django.utils.encoding import force_str
-from django.utils.http import urlsafe_base64_decode
 from rest_framework.response import Response
 from rest_framework.generics import UpdateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated

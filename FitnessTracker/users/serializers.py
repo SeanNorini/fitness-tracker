@@ -1,9 +1,8 @@
-from rest_framework import serializers
-
-from log.models import WeightLog
-from log.serializers import WeightLogSerializer
-from .models import User, UserSettings
 from django.utils import timezone
+from rest_framework import serializers
+from .models import User, UserSettings
+from log.serializers import WeightLogSerializer
+from log.models import WeightLog
 
 
 class UpdateUserAccountSettingsSerializer(serializers.ModelSerializer):

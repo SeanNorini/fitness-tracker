@@ -1,7 +1,4 @@
 from django import forms
-from datetime import datetime, timedelta
-
-from django.core.validators import MaxValueValidator
 from workout.models import Exercise, WorkoutSettings
 
 

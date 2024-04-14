@@ -1,22 +1,21 @@
-from datetime import timedelta
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from matplotlib.dates import DateFormatter
-from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from datetime import timedelta
+from matplotlib.dates import DateFormatter
+from matplotlib import pyplot as plt
 import requests
 import json
-from .models import *
-from django.utils import timezone
-from matplotlib.ticker import MaxNLocator
-from matplotlib import pyplot as plt
 from io import BytesIO
 import base64
+from .models import *
+
 
 # Create your views here.
 

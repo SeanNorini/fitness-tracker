@@ -1,15 +1,15 @@
-from django.shortcuts import render
 from django.views.generic import TemplateView
-from .services import get_cardio_log_summaries
+from django.shortcuts import render
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from matplotlib.ticker import MaxNLocator
 from matplotlib import pyplot as plt
 from io import BytesIO
-import base64
 import matplotlib
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+import base64
 import pandas as pd
+from .services import get_cardio_log_summaries
 
 matplotlib.use("Agg")
 

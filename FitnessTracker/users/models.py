@@ -1,4 +1,3 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import (
     MinValueValidator,
@@ -6,6 +5,7 @@ from django.core.validators import (
     RegexValidator,
     MinLengthValidator,
 )
+from django.db import models
 
 
 # Create your models here.

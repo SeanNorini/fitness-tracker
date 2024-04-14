@@ -1,6 +1,6 @@
+from django.core.exceptions import ObjectDoesNotExist
 from .models import *
 from users.models import *
-from django.core.exceptions import ObjectDoesNotExist
 
 
 def save_workout_session(user, workout_form) -> None:

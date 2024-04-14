@@ -1,7 +1,7 @@
-from datetime import timedelta
-from django.db.models import Sum
 from django.db.models.functions import TruncDay
+from django.db.models import Sum
 from django.utils import timezone
+from datetime import timedelta
 from log.models import CardioLog
 from .utils import (
     format_duration,
