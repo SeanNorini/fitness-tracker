@@ -1,5 +1,8 @@
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -7,6 +10,29 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 import six
 import os
+
+
+def change_user_password(
+    user, current_password, new_password, confirm_password, **kwargs
+):
+    if new_password != confirm_password:
+        return {"confirm_password": ["Passwords don't match"]}
+
+    if not user.check_password(current_password):
+        return {"current_password": ["Incorrect password"]}
+
+    try:
+        validate_password(new_password, user)
+    except ValidationError as e:
+        return {"new_password": e.messages}
+
+    user.set_password(new_password)
+    user.save()
+    return {}
+
+
+def update_user_session(request, user):
+    update_session_auth_hash(request, user)
 
 
 class EmailService:

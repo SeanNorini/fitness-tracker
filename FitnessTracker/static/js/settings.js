@@ -92,7 +92,7 @@ class SettingsManager {
   updateUserSettings() {
     const formData = FormUtils.getFormData("user-settings-form");
     FetchUtils.apiFetch({
-      url: `${this.baseURL}/update_user_settings/`,
+      url: `${this.baseURL}/user_settings/`,
       method: "PATCH",
       body: formData,
       successHandler: (response) => {
@@ -171,7 +171,7 @@ class SettingsManager {
     const formData = FormUtils.getFormData("account-settings-form");
     FormUtils.clearFormErrors();
     FetchUtils.apiFetch({
-      url: `${pageManager.baseURL}/user/settings/update_account_settings/`,
+      url: `${pageManager.baseURL}/user/settings/account_settings/`,
       method: "PATCH",
       body: formData,
       successHandler: (response) => {
@@ -195,6 +195,7 @@ class SettingsManager {
       body: formData,
       successHandler: (response) => {
         pageManager.showTempPopupMessage("Password Updated.", 2000);
+        settingsManager.initialize();
       },
       errorHandler: FormUtils.formErrorHandler,
     });

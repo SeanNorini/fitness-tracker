@@ -1,13 +1,18 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from django.utils import timezone
 from django.test import TestCase, Client
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
+from rest_framework import status
 from unittest.mock import patch
 from bs4 import BeautifulSoup
-from users.models import User
-from users.utils import account_token_generator
+import json
+
+from log.models import WeightLog
+from users.models import User, UserSettings
+from users.services import account_token_generator
 from common.test_globals import *
 from common.test_utils import (
     form_without_csrf_token,
@@ -149,7 +154,7 @@ class TestRegistrationView(TestUserViews):
         self.assertTemplateUsed(response, "users/registration.html")
 
     def test_valid_registration(self):
-        with patch("users.utils.EmailService.send_activation_link") as email_service:
+        with patch("users.services.EmailService.send_activation_link") as email_service:
             response = self.client.post(
                 reverse("registration"),
                 data=REGISTRATION_FORM_FIELDS,
@@ -193,7 +198,7 @@ class TestRegistrationView(TestUserViews):
 
     def test_valid_csrf_token(self):
         with patch(
-            "users.utils.EmailService"
+            "users.services.EmailService"
         ) as mock:  # mocked to stop EmailService from running
             status_code = form_with_valid_csrf_token(
                 "registration", {"username": USERNAME_VALID, "password": PASSWORD_VALID}
@@ -297,13 +302,23 @@ class TestChangePasswordAPIView(APITestCase):
 
     def test_change_password_success(self) -> None:
         response = self.client.post(
-            reverse("change_password"), data=CHANGE_PASSWORD_FORM_FIELDS
+            reverse("change_password"),
+            data=json.dumps(CHANGE_PASSWORD_FORM_FIELDS),
+            content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
 
     def test_change_password_fail(self) -> None:
         response = self.client.post(
-            reverse("change_password"), data={"current_password": PASSWORD_INVALID}
+            reverse("change_password"),
+            data=json.dumps(
+                {
+                    "current_password": PASSWORD_INVALID,
+                    "new_password": PASSWORD_VALID,
+                    "confirm_password": PASSWORD_VALID,
+                }
+            ),
+            content_type="application/json",
         )
         # Verify page reloads on form error
         self.assertEqual(response.status_code, 400)
@@ -331,7 +346,9 @@ class TestChangePasswordAPIView(APITestCase):
             "users.models.UserSettings"
         ) as mock:  # Mocked to prevent model does not exist error
             response = self.client.post(
-                reverse("change_password"), data=CHANGE_PASSWORD_FORM_FIELDS
+                reverse("change_password"),
+                data=json.dumps(CHANGE_PASSWORD_FORM_FIELDS),
+                content_type="application/json",
             )
             self.assertEqual(response.status_code, 200)
 
@@ -343,7 +360,7 @@ class TestResetPasswordView(TestUserViews):
         self.soup = BeautifulSoup(self.response.content, "html.parser")
 
     def test_reset_password_valid_form(self) -> None:
-        with patch("users.utils.EmailService.send_reset_link") as email_service:
+        with patch("users.services.EmailService.send_reset_link") as email_service:
             response = self.client.post(
                 reverse("reset_password"), data={"username": USERNAME_VALID}
             )
@@ -484,22 +501,22 @@ class TestResetPasswordConfirmView(TestUserViews):
         self.assertIsNotNone(change_password_button, "Change password button not found")
 
 
-class TestUserSettingsView(TestUserViews):
+class TestSettingsView(TestUserViews):
     def setUp(self):
         super().setUp()
         self.client.force_login(self.user)
-        self.url = reverse("user_settings")
+        self.url = reverse("settings")
         self.response = self.client.get(self.url)
         self.soup = BeautifulSoup(self.response.content, "html.parser")
 
     def test_fetch_request_template(self):
         response = self.client.get(
-            reverse("user_settings"), HTTP_X_REQUESTED_WITH="XMLHttpRequest"
+            reverse("settings"), HTTP_X_REQUESTED_WITH="XMLHttpRequest"
         )
         self.assertTemplateUsed(response, "users/settings.html")
 
     def test_standard_request_template_and_context(self):
-        response = self.client.get(reverse("user_settings"))
+        response = self.client.get(reverse("settings"))
         self.assertTemplateUsed(response, "base/index.html")
         self.assertIsInstance(response.context["form"], UpdateAccountForm)
         self.assertIsInstance(response.context["user_settings_form"], UserSettingsForm)
@@ -556,3 +573,88 @@ class TestDeleteUserView(TestCase):
         )
         self.assertEqual(response.status_code, 400)
         self.assertTrue(User.objects.filter(username="testuser").exists())
+
+
+class TestUpdateAccountSettingsAPIView(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword"
+        )
+        self.user_settings = UserSettings.objects.create(
+            user=self.user, system_of_measurement="metric"
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
+    def test_update_account_settings(self):
+        url = reverse("account_settings")
+        data = {
+            "email": "newemail@example.com",
+            "confirm_email": "newemail@example.com",
+            "first_name": "Test",
+            "last_name": "User",
+        }
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, "newemail@example.com")
+        self.assertEqual(self.user.first_name, "Test")
+
+    def test_invalid_email_update(self):
+        url = reverse("account_settings")
+        data = {
+            "email": "newemail@example.com",
+            "confirm_email": "wrongemail@example.com",
+        }
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_unauthenticated_access(self):
+        self.client.logout()
+        url = reverse("account_settings")
+        response = self.client.patch(url, {"email": "failtest@example.com"})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_partial_update_account_settings(self):
+        url = reverse("account_settings")
+        data = {"first_name": "UpdatedName"}
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, "UpdatedName")
+        # Verify other fields are unchanged
+        self.assertEqual(self.user.last_name, "last")
+
+
+class TestUpdateUserSettingsAPIView(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword"
+        )
+        self.user_settings = UserSettings.objects.create(
+            user=self.user, system_of_measurement="metric"
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
+    def test_update_user_settings_with_weight_log(self):
+        url = reverse("user_settings")
+        new_weight = 190
+        data = {
+            "system_of_measurement": "Imperial",
+            "gender": "F",
+            "height": 65,
+            "body_weight": new_weight,
+            "body_fat": 15,
+            "age": 30,
+        }
+        response = self.client.patch(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user_settings.refresh_from_db()
+        self.assertEqual(self.user_settings.body_weight, new_weight)
+
+        # Verify that the weight log is updated
+        today = timezone.localdate()
+        updated_log = WeightLog.objects.filter(user=self.user, date=today).first()
+        self.assertIsNotNone(updated_log)
+        self.assertEqual(updated_log.body_weight, new_weight)

@@ -1,6 +1,7 @@
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 from selenium import webdriver
 
 
@@ -192,3 +193,29 @@ def validate_required_fields(driver, form_id, required_fields) -> bool:
             return False
 
     return True
+
+
+def get_value(driver, selector_type, selector_value):
+    try:
+        element = find_element(driver, selector_type, selector_value)
+        if element:
+            return element.get_attribute("value")
+        else:
+            print(f"No element found with {selector_type}='{selector_value}'")
+            return None
+    except NoSuchElementException as e:
+        print(f"Element not found: {e}")
+        return None
+
+
+def is_selected(driver, selector_type, selector_value):
+    try:
+        element = find_element(driver, selector_type, selector_value)
+        if element:
+            return element.is_selected()
+        else:
+            print(f"No element found with {selector_type}='{selector_value}'")
+            return None
+    except NoSuchElementException as e:
+        print(f"Element not found: {e}")
+        return None

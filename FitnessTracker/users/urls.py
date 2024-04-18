@@ -28,16 +28,16 @@ urlpatterns = [
         views.ResetPasswordConfirmView.as_view(),
         name="reset_password_confirm",
     ),
-    path("settings/", views.SettingsView.as_view(), name="user_settings"),
+    path("settings/", views.SettingsView.as_view(), name="settings"),
     path("delete_account/", views.DeleteUserAPIView.as_view(), name="delete_account"),
     path(
-        "settings/update_account_settings/",
+        "settings/account_settings/",
         views.UpdateAccountSettingsAPIView.as_view(),
-        name="update_account_settings",
+        name="account_settings",
     ),
     path(
-        "settings/update_user_settings/",
-        views.UpdateUserSettingsView.as_view(),
-        name="update_user_settings",
+        "settings/user_settings/",
+        views.UpdateUserSettingsAPIView.as_view(),
+        name="user_settings",
     ),
 ]

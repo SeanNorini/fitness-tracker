@@ -1,7 +1,7 @@
 from rest_framework.test import APITestCase, APIRequestFactory
 from log.models import WeightLog
 from users.serializers import (
-    UpdateUserAccountSettingsSerializer,
+    UpdateAccountSettingsSerializer,
     UpdateUserSettingsSerializer,
 )
 from users.models import User, UserSettings
@@ -9,7 +9,8 @@ from common.test_globals import *
 from django.utils import timezone
 from rest_framework.test import APIClient
 
-class UpdateUserAccountSettingsSerializerTest(APITestCase):
+
+class UpdateAccountSettingsSerializerTest(APITestCase):
 
     def setUp(self) -> None:
         self.user = User.objects.create_user(
@@ -25,7 +26,7 @@ class UpdateUserAccountSettingsSerializerTest(APITestCase):
             "last_name": "User",
         }
 
-        serializer = UpdateUserAccountSettingsSerializer(
+        serializer = UpdateAccountSettingsSerializer(
             instance=self.user, data=valid_data
         )
         self.assertTrue(serializer.is_valid())
@@ -34,14 +35,14 @@ class UpdateUserAccountSettingsSerializerTest(APITestCase):
         invalid_data = valid_data.copy()
         invalid_data["confirm_email"] = "mismatch@gmail.com"
 
-        serializer = UpdateUserAccountSettingsSerializer(
+        serializer = UpdateAccountSettingsSerializer(
             instance=self.user, data=invalid_data
         )
         self.assertFalse(serializer.is_valid())
         self.assertIn("Emails do not match", serializer.errors["confirm_email"])
 
     def test_expected_fields(self) -> None:
-        serializer = UpdateUserAccountSettingsSerializer(instance=self.user)
+        serializer = UpdateAccountSettingsSerializer(instance=self.user)
         data = serializer.data
 
         self.assertEqual(
@@ -50,12 +51,12 @@ class UpdateUserAccountSettingsSerializerTest(APITestCase):
         )
 
     def test_user_account_field_content(self) -> None:
-        serializer = UpdateUserAccountSettingsSerializer(instance=self.user)
+        serializer = UpdateAccountSettingsSerializer(instance=self.user)
         data = serializer.data
 
         self.assertEqual(data["email"], self.user.email)
         self.assertEqual(data["first_name"], self.user.first_name)
-        self.assertEqual(data["last_name"], self.user.last_name
+        self.assertEqual(data["last_name"], self.user.last_name)
 
 
 class UpdateUserSettingsSerializerTest(APITestCase):

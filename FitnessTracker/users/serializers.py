@@ -5,7 +5,7 @@ from log.serializers import WeightLogSerializer
 from log.models import WeightLog
 
 
-class UpdateUserAccountSettingsSerializer(serializers.ModelSerializer):
+class UpdateAccountSettingsSerializer(serializers.ModelSerializer):
     confirm_email = serializers.EmailField(write_only=True)
 
     class Meta:
@@ -61,5 +61,4 @@ class UpdateUserSettingsSerializer(serializers.ModelSerializer):
         # Validate and save the weight log
         if weight_log_serializer.is_valid(raise_exception=True):
             weight_log_serializer.save()
-
         return instance

@@ -1,10 +1,8 @@
-from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.password_validation import validate_password
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
 from django.views.generic import FormView, View
-from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect, reverse
 from django.db.models import Q
 from django.db import transaction
@@ -25,10 +23,12 @@ from .forms import (
 from workout.models import WorkoutSettings
 from .models import User, UserSettings
 from .serializers import (
-    UpdateUserAccountSettingsSerializer,
+    UpdateAccountSettingsSerializer,
     UpdateUserSettingsSerializer,
 )
-from .utils import (
+from .services import (
+    update_user_session,
+    change_user_password,
     account_token_generator,
     EmailService,
 )
@@ -158,35 +158,11 @@ class ChangePasswordAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        current_password = request.data.get("current_password")
-        new_password = request.data.get("new_password")
-        confirm_password = request.data.get("confirm_password")
-        errors = {}
-
-        # Check if the new password and confirm password match
-        if new_password != confirm_password:
-            errors["confirm_password"] = ["Passwords don't match"]
-
-        # Verify the current password
-        user = request.user
-        if not user.check_password(current_password):
-            errors["current_password"] = ["Incorrect password"]
-
-        try:
-            validate_password(new_password, user)
-        except ValidationError as e:
-            errors["new_password"] = e.messages
-        except AttributeError as e:
-            errors["new_password"] = ["Password must be at least 8 characters long"]
-
+        errors = change_user_password(request.user, **request.data)
         if errors:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Update the user's password
-        user.set_password(new_password)
-        user.save()
-        update_session_auth_hash(request, user)
-
+        update_user_session(request, request.user)
         return Response(
             {"message": "Password changed successfully"}, status=status.HTTP_200_OK
         )
@@ -307,14 +283,14 @@ class DeleteUserAPIView(DestroyAPIView):
 
 
 class UpdateAccountSettingsAPIView(UpdateAPIView):
-    serializer_class = UpdateUserAccountSettingsSerializer
+    serializer_class = UpdateAccountSettingsSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self, queryset=None):
         return self.request.user
 
 
-class UpdateUserSettingsView(UpdateAPIView):
+class UpdateUserSettingsAPIView(UpdateAPIView):
     serializer_class = UpdateUserSettingsSerializer
     permission_classes = [IsAuthenticated]
 

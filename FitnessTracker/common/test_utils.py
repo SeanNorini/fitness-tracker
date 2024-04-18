@@ -38,6 +38,19 @@ def form_with_valid_csrf_token(page, form_data, login=False):
     return response.status_code
 
 
+def elements_exist(soup, elements):
+    """
+    Check if all elements exist in the soup.
+    Elements should be a dictionary with keys as attributes and values as lists of values for those attributes.
+    Example: {"id": ["btn-login", "header"], "name": ["username", "password"]}
+    """
+    for attr, values in elements.items():
+        for value in values:
+            if not soup.find(attrs={attr: value}):
+                return False
+    return True
+
+
 def get_cookie_expiration_time(driver, cookie_name):
     """
     Gets the expiration time of a specific cookie.
