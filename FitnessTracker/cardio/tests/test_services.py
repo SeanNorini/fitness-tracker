@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from cardio.models import CardioLog
+from log.models import CardioLog
 from cardio.services import (
     update_log_dict_and_graph_data,
     get_cardio_log_averages,
