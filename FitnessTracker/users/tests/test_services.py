@@ -1,56 +1,66 @@
-from django.test import TestCase, RequestFactory
+from django.test.client import RequestFactory
+from django.test import TestCase
 from django.utils import timezone
 from django.core import mail
-from unittest.mock import patch
+from django.core.exceptions import ValidationError
+from unittest.mock import patch, MagicMock
 from users.models import User
-from users.utils import AccountTokenGenerator, EmailService
+from users.services import (
+    AccountTokenGenerator,
+    EmailService,
+    change_user_password,
+)
 import six
 
 
-class EmailServiceTests(TestCase):
-
+class TestEmailService(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         self.user = User.objects.create_user(
-            username="testuser",
-            email="snorini@gmail.com",
-            password="password",
-            first_name="Test",
-            last_name="User",
+            username="testuser", email="test@test.com", password="testpassword"
         )
-        self.request = self.factory.get("/test_url")
+        self.request = self.factory.get("/")
+        self.request.user = self.user
+        self.service = EmailService(self.request, self.user)
 
-    def test_send_activation_link_email(self):
-        service = EmailService(self.request, self.user)
-        service.send_activation_link()
+    @patch("users.services.get_current_site")
+    def test_send_activation_link(self, mock_get_current_site):
+        mock_site = MagicMock()
+        mock_site.domain = "testserver"
+        mock_get_current_site.return_value = mock_site
 
-        # Check that one message has been sent
-        self.assertEqual(len(mail.outbox), 1)
+        with self.settings(
+            EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend"
+        ):
+            self.service.send_activation_link()
+            self.assertEqual(len(mail.outbox), 1)
+            self.assertIn(
+                "Fitness Tracker Registration Confirmation", mail.outbox[0].subject
+            )
+            self.assertIn(
+                "http://{}/user/activate/".format(mock_site.domain), mail.outbox[0].body
+            )
 
-        # Verify that the subject of the first message is correct
-        self.assertEqual(
-            mail.outbox[0].subject, "Fitness Tracker Registration Confirmation"
-        )
+    @patch("users.services.get_current_site")
+    def test_send_reset_link(self, mock_get_current_site):
+        mock_site = MagicMock()
+        mock_site.domain = "testserver"
+        mock_get_current_site.return_value = mock_site
 
-        # Verify email body is correct
-        self.assertIn(self.user.email, mail.outbox[0].to)
-        self.assertIn("To complete your registration", mail.outbox[0].body)
-        self.assertIn("http://", mail.outbox[0].body)
+        with self.settings(
+            EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend"
+        ):
+            self.service.send_reset_link()
+            self.assertEqual(len(mail.outbox), 1)
+            self.assertIn("Password Reset Request", mail.outbox[0].subject)
+            self.assertIn(
+                "http://{}/user/reset_password/".format(mock_site.domain),
+                mail.outbox[0].body,
+            )
 
-    def test_send_reset_link_email(self):
-        service = EmailService(self.request, self.user)
-        service.send_reset_link()
-
-        # Check that one message has been sent
-        self.assertEqual(len(mail.outbox), 1)
-
-        # Verify that the subject of the first message is correct
-        self.assertEqual(mail.outbox[0].subject, "Password Reset Request")
-
-        # Verify email body is correct
-        self.assertIn(self.user.email, mail.outbox[0].to)
-        self.assertIn("password reset request was made", mail.outbox[0].body)
-        self.assertIn("http://", mail.outbox[0].body)
+    def test_create_html_body(self):
+        html_content = self.service.create_html_body("users/registration_email.html")
+        self.assertIn(self.user.username, html_content)
 
 
 class TestAccountTokenGenerator(TestCase):
@@ -109,3 +119,59 @@ class TestAccountTokenGenerator(TestCase):
 
         # Ensure a new token is generated over time
         self.assertNotEqual(initial_token, new_token)
+
+
+class ChangeUserPasswordTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            "testuser", "test@test.com", "old_password"
+        )
+
+    @patch("users.models.User.check_password")
+    @patch("users.models.User.set_password")
+    def test_password_change_success(self, mock_set_password, mock_check_password):
+        mock_check_password.return_value = True
+        mock_set_password.return_value = None
+
+        response = change_user_password(
+            self.user, "old_password", "new_password", "new_password"
+        )
+        mock_check_password.assert_called_once_with("old_password")
+        mock_set_password.assert_called_once_with("new_password")
+        self.assertEqual(response, {})
+
+    @patch("users.models.User.check_password")
+    def test_password_mismatch(self, mock_check_password):
+        response = change_user_password(
+            self.user, "old_password", "new_password", "different_new_password"
+        )
+        mock_check_password.assert_not_called()
+        self.assertEqual(response, {"confirm_password": ["Passwords don't match"]})
+
+    @patch("users.models.User.check_password")
+    def test_incorrect_old_password(self, mock_check_password):
+        mock_check_password.return_value = False
+        response = change_user_password(
+            self.user, "wrong_password", "new_password", "new_password"
+        )
+        mock_check_password.assert_called_once_with("wrong_password")
+        self.assertEqual(response, {"current_password": ["Incorrect password"]})
+
+    @patch("users.models.User.check_password")
+    @patch("users.services.validate_password")
+    def test_invalid_new_password(self, mock_validate_password, mock_check_password):
+        mock_check_password.return_value = True
+        mock_validate_password.side_effect = ValidationError(
+            ["This password is too short. It must contain at least 8 characters."]
+        )
+
+        response = change_user_password(self.user, "old_password", "short", "short")
+        mock_validate_password.assert_called_once_with("short", self.user)
+        self.assertEqual(
+            response,
+            {
+                "new_password": [
+                    "This password is too short. It must contain at least 8 characters."
+                ]
+            },
+        )

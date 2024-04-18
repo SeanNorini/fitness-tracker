@@ -221,6 +221,7 @@ class TestChangePassword(SeleniumTestCase):
         self.assertTrue(elements_exist(self.driver, {"class": ["errors"]}))
 
     def test_return_to_settings_btn(self) -> None:
+        time.sleep(1)
         click(self.driver, "id", "return-to-settings")
         time.sleep(1)
         self.assertTrue(find_element(self.driver, "id", "account-settings-form"))

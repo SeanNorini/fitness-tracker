@@ -1,6 +1,5 @@
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.sites.shortcuts import get_current_site
-from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.mail import EmailMultiAlternatives
@@ -29,10 +28,6 @@ def change_user_password(
     user.set_password(new_password)
     user.save()
     return {}
-
-
-def update_user_session(request, user):
-    update_session_auth_hash(request, user)
 
 
 class EmailService:
@@ -98,7 +93,6 @@ class EmailService:
             template_name,
             {
                 "name": self.user.username,
-                "email": self.user.email,
                 "domain": self.domain,
                 "uid": self.uid,
                 "token": self.token,

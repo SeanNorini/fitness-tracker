@@ -1,4 +1,4 @@
-from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
@@ -27,7 +27,6 @@ from .serializers import (
     UpdateUserSettingsSerializer,
 )
 from .services import (
-    update_user_session,
     change_user_password,
     account_token_generator,
     EmailService,
@@ -162,7 +161,7 @@ class ChangePasswordAPIView(APIView):
         if errors:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
-        update_user_session(request, request.user)
+        update_session_auth_hash(request, request.user)
         return Response(
             {"message": "Password changed successfully"}, status=status.HTTP_200_OK
         )

@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.utils import timezone
 from common.test_globals import USERNAME_VALID, PASSWORD_VALID
-from log.models import WorkoutLog, CardioLog, WorkoutSet
+from log.models import WorkoutLog, CardioLog, WorkoutSet, WeightLog
 from users.models import User
 from workout.models import Workout, Exercise
 from datetime import date
@@ -203,7 +203,7 @@ class TestWorkoutSetModel(TestCase):
             self.assert_invalid_value("reps", None)
 
 
-class CardioLogModelTest(TestCase):
+class TestCardioLogModel(TestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -369,3 +369,59 @@ class CardioLogModelTest(TestCase):
         cardio_log.save()
         self.assertEqual(CardioLog.objects.count(), 1)
         self.assertEqual(CardioLog.objects.first(), cardio_log)
+
+
+class TestWeightLogModel(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="testuser", email="test@example.com")
+        self.date = timezone.localdate()
+
+    def test_create_weight_entry(self):
+        # Create a weight entry
+        weight_entry = WeightLog.objects.create(
+            user=self.user, body_weight=70.5, body_fat=20, date=self.date
+        )
+
+        # Check if the weight entry is created successfully
+        self.assertIsNotNone(weight_entry)
+        self.assertEqual(weight_entry.user, self.user)
+        self.assertEqual(weight_entry.body_weight, 70.5)
+        self.assertEqual(weight_entry.body_fat, 20)
+        self.assertEqual(weight_entry.date, self.date)
+
+    def test_update_existing_weight_entry(self):
+        # Create an initial weight entry
+        initial_weight_entry, _ = WeightLog.objects.update_or_create(
+            user=self.user,
+            date=self.date,
+            defaults={"body_weight": 70.5, "body_fat": 19},
+        )
+
+        # Create another weight entry with the same user and date but different weight
+        updated_weight_entry, _ = WeightLog.objects.update_or_create(
+            user=self.user,
+            date=self.date,
+            defaults={"body_weight": 75.0, "body_fat": 20},
+        )
+
+        # Refresh the initial weight entry from the database
+        initial_weight_entry.refresh_from_db()
+
+        # Check if the initial weight entry is updated with the new weight
+        self.assertEqual(initial_weight_entry.body_weight, 75.0)
+        self.assertEqual(initial_weight_entry.body_fat, 20)
+
+    def test_unique_together_constraint(self):
+        # Create a weight entry
+        WeightLog.objects.create(
+            user=self.user, body_weight=70.5, body_fat=20, date=self.date
+        )
+
+        # Try to create another weight entry with the same user and date
+        with self.assertRaises(Exception) as context:
+            WeightLog.objects.create(
+                user=self.user, body_weight=75.0, body_fat=21, date=self.date
+            )
+
+        # Check if the correct exception (IntegrityError) is raised due to the unique constraint
+        self.assertTrue("UNIQUE constraint" in str(context.exception))

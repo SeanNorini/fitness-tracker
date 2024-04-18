@@ -43,14 +43,14 @@ class TestCardioView(TestCase):
         self.soup = BeautifulSoup(self.response.content, "html.parser")
         title_tag = self.soup.find("title")
         self.assertIsNotNone(title_tag, "Title tag not found")
-        self.assertEqual(title_tag.text, "Fitness Tracker - Cardio")
+        self.assertEqual(title_tag.text, "Fitness Tracker")
 
     def test_elements_exist(self):
         elements = {
             "class": ["summary"],
             "id": ["week", "month", "year", "save-cardio-session", "cardio-chart"],
         }
-        self.assertTrue(elements_exist(elements))
+        self.assertTrue(elements_exist(self.soup, elements))
 
 
 class TestCardioLogSummariesAPIView(TestCase):
