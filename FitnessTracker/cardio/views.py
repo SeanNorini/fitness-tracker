@@ -1,4 +1,5 @@
 from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -74,7 +75,7 @@ def plot_graph(graph_data):
     return img_base64
 
 
-class CardioTemplateView(TemplateView):
+class CardioTemplateView(LoginRequiredMixin, TemplateView):
     template_name = "cardio/cardio.html"
 
     def get_context_data(self, **kwargs):

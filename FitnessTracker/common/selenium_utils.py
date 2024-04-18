@@ -2,6 +2,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium import webdriver
 
 
@@ -219,3 +220,10 @@ def is_selected(driver, selector_type, selector_value):
     except NoSuchElementException as e:
         print(f"Element not found: {e}")
         return None
+
+
+def drag_y(driver, selector_type, selector_value, y_value):
+    element_to_drag = find_element(driver, selector_type, selector_value)
+    ActionChains(driver).click_and_hold(element_to_drag).move_by_offset(
+        0, y_value
+    ).release().perform()
