@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.core import mail
 from unittest.mock import patch
 from users.models import User
-from user.utils import AccountTokenGenerator, EmailService
+from users.utils import AccountTokenGenerator, EmailService
 import six
 
 
