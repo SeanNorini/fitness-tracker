@@ -17,7 +17,7 @@ from users.models import UserSettings
 from workout.models import WorkoutSettings, Exercise
 
 
-class TestWorkoutLogIntegration(TestCase):
+class TestWorkoutLog(TestCase):
     def setUp(self):
         self.user = User.objects.create(username="testuser")
         self.workout = Workout.objects.create(name="Test Workout", user=self.user)
@@ -25,7 +25,7 @@ class TestWorkoutLogIntegration(TestCase):
     def test_workout_log_creation_valid(self):
         date = timezone.now()
         workout_log = WorkoutLog(workout=self.workout, user=self.user, date=date)
-        workout_log.full_clean()  # This will raise ValidationError if invalid
+        workout_log.full_clean()
         workout_log.save()
         self.assertEqual(WorkoutLog.objects.count(), 1)
 
@@ -36,8 +36,8 @@ class TestWorkoutLogIntegration(TestCase):
             workout_log.full_clean()
 
     def test_workout_log_creation_invalid_past_date(self):
-        future_date = timezone.now() - timezone.timedelta(days=365 * 5 + 2)
-        workout_log = WorkoutLog(workout=self.workout, user=self.user, date=future_date)
+        past_date = timezone.now() - timezone.timedelta(days=365 * 5 + 2)
+        workout_log = WorkoutLog(workout=self.workout, user=self.user, date=past_date)
         with self.assertRaises(ValidationError):
             workout_log.full_clean()
 
@@ -76,14 +76,27 @@ class TestWorkoutLogIntegration(TestCase):
         with self.assertRaises(ValidationError):
             workout_log.full_clean()
 
+    def test_get_logs(self):
+        current_year = timezone.now().year
+        current_month = timezone.now().month
+        workout_log = WorkoutLog.objects.create(
+            user=self.user,
+            date=timezone.now(),
+            workout=self.workout,
+            total_time=timezone.timedelta(minutes=30),
+        )
+        workout_logs = WorkoutLog.get_logs(self.user, current_year, current_month)
+        self.assertEqual(workout_logs.count(), 1)
+        self.assertEqual(workout_logs.first(), workout_log)
 
-class TestWorkoutSetIntegration(TestCase):
+
+class TestWorkoutSet(TestCase):
     def setUp(self):
         self.user = User.objects.create(username="test_user")
         self.workout = Workout.objects.create(name="Morning Routine", user=self.user)
         self.exercise = Exercise.objects.create(name="Push-ups", user=self.user)
         self.workout_log = WorkoutLog.objects.create(
-            workout=self.workout, user=self.user, date=timezone.now().date()
+            workout=self.workout, user=self.user, date=timezone.now()
         )
 
         # Settings to automatically update five rep max
@@ -163,6 +176,13 @@ class TestCardioLog(TestCase):
             self.cardio_log.distance = 100
             self.cardio_log.full_clean()
 
+    def test_get_logs(self):
+        current_year = timezone.now().year
+        current_month = timezone.now().month
+        cardio_logs = CardioLog.get_logs(self.user, current_year, current_month)
+        self.assertEqual(cardio_logs.count(), 1)
+        self.assertEqual(cardio_logs.first(), self.cardio_log)
+
 
 class TestWeightLog(TestCase):
     def setUp(self):
@@ -193,6 +213,13 @@ class TestWeightLog(TestCase):
                 body_fat=20.0,
                 date=self.weight_log.date,
             )
+
+    def test_get_logs(self):
+        current_year = timezone.now().year
+        current_month = timezone.now().month
+        weight_logs = WeightLog.get_logs(self.user, current_year, current_month)
+        self.assertEqual(weight_logs.count(), 1)
+        self.assertEqual(weight_logs.first(), self.weight_log)
 
 
 class TestFoodLog(TestCase):

@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.utils import timezone
+from datetime import timedelta
 from unittest.mock import patch
 from log.models import WorkoutLog, WorkoutSet, CardioLog, WeightLog
 from workout.models import Exercise, Workout, WorkoutSettings
@@ -11,7 +12,10 @@ class TestWorkoutLog(TestCase):
         self.user = User.objects.create(username="testuser")
         self.workout = Workout.objects.create(user=self.user, name="Morning Routine")
         self.workout_log = WorkoutLog.objects.create(
-            workout=self.workout, user=self.user, date=timezone.now().date()
+            workout=self.workout,
+            user=self.user,
+            date=timezone.now().date(),
+            total_time=timedelta(hours=1),
         )
         self.exercise = Exercise.objects.create(user=self.user, name="Push-ups")
         WorkoutSet.objects.create(
@@ -47,8 +51,7 @@ class TestWorkoutSet(TestCase):
         self.assertEqual(WorkoutSet.objects.first().reps, 15)
 
     @patch("workout.models.Exercise.update_five_rep_max")
-    @patch("workout.models.Workout.update_five_rep_max")
-    def test_auto_update_five_rep_max(self, mock_update_workout, mock_update_exercise):
+    def test_auto_update_five_rep_max(self, mock_update_exercise):
         WorkoutSettings.objects.create(user=self.user, auto_update_five_rep_max=True)
         mock_update_exercise.return_value = True
 
@@ -56,20 +59,14 @@ class TestWorkoutSet(TestCase):
 
         mock_update_exercise.assert_called_once_with(70, 10)
 
-        mock_update_workout.assert_called_once_with(self.exercise)
-
     def test_no_auto_update_when_setting_is_disabled(self):
         WorkoutSettings.objects.create(user=self.user, auto_update_five_rep_max=False)
 
         with patch(
             "workout.models.Exercise.update_five_rep_max"
-        ) as mock_update_exercise, patch(
-            "workout.models.Workout.update_five_rep_max"
-        ) as mock_update_workout:
+        ) as mock_update_exercise:
             self.workout_set.save()
-
             mock_update_exercise.assert_not_called()
-            mock_update_workout.assert_not_called()
 
 
 class CardioLogTestCase(TestCase):

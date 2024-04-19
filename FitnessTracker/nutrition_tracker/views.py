@@ -14,6 +14,8 @@ import requests
 import json
 from io import BytesIO
 import base64
+
+from log.models import FoodLog
 from .models import *
 
 
@@ -94,7 +96,7 @@ class FetchNutritionSummaryAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        logs = FoodLogEntry.objects.filter(
+        logs = FoodLog.objects.filter(
             user=request.user,
             date__range=(timezone.now() - timedelta(days=6), timezone.now()),
         )

@@ -1,18 +1,16 @@
 from calendar import HTMLCalendar, month_name
 
+from log.models import WorkoutLog, CardioLog, WeightLog
+
 
 class Calendar(HTMLCalendar):
-    def __init__(
-        self,
-        firstweekday=6,
-        workout_logs=None,
-        weight_logs=None,
-        cardio_logs=None,
-    ):
+    def __init__(self, firstweekday=6, user=None, year=None, month=None):
         super().__init__(firstweekday)
-        self.workout_logs = workout_logs
-        self.weight_logs = weight_logs
-        self.cardio_logs = cardio_logs
+        self.workout_logs = WorkoutLog.get_logs(user, year, month)
+        self.weight_logs = WeightLog.get_logs(user, year, month)
+        self.cardio_logs = CardioLog.get_logs(user, year, month)
+        self.year = year
+        self.month = month
 
     def formatday(self, day, weekday):
         workout_log = self.workout_logs.filter(date__day=day).first()
@@ -41,8 +39,10 @@ class Calendar(HTMLCalendar):
             day_format += "</td>"
         return day_format
 
-    def formatmonth(self, year, month, withyear=True):
+    def formatmonth(self, year=None, month=None, withyear=True):
         # Get the calendar table with the month's days
+        year = self.year
+        month = self.month
         cal = super().formatmonth(year, month, withyear)
 
         # Add a CSS class to the table

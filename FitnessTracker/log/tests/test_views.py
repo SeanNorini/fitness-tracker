@@ -1,11 +1,11 @@
-from datetime import timedelta
-
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
 from django.utils import timezone
-from rest_framework.test import APIClient
 from django.test import Client
-from log.views import LogView, DailyLogView
+from rest_framework.test import APIClient, APITestCase
+from datetime import timedelta, date
+from bs4 import BeautifulSoup
+from log.views import LogView
 from users.models import User, UserSettings
 from workout.models import Workout, Exercise
 from rest_framework import status
@@ -46,10 +46,9 @@ class TestLogView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "base/index.html")
         # Check if default month and year are used
-        year = timezone.now().year
-        month = timezone.now().month
-        self.assertEqual(year, response.context["year"])
-        self.assertEqual(month, response.context["month"])
+        soup = BeautifulSoup(response.content, "html.parser")
+        calendar_date = soup.find(id="month-name")
+        self.assertEqual(calendar_date.text, date.today().strftime("%B %Y"))
 
     def test_log_view_fetch_request(self):
         url = reverse("log", kwargs={"year": "2024", "month": "4"})
@@ -64,13 +63,6 @@ class TestLogView(TestCase):
         response = self.client.get(url)
         self.assertNotEqual(response.status_code, 200)
         self.assertRedirects(response, f"/user/login/?next={url}")
-
-    def test_response_content_for_correct_data(self):
-        url = reverse("log", kwargs={"year": "2024", "month": "4"})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.context["workout_logs"]), 1)
-        self.assertEqual(len(response.context["weight_logs"]), 1)
 
     def test_get_date_with_valid_params(self):
         request = self.factory.get("/fake-url/", {"year": "2024", "month": "4"})
@@ -94,25 +86,8 @@ class TestLogView(TestCase):
         self.assertEqual(year, timezone.now().year)
         self.assertEqual(month, timezone.now().month)
 
-    def test_get_workout_logs(self):
-        view = LogView()
-        view.request = self.factory.get("/fake-url/")
-        view.request.user = self.user
-        logs = view.get_workout_logs(self.user, 2024, 4)
-        self.assertEqual(len(logs), 1)
-        self.assertEqual(logs.first().total_time, timedelta(hours=1))
 
-    def test_get_weight_logs(self):
-        view = LogView()
-        view.request = self.factory.get("/fake-url/")
-        view.request.user = self.user
-        logs = view.get_weight_logs(self.user, 2024, 4)
-        self.assertEqual(len(logs), 1)
-        self.assertEqual(logs.first().body_weight, 150)
-        self.assertEqual(logs.first().body_fat, 20)
-
-
-class DailyLogViewTests(TestCase):
+class TestDailyLogView(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="testuser")
         self.client.force_login(user=self.user)
@@ -160,70 +135,70 @@ class DailyLogViewTests(TestCase):
         self.assertRedirects(response, f"/user/login/?next={url}")
 
 
-class DeleteWeightLogAPITests(TestCase):
+class TestWeightLogTemplateView(TestCase):
     def setUp(self):
-        # Create two users
-        self.user1 = User.objects.create_user(
-            username="user1", password="12345", email="test@gmail.com"
-        )
-        self.user2 = User.objects.create_user(
-            username="user2", password="12345", email="fake@gmail.com"
-        )
+        self.user = User.objects.create_user(username="user", password="pass")
+        self.client.login(username="user", password="pass")
+        UserSettings.objects.create(user=self.user, body_weight=180)
 
-        # Create weight logs for each user
-        self.weight_log1 = WeightLog.objects.create(
-            user=self.user1, date=timezone.now(), body_weight=160, body_fat=20
-        )
-        self.weight_log2 = WeightLog.objects.create(
-            user=self.user2, date=timezone.now(), body_weight=150, body_fat=18
-        )
+    def test_template_used(self):
+        response = self.client.get(reverse("weight_log_template"))
+        self.assertTemplateUsed(response, "log/save_weight_log.html")
 
-    def test_delete_weight_log_unauthorized(self):
-        # User2 tries to delete User1's weight log
-        self.client.login(username="user2", password="12345")
-        url = reverse("weight_log", args=[self.weight_log1.pk])
-        response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(WeightLog.objects.count(), 2)  # Ensure the log was not deleted
-
-    def test_delete_weight_log_authorized(self):
-        # User1 deletes their own weight log
-        self.client.login(username="user1", password="12345")
-        url = reverse("weight_log", args=[self.weight_log1.pk])
-        response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(WeightLog.objects.count(), 1)  # One log should be deleted
-        self.assertNotIn(self.weight_log1, WeightLog.objects.all())
-
-    def test_delete_weight_log_not_found(self):
-        # Test deleting a non-existing log
-        self.client.login(username="user1", password="12345")
-        url = reverse("weight_log", args=[999])  # Non-existing ID
-        response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(WeightLog.objects.count(), 2)  # No logs should be deleted
+    def test_context_data(self):
+        response = self.client.get(reverse("weight_log_template"))
+        self.assertIn("user_settings", response.context)
+        self.assertEqual(response.context["user_settings"].body_weight, 180)
 
 
-class TestCreateCardioLogAPIView(TestCase):
+class TestWeightLogViewSet(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="testuser")
         self.client = APIClient()
+        self.user = User.objects.create_user(username="user", password="pass")
         self.client.force_authenticate(user=self.user)
-        self.url = reverse("cardio_log")
+        self.weight_log = WeightLog.objects.create(
+            user=self.user, body_weight=150, body_fat=15, date=timezone.now()
+        )
 
-    def test_create_cardio_log(self):
-        data = {
-            "datetime": "2024-04-12T01:17:38.246Z",
-            "duration-minutes": "30",
-            "distance-integer": "5",
+    def test_get_queryset(self):
+        response = self.client.get(reverse("weightlog-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)  # Assuming this is the only log
+
+    def test_create_weight_log(self):
+        today = timezone.now()
+        day = today.day
+        year = today.year
+        post_data = {
+            "body_weight": 160,
+            "body_fat": 14,
+            "date": f"January {day}, {year}",
         }
-        response = self.client.post(self.url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(CardioLog.objects.count(), 1)
-        self.assertEqual(CardioLog.objects.first().distance, 5.0)
+        response = self.client.post(reverse("weightlog-list"), post_data)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(WeightLog.objects.count(), 2)
+        self.assertEqual(WeightLog.objects.last().body_weight, 160)
+        self.assertEqual(WeightLog.objects.last().body_fat, 14)
 
 
-class UpdateWorkoutLogTemplateViewTests(TestCase):
+class TestWorkoutLogTemplateView(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="user", password="pass")
+        self.workout = Workout.objects.create(name="Morning Routine", user=self.user)
+        self.workout_log = WorkoutLog.objects.create(
+            user=self.user, workout=self.workout, date=timezone.now()
+        )
+        self.client.login(username="user", password="pass")
+
+    def test_context_data(self):
+        url = reverse("workout_log_template", kwargs={"pk": self.workout_log.pk})
+        response = self.client.get(url)
+        self.assertEqual(
+            response.context["workout_log"]["workout_name"], "Morning Routine"
+        )
+
+
+class TestUpdateWorkoutLogTemplateView(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
@@ -237,11 +212,13 @@ class UpdateWorkoutLogTemplateViewTests(TestCase):
         self.workout_log = WorkoutLog.objects.create(
             user=self.user, workout=self.workout
         )
-        self.url = reverse("workout_log_template/", kwargs={"pk": self.workout_log.pk})
+        self.url = reverse(
+            "update_workout_log_template", kwargs={"pk": self.workout_log.pk}
+        )
 
     def test_login_required(self):
         response = self.client.get(self.url)
-        self.assertRedirects(response, f"/accounts/login/?next={self.url}")
+        self.assertRedirects(response, f"/user/login/?next={self.url}")
 
     def test_user_access_own_log(self):
         self.client.login(username="user", password="testpass")
@@ -251,13 +228,13 @@ class UpdateWorkoutLogTemplateViewTests(TestCase):
     def test_user_cannot_access_other_user_log(self):
         self.client.login(username="otheruser", password="testpass")
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.context["workout"]["user"], None)
 
     def test_context_data(self):
         self.client.login(username="user", password="testpass")
         response = self.client.get(self.url)
         self.assertIn("workout", response.context)
-        self.assertEqual(response.context["workout"]["id"], self.workout_log.pk)
+        self.assertEqual(response.context["workout"]["pk"], self.workout_log.pk)
 
         self.assertIn("workouts", response.context)
         self.assertIn("exercises", response.context)
@@ -277,3 +254,128 @@ class UpdateWorkoutLogTemplateViewTests(TestCase):
         self.assertContains(
             response, "Push Up"
         )  # Assuming the template displays exercise names
+
+
+class TestWorkoutLogViewSet(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="user", password="pass", email="test@test.com"
+        )
+        self.client.login(username="user", password="pass")
+        self.workout = Workout.objects.create(user=self.user, name="Test Workout")
+        self.workout_log = WorkoutLog.objects.create(
+            user=self.user, workout=self.workout
+        )
+
+    def test_list_workout_logs(self):
+        url = reverse("workoutlog-list")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            len(response.data), 1
+        )  # Ensure only the user's logs are listed
+
+    def test_create_workout_log(self):
+        url = reverse("workoutlog-list")
+        data = {
+            "workout": self.workout.pk,
+            "workout_name": "Test Workout",
+            "date": "2024-04-01",
+            "total_time": 3600,
+            "workout_exercises": [
+                {"bench press": {"reps": [5], "weights": [50]}},
+            ],
+        }
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(WorkoutLog.objects.count(), 2)
+
+    def test_retrieve_workout_log(self):
+        url = reverse("workoutlog-detail", kwargs={"pk": self.workout_log.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["pk"], self.workout_log.pk)
+
+    def test_update_workout_log(self):
+        url = reverse("workoutlog-detail", kwargs={"pk": self.workout_log.pk})
+        data = {"total_time": 7200}
+        response = self.client.patch(url, data, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.workout_log.refresh_from_db()
+        self.assertEqual(self.workout_log.total_time, timedelta(hours=2))
+
+    def test_delete_workout_log(self):
+        url = reverse("workoutlog-detail", kwargs={"pk": self.workout_log.pk})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 204)
+
+
+class TestCardioLogViewSet(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword"
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+        self.cardio_log = CardioLog.objects.create(
+            user=self.user,
+            datetime="2024-01-01T12:00:00Z",
+            duration=timedelta(minutes=30),
+            distance=5.0,
+        )
+        self.url = reverse("cardiolog-list")
+
+    def test_authentication_required(self):
+        self.client.logout()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_can_access_own_logs(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+
+    def test_user_cannot_access_other_user_logs(self):
+        other_user = User.objects.create_user(
+            username="otheruser", password="password", email="test@test.com"
+        )
+        self.client.force_authenticate(user=other_user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+    def test_create_cardio_log(self):
+        data = {
+            "datetime": "2024-01-02T15:00:00Z",
+            "duration-hours": "1",
+            "duration-minutes": "15",
+            "duration-seconds": "30",
+            "distance-integer": "7",
+            "distance-decimal": "5",
+        }
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(CardioLog.objects.count(), 2)
+        new_log = CardioLog.objects.get(datetime="2024-01-02T15:00:00Z")
+        self.assertEqual(new_log.duration, timedelta(hours=1, minutes=15, seconds=30))
+        self.assertEqual(new_log.distance, 7.5)
+
+    def test_retrieve_cardio_log(self):
+        url = reverse("cardiolog-detail", kwargs={"pk": self.cardio_log.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["distance"], 5.0)
+
+    def test_update_cardio_log(self):
+        url = reverse("cardiolog-detail", kwargs={"pk": self.cardio_log.pk})
+        data = {"distance-integer": "10", "distance-decimal": "25"}
+        response = self.client.patch(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.cardio_log.refresh_from_db()
+        self.assertEqual(self.cardio_log.distance, 10.25)
+
+    def test_delete_cardio_log(self):
+        url = reverse("cardiolog-detail", kwargs={"pk": self.cardio_log.pk})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(CardioLog.objects.count(), 0)

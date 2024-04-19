@@ -27,7 +27,7 @@ urlpatterns = [
     path(
         "workout_log_template/<int:pk>",
         views.WorkoutLogTemplateView.as_view(),
-        name="get_workout_log",
+        name="workout_log_template",
     ),
     path(
         "update_workout_log_template/<int:pk>/",

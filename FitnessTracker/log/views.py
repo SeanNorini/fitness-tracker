@@ -26,43 +26,16 @@ class LogView(LoginRequiredMixin, TemplateView):
         except (ValueError, TypeError):
             return datetime.now().year, datetime.now().month
 
-    def get_workout_logs(self, user, year, month):
-        return WorkoutLog.objects.filter(user=user, date__year=year, date__month=month)
-
-    def get_weight_logs(self, user, year, month):
-        return WeightLog.objects.filter(user=user, date__year=year, date__month=month)
-
-    def get_cardio_logs(self, user, year, month):
-        return CardioLog.objects.filter(
-            user=user, datetime__year=year, datetime__month=month
-        )
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["year"], context["month"] = self.get_date()
-
+        year, month = self.get_date()
         user = self.request.user
-        context["workout_logs"] = self.get_workout_logs(
-            user, context["year"], context["month"]
-        )
-        context["weight_logs"] = self.get_weight_logs(
-            user, context["year"], context["month"]
-        )
-        context["cardio_logs"] = self.get_cardio_logs(
-            user, context["year"], context["month"]
-        )
 
         modules = ["workout", "cardio", "nutrition", "log", "stats", "settings"]
         context["modules"] = modules
 
-        calendar = Calendar(
-            workout_logs=context["workout_logs"],
-            weight_logs=context["weight_logs"],
-            cardio_logs=context["cardio_logs"],
-        )
-        context["calendar"] = calendar.formatmonth(
-            year=context["year"], month=context["month"]
-        )
+        context["calendar"] = Calendar(user=user, year=year, month=month).formatmonth()
+
         return context
 
     def get(self, request, *args, **kwargs):

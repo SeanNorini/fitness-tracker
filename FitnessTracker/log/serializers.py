@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from django.db import transaction
 from rest_framework import serializers
 from datetime import timedelta, datetime, date
@@ -28,9 +29,15 @@ class WorkoutLogSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         data["user"] = user
         data["workout"] = Workout.get_workout(
-            user=user, workout_name=data["workout_name"]
+            user=user, workout_name=data.get("workout_name", None)
         )
         data["total_time"] = timedelta(seconds=int(data.get("total_time", 0)))
+        if data.get("date", None) is not None:
+            date_values = [int(value) for value in data.get("date").split("-")]
+            data["date"] = timezone.make_aware(
+                datetime(date_values[0], date_values[1], date_values[2]),
+                timezone.get_default_timezone(),
+            )
         return data
 
     def to_representation(self, instance):
@@ -78,6 +85,7 @@ class WorkoutLogSerializer(serializers.ModelSerializer):
             try:
                 workout_log.full_clean()
             except ValidationError as e:
+                print(e.message_dict)
                 raise serializers.ValidationError(e.message_dict)
             return workout_log
 
@@ -95,6 +103,7 @@ class CardioLogSerializer(serializers.ModelSerializer):
     def validate_datetime(self, value):
         validate_not_future_date(value)
         validate_not_more_than_5_years_ago(value)
+
         return value
 
     def validate_duration(self, value):
@@ -110,7 +119,9 @@ class CardioLogSerializer(serializers.ModelSerializer):
         return value
 
     def to_internal_value(self, data):
-        updated_data = {"datetime": data.get("datetime")}
+        updated_data = (
+            {"datetime": data.get("datetime")} if data.get("datetime") else {}
+        )
 
         duration_hours = int(data.get("duration-hours", 0))
         duration_minutes = int(data.get("duration-minutes", 0))
@@ -122,6 +133,7 @@ class CardioLogSerializer(serializers.ModelSerializer):
         distance_integer = data.get("distance-integer", 0)
         distance_decimal = data.get("distance-decimal", 0)
         updated_data["distance"] = float(f"{distance_integer}.{distance_decimal}")
+
         return super().to_internal_value(updated_data)
 
 
@@ -136,4 +148,5 @@ class WeightLogSerializer(serializers.ModelSerializer):
         data_date = data.get("date")
         if not isinstance(data_date, datetime) and not isinstance(data_date, date):
             data["date"] = datetime.strptime(data_date, "%B %d, %Y").date()
+
         return data

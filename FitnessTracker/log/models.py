@@ -20,7 +20,7 @@ from cardio.utils import format_duration
 class WorkoutLog(models.Model):
     workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateTimeField(
+    date = models.DateField(
         default=timezone.now,
         validators=[validate_not_future_date, validate_not_more_than_5_years_ago],
     )
@@ -52,15 +52,17 @@ class WorkoutLog(models.Model):
 
         return workout_log
 
+    @classmethod
+    def get_logs(cls, user, year, month):
+        return cls.objects.filter(user=user, date__year=year, date__month=month)
+
 
 class WorkoutSet(models.Model):
     workout_log = models.ForeignKey(
         WorkoutLog, on_delete=models.CASCADE, related_name="workout_sets"
     )
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-    weight = models.DecimalField(
-        max_digits=6,
-        decimal_places=2,
+    weight = models.FloatField(
         validators=[MaxValueValidator(1500.0), MinValueValidator(0.0)],
     )
     reps = models.PositiveIntegerField(
@@ -99,6 +101,10 @@ class CardioLog(models.Model):
         else:
             return "N/A"
 
+    @classmethod
+    def get_logs(cls, user, year, month):
+        return cls.objects.filter(user=user, datetime__year=year, datetime__month=month)
+
 
 class WeightLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -122,6 +128,10 @@ class WeightLog(models.Model):
     class Meta:
         # Ensure only one weight entry per user per date
         unique_together = ("user", "date")
+
+    @classmethod
+    def get_logs(cls, user, year, month):
+        return cls.objects.filter(user=user, date__year=year, date__month=month)
 
 
 class FoodLog(models.Model):
