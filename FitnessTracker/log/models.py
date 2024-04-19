@@ -1,6 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-
+from django.core.exceptions import ValidationError
 from workout.models import Exercise, Workout, WorkoutSettings
 from .validators import (
     validate_not_future_date,
@@ -150,9 +150,19 @@ class FoodItem(models.Model):
     )
     name = models.CharField(max_length=200)
     calories = models.PositiveIntegerField()
-    protein = models.DecimalField(max_digits=5, decimal_places=2)
-    carbs = models.DecimalField(max_digits=5, decimal_places=2)
-    fat = models.DecimalField(max_digits=5, decimal_places=2)
+    protein = models.FloatField(
+        validators=[MinValueValidator(0), MaxValueValidator(999.99)]
+    )
+    carbs = models.FloatField(
+        validators=[MinValueValidator(0), MaxValueValidator(999.99)]
+    )
+    fat = models.FloatField(
+        validators=[MinValueValidator(0), MaxValueValidator(999.99)]
+    )
+
+    def clean(self):
+        if self.calories < 0:
+            raise ValidationError({"calories": "Calories must be non-negative."})
 
     def __str__(self):
         return self.name

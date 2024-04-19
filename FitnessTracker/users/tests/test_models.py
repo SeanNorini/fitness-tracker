@@ -76,7 +76,7 @@ class TestUserModel(TestCase):
 
         user_settings.system_of_measurement = "Metric"
         user_settings.save()
-        distance_unit = self.user.distance_unit()
+        distance_unit = self.user.distance_unit
         self.assertEqual(distance_unit, "km")
 
     def test_weight_unit(self):
@@ -140,7 +140,6 @@ class TestUserSettingsModel(TestCase):
         assert input_validation(self, self.user_settings, "body_fat", field_inputs)
 
     def test_default_values(self):
-        # Verify default values for a new user
         self.assertEqual(self.user_settings.gender, "M")
         self.assertEqual(self.user_settings.height, 70)
         self.assertEqual(self.user_settings.body_weight, 160)

@@ -150,6 +150,6 @@ class FoodItemModelTest(TestCase):
             self.food_item.full_clean()
 
     def test_negative_calories(self):
+        self.food_item.calories = -10
         with self.assertRaises(ValidationError):
-            self.food_item.calories = -10
             self.food_item.full_clean()

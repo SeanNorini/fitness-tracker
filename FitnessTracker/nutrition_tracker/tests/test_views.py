@@ -2,8 +2,8 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
-from django.contrib.auth.models import User
 from unittest.mock import patch
+from users.models import User
 
 
 class TestNutritionTrackerView(TestCase):
@@ -35,7 +35,7 @@ class TestFetchNutritionSearchAPIView(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="user", password="testpass")
         self.client.force_authenticate(user=self.user)
-        self.url = reverse("fetch_nutrition_search", kwargs={"query": "apple"})
+        self.url = reverse("get_search_results", kwargs={"query": "apple"})
 
     @patch("nutrition_tracker.services.Nutritionix.search")
     def test_search_api(self, mock_search):
@@ -50,7 +50,7 @@ class TestFetchItemDetailsAPIView(APITestCase):
         self.user = User.objects.create_user(username="user", password="testpass")
         self.client.force_authenticate(user=self.user)
         self.url = reverse(
-            "fetch_item_details", kwargs={"item_type": "food", "item_id": "12345"}
+            "get_item_details", kwargs={"item_type": "food", "item_id": "12345"}
         )
 
     @patch("nutrition_tracker.services.Nutritionix.get_item")
@@ -66,14 +66,14 @@ class TestFetchNutritionSummaryAPIView(APITestCase):
         self.user = User.objects.create_user(
             username="testuser", password="testpassword"
         )
-        self.url = reverse("get_nutrition_summary")
+        self.url = reverse("get_nutrition_summary", args=["week"])
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
     def test_authentication_required(self):
         self.client.logout()
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @patch("nutrition_tracker.views.FoodLogService.get_user_food_summary")
     def test_successful_data_retrieval(self, mock_get_summary):
