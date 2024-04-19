@@ -183,12 +183,6 @@ class Workout(models.Model):
             reps.append(exercise_set["reps"])
         return weights, reps
 
-    def update_five_rep_max(self, exercise):
-        for workout_exercise in self.config["exercises"]:
-            if workout_exercise["name"] == exercise.name:
-                workout_exercise["five_rep_max"] = exercise.five_rep_max
-                self.save()
-
 
 class Routine(models.Model):
     name = models.CharField(max_length=100)

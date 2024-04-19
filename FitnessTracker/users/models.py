@@ -46,6 +46,12 @@ class User(AbstractUser):
             .body_weight
         )
 
+    @property
+    def body_fat(self):
+        return (
+            UserSettings.objects.filter(user=self.id).order_by("-pk").first().body_fat
+        )
+
     @classmethod
     def default_user(cls):
         user, created = User.objects.get_or_create(username="default")

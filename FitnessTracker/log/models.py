@@ -1,6 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db import models, transaction
-from django.core.exceptions import ValidationError
+from django.db import models
+
 from workout.models import Exercise, Workout, WorkoutSettings
 from .validators import (
     validate_not_future_date,
@@ -15,45 +15,19 @@ from cardio.utils import format_duration
 
 
 # Create your models here.
-def validate_date(date):
-    if date > timezone.now().date():
-        raise ValidationError("Date cannot be in the future.")
-
-    one_year_ago = timezone.now().date() - timezone.timedelta(days=365 * 5)
-    if date < one_year_ago:
-        raise ValidationError("Date cannot be earlier than five years ago.")
 
 
 class WorkoutLog(models.Model):
     workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateField(default=timezone.now, validators=[validate_date])
+    date = models.DateTimeField(
+        default=timezone.now,
+        validators=[validate_not_future_date, validate_not_more_than_5_years_ago],
+    )
     total_time = models.DurationField(
         default=timedelta(minutes=30),
         validators=[validate_duration_min, validate_duration_max],
     )
-
-    def save_workout_session(self, exercises):
-        try:
-            with transaction.atomic():
-                self.save()
-                for exercise in exercises:
-                    for exercise_name, exercise_sets in exercise.items():
-                        exercise = Exercise.get_exercise(self.user, exercise_name)
-
-                        WorkoutSet.save_workout_set(self, exercise, exercise_sets)
-            return True
-        except Exception as e:
-            print(e)
-            return False
-
-    def update_workout_session(self, exercises):
-        self.exercises = None
-        workout_sets = WorkoutSet.objects.filter(workout_log=self)
-        for workout_set in workout_sets:
-            workout_set.delete()
-
-        return self.save_workout_session(exercises)
 
     def generate_workout_log(self):
         workout_log = {
@@ -93,27 +67,14 @@ class WorkoutSet(models.Model):
         validators=[MaxValueValidator(100), MinValueValidator(0)]
     )
 
-    @classmethod
-    def save_workout_set(cls, workout_log, exercise, exercise_sets):
-        update_five_rep_max = False
-        for i in range(len(exercise_sets["weight"])):
-            weight = float(exercise_sets["weight"][i])
-            reps = int(exercise_sets["reps"][i])
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
 
-            cls.objects.create(
-                workout_log=workout_log,
-                exercise=exercise,
-                weight=weight,
-                reps=reps,
-            )
-
-            user = workout_log.user
-            user_workout_settings = WorkoutSettings.objects.filter(user=user).first()
-
-            if user_workout_settings.auto_update_five_rep_max:
-                update_five_rep_max = exercise.update_five_rep_max(weight, reps)
-            if update_five_rep_max:
-                workout_log.workout.update_five_rep_max(exercise)
+        user_workout_settings = WorkoutSettings.objects.filter(
+            user=self.workout_log.user
+        ).first()
+        if user_workout_settings and user_workout_settings.auto_update_five_rep_max:
+            self.exercise.update_five_rep_max(self.weight, self.reps)
 
 
 class CardioLog(models.Model):
@@ -161,3 +122,28 @@ class WeightLog(models.Model):
     class Meta:
         # Ensure only one weight entry per user per date
         unique_together = ("user", "date")
+
+
+class FoodLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="food_logs")
+    date = models.DateField()
+
+    def __str__(self):
+        return f"{self.user.username} - {self.date}"
+
+    class Meta:
+        unique_together = ("user", "date")
+
+
+class FoodItem(models.Model):
+    log_entry = models.ForeignKey(
+        FoodLog, on_delete=models.CASCADE, related_name="food_items"
+    )
+    name = models.CharField(max_length=200)
+    calories = models.IntegerField()
+    protein = models.DecimalField(max_digits=5, decimal_places=2)
+    carbs = models.DecimalField(max_digits=5, decimal_places=2)
+    fat = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return self.name

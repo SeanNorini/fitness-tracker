@@ -122,7 +122,7 @@ class TestCardioLogSerializer(TestCase):
         }
         serializer = CardioLogSerializer(data=data, context={"user": self.user})
         self.assertTrue(serializer.is_valid())
-        instance = serializer.save()
+        instance = serializer.save(user=self.user)
         self.assertEqual(instance.user, self.user)
         self.assertEqual(instance.duration, timedelta(hours=1))
         self.assertEqual(instance.distance, 10.0)

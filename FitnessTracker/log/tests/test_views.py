@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
 from django.utils import timezone
@@ -20,7 +22,7 @@ class TestLogView(TestCase):
         WorkoutLog.objects.create(
             user=self.user,
             date="2024-04-01",
-            total_time=60,
+            total_time=timedelta(hours=1),
             workout=self.workout,
         )
         WeightLog.objects.create(
@@ -98,7 +100,7 @@ class TestLogView(TestCase):
         view.request.user = self.user
         logs = view.get_workout_logs(self.user, 2024, 4)
         self.assertEqual(len(logs), 1)
-        self.assertEqual(logs.first().total_time, 60)
+        self.assertEqual(logs.first().total_time, timedelta(hours=1))
 
     def test_get_weight_logs(self):
         view = LogView()
@@ -118,7 +120,10 @@ class DailyLogViewTests(TestCase):
         self.date = "2024-4-11"
         self.workout = Workout.objects.create(user=self.user, name="Test Workout")
         self.workout_log = WorkoutLog.objects.create(
-            user=self.user, date=self.date, total_time=60, workout=self.workout
+            user=self.user,
+            date=self.date,
+            total_time=timedelta(hours=1),
+            workout=self.workout,
         )
         self.weight_log = WeightLog.objects.create(
             user=self.user, date=self.date, body_weight=150, body_fat=20
@@ -141,7 +146,7 @@ class DailyLogViewTests(TestCase):
         self.assertEqual(len(response.context["workout_logs"]), 1)
 
         # Check correct serialization if WorkoutLogSerializer is used in the view
-        self.assertEqual(response.context["workout_logs"][0]["total_time"], 60)
+        self.assertEqual(response.context["workout_logs"][0]["total_time"], "01:00:00")
 
         # Assert weight logs are correctly passed in the context
         self.assertIn("weight_log", response.context)
@@ -158,7 +163,9 @@ class DailyLogViewTests(TestCase):
 class DeleteWeightLogAPITests(TestCase):
     def setUp(self):
         # Create two users
-        self.user1 = User.objects.create_user(username="user1", password="12345")
+        self.user1 = User.objects.create_user(
+            username="user1", password="12345", email="test@gmail.com"
+        )
         self.user2 = User.objects.create_user(
             username="user2", password="12345", email="fake@gmail.com"
         )
@@ -174,7 +181,7 @@ class DeleteWeightLogAPITests(TestCase):
     def test_delete_weight_log_unauthorized(self):
         # User2 tries to delete User1's weight log
         self.client.login(username="user2", password="12345")
-        url = reverse("delete_weight_log", args=[self.weight_log1.pk])
+        url = reverse("weight_log", args=[self.weight_log1.pk])
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(WeightLog.objects.count(), 2)  # Ensure the log was not deleted
@@ -182,7 +189,7 @@ class DeleteWeightLogAPITests(TestCase):
     def test_delete_weight_log_authorized(self):
         # User1 deletes their own weight log
         self.client.login(username="user1", password="12345")
-        url = reverse("delete_weight_log", args=[self.weight_log1.pk])
+        url = reverse("weight_log", args=[self.weight_log1.pk])
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(WeightLog.objects.count(), 1)  # One log should be deleted
@@ -191,7 +198,7 @@ class DeleteWeightLogAPITests(TestCase):
     def test_delete_weight_log_not_found(self):
         # Test deleting a non-existing log
         self.client.login(username="user1", password="12345")
-        url = reverse("delete_weight_log", args=[999])  # Non-existing ID
+        url = reverse("weight_log", args=[999])  # Non-existing ID
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(WeightLog.objects.count(), 2)  # No logs should be deleted
@@ -202,7 +209,7 @@ class TestCreateCardioLogAPIView(TestCase):
         self.user = User.objects.create_user(username="testuser")
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
-        self.url = reverse("create_cardio_log")
+        self.url = reverse("cardio_log")
 
     def test_create_cardio_log(self):
         data = {
@@ -219,16 +226,18 @@ class TestCreateCardioLogAPIView(TestCase):
 class UpdateWorkoutLogTemplateViewTests(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create_user(username="user", password="testpass")
+        self.user = User.objects.create_user(
+            username="user", email="user@user.com", password="testpass"
+        )
         self.other_user = User.objects.create_user(
-            username="otheruser", password="testpass"
+            username="otheruser", password="testpass", email="other@other.com"
         )
         self.workout = Workout.objects.create(name="Morning Routine", user=self.user)
         self.exercise = Exercise.objects.create(name="Push Up", user=self.user)
         self.workout_log = WorkoutLog.objects.create(
             user=self.user, workout=self.workout
         )
-        self.url = reverse("update_workout_log", kwargs={"pk": self.workout_log.pk})
+        self.url = reverse("workout_log_template/", kwargs={"pk": self.workout_log.pk})
 
     def test_login_required(self):
         response = self.client.get(self.url)

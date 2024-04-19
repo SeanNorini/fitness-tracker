@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.utils import timezone
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-from cardio.validators import (
+from log.validators import (
     validate_not_future_date,
     validate_not_more_than_5_years_ago,
     validate_duration_min,
