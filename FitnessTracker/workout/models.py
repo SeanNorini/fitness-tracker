@@ -154,7 +154,7 @@ class Workout(models.Model):
     def configure_workout(self) -> dict:
         workout_config = {"exercises": []}
 
-        for exercise in self.config:
+        for exercise in self.config["exercises"]:
             weights, reps = self.configure_exercise(
                 exercise["five_rep_max"], exercise["sets"]
             )
@@ -182,6 +182,16 @@ class Workout(models.Model):
             weights.append(weight)
             reps.append(exercise_set["reps"])
         return weights, reps
+
+
+class WorkoutSettings(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    auto_update_five_rep_max = models.BooleanField(default=False)
+    show_rest_timer = models.BooleanField(default=False)
+    show_workout_timer = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name_plural = "Workout Settings"
 
 
 class Routine(models.Model):
@@ -278,6 +288,8 @@ class RoutineSettings(models.Model):
             direction (str): 'next' for the next workout or 'prev' for the previous workout.
         """
         workouts_count = Workout.objects.filter(dayworkout__day=self._get_day()).count()
+        if workouts_count == 0:
+            return
 
         if direction == "next":
             self.workout_index = (self.workout_index + 1) % workouts_count
@@ -327,13 +339,3 @@ class RoutineSettings(models.Model):
         """Move to the previous workout and retrieve it."""
         self._update_workout_day_week("prev")
         return self.get_workout()
-
-
-class WorkoutSettings(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    auto_update_five_rep_max = models.BooleanField(default=False)
-    show_rest_timer = models.BooleanField(default=False)
-    show_workout_timer = models.BooleanField(default=False)
-
-    class Meta:
-        verbose_name_plural = "Workout Settings"
