@@ -13,7 +13,6 @@ urlpatterns = [
         views.FetchItemDetailsAPIView.as_view(),
         name="get_item_details",
     ),
-    path("save_food_log/", views.SaveFoodLogAPIView.as_view(), name="save_food_log"),
     path(
         "get_nutrition_summary/<str:period>/",
         views.FetchNutritionSummaryAPIView.as_view(),

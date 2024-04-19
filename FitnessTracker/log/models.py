@@ -126,7 +126,6 @@ class WeightLog(models.Model):
         )
 
     class Meta:
-        # Ensure only one weight entry per user per date
         unique_together = ("user", "date")
 
     @classmethod
@@ -150,7 +149,7 @@ class FoodItem(models.Model):
         FoodLog, on_delete=models.CASCADE, related_name="food_items"
     )
     name = models.CharField(max_length=200)
-    calories = models.IntegerField()
+    calories = models.PositiveIntegerField()
     protein = models.DecimalField(max_digits=5, decimal_places=2)
     carbs = models.DecimalField(max_digits=5, decimal_places=2)
     fat = models.DecimalField(max_digits=5, decimal_places=2)

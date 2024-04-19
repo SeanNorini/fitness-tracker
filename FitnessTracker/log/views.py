@@ -9,8 +9,13 @@ from common.permissions import IsOwner
 from .utils import Calendar
 from workout.models import Workout, Exercise, get_attribute_list
 from users.models import UserSettings
-from .serializers import CardioLogSerializer, WorkoutLogSerializer, WeightLogSerializer
-from .models import WorkoutLog, CardioLog, WeightLog
+from .serializers import (
+    CardioLogSerializer,
+    WorkoutLogSerializer,
+    WeightLogSerializer,
+    FoodLogSerializer,
+)
+from .models import WorkoutLog, CardioLog, WeightLog, FoodLog
 
 
 # Create your views here.
@@ -139,6 +144,18 @@ class CardioLogViewSet(viewsets.ModelViewSet):
     queryset = CardioLog.objects.all()
     permission_classes = [IsAuthenticated, IsOwner]
     serializer_class = CardioLogSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
+
+
+class FoodLogViewSet(viewsets.ModelViewSet):
+    queryset = FoodLog.objects.all()
+    serializer_class = FoodLogSerializer
+    permission_classes = [IsAuthenticated, IsOwner]
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)

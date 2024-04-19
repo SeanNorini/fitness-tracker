@@ -1,11 +1,18 @@
+from unittest import mock
+
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.test import TestCase
 from rest_framework.test import APIClient
 from datetime import timedelta
 
-from log.models import WeightLog
-from log.serializers import WeightLogSerializer, CardioLogSerializer
+from log.models import WeightLog, FoodLog, FoodItem
+from log.serializers import (
+    WeightLogSerializer,
+    CardioLogSerializer,
+    FoodItemSerializer,
+    FoodLogSerializer,
+)
 from users.models import User
 from common.test_globals import *
 from rest_framework.test import APITestCase
@@ -152,3 +159,95 @@ class TestWeightLogSerializer(APITestCase):
         self.assertEqual(data["body_weight"], self.weight_log.body_weight)
         self.assertEqual(data["body_fat"], self.weight_log.body_fat)
         self.assertEqual(data["date"], str(self.weight_log.date))
+
+
+class TestFoodItemSerializer(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="testuser", password="testpassword")
+        self.food_log = FoodLog.objects.create(
+            user=self.user, date=timezone.localdate()
+        )
+        self.food_data = {
+            "name": "Apple",
+            "log_entry": self.food_log,
+            "calories": "95",
+            "protein": "0.5",
+            "carbs": "25",
+            "fat": "0.3",
+        }
+
+    def test_food_item_valid_data(self):
+        serializer = FoodItemSerializer(data=self.food_data)
+        self.assertTrue(serializer.is_valid())
+        food_item = serializer.save()
+        self.assertEqual(food_item.name, "Apple")
+        self.assertEqual(food_item.calories, 95)
+        self.assertEqual(food_item.protein, 0.5)
+        self.assertEqual(food_item.carbs, 25)
+        self.assertEqual(food_item.fat, 0.3)
+
+    def test_food_item_invalid_data(self):
+        invalid_data = self.food_data.copy()
+        invalid_data["calories"] = "abc"  # Invalid calorie input
+        serializer = FoodItemSerializer(data=invalid_data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("calories", serializer.errors)
+
+
+class TestFoodLogSerializer(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="testuser", password="testpassword")
+        self.food_log_data = {
+            "date": timezone.localdate(),
+            "food_items": [
+                {
+                    "name": "Apple",
+                    "calories": 95,
+                    "protein": 0.5,
+                    "carbs": 25,
+                    "fat": 0.3,
+                },
+                {
+                    "name": "Banana",
+                    "calories": 105,
+                    "protein": 1.3,
+                    "carbs": 27,
+                    "fat": 0.4,
+                },
+            ],
+        }
+
+    def test_create_food_log_with_items(self):
+        serializer = FoodLogSerializer(data=self.food_log_data)
+        serializer.context["request"] = mock.MagicMock(user=self.user)
+        self.assertTrue(serializer.is_valid())
+        food_log = serializer.save(user=self.user)
+        self.assertEqual(food_log.food_items.count(), 2)
+        self.assertEqual(food_log.user, self.user)
+
+    def test_update_food_log(self):
+        food_log = FoodLog.objects.create(user=self.user, date=timezone.localdate())
+        FoodItem.objects.create(
+            log_entry=food_log,
+            name="Old Food",
+            calories=200,
+            protein=10,
+            carbs=20,
+            fat=5,
+        )
+        self.assertEqual(food_log.food_items.count(), 1)
+
+        serializer = FoodLogSerializer(instance=food_log, data=self.food_log_data)
+        serializer.is_valid()
+        self.assertTrue(serializer.is_valid())
+        updated_log = serializer.save()
+        self.assertEqual(
+            updated_log.food_items.count(), 2
+        )  # Old item should be removed
+
+    def test_unique_together_constraint(self):
+        FoodLog.objects.create(user=self.user, date=timezone.localdate())
+        serializer = FoodLogSerializer(data=self.food_log_data)
+        serializer.is_valid()
+        serializer.save()
+        self.assertEqual(len(FoodLog.objects.all()), 1)

@@ -1,12 +1,13 @@
 from . import views
 from django.urls import re_path, path, include
 from rest_framework.routers import DefaultRouter
-from .views import WorkoutLogViewSet, WeightLogViewSet, CardioLogViewSet
+from .views import WorkoutLogViewSet, WeightLogViewSet, CardioLogViewSet, FoodLogViewSet
 
 router = DefaultRouter()
 router.register(r"workout_log", WorkoutLogViewSet)
 router.register(r"weight_log", WeightLogViewSet)
 router.register(r"cardio_log", CardioLogViewSet)
+router.register(r"food_log", FoodLogViewSet)
 
 urlpatterns = [
     re_path(

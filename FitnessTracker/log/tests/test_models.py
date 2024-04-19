@@ -1,8 +1,10 @@
 from django.test import TestCase
 from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from datetime import timedelta
 from unittest.mock import patch
-from log.models import WorkoutLog, WorkoutSet, CardioLog, WeightLog
+from log.models import WorkoutLog, WorkoutSet, CardioLog, WeightLog, FoodLog, FoodItem
 from workout.models import Exercise, Workout, WorkoutSettings
 from users.models import User, UserSettings
 
@@ -97,3 +99,57 @@ class WeightLogTestCase(TestCase):
         self.user.refresh_from_db()
         self.assertEqual(self.user.body_weight, 150)
         self.assertEqual(self.user.body_fat, 20)
+
+
+class FoodLogModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(username="testuser", password="testpass")
+        cls.food_log = FoodLog.objects.create(user=cls.user, date=timezone.localdate())
+
+    def test_string_representation(self):
+        self.assertEqual(
+            str(self.food_log), f"{self.user.username} - {self.food_log.date}"
+        )
+
+    def test_duplicate_food_log(self):
+        with self.assertRaises(IntegrityError):
+            FoodLog.objects.create(user=self.user, date=self.food_log.date)
+
+    def test_food_log_relationship(self):
+        self.assertEqual(self.user.food_logs.first(), self.food_log)
+
+
+class FoodItemModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(username="testuser", password="testpass")
+        cls.food_log = FoodLog.objects.create(user=cls.user, date=timezone.localdate())
+        cls.food_item = FoodItem.objects.create(
+            log_entry=cls.food_log,
+            name="Banana",
+            calories=100,
+            protein=1.1,
+            carbs=27.5,
+            fat=0.3,
+        )
+
+    def test_string_representation(self):
+        self.assertEqual(str(self.food_item), "Banana")
+
+    def test_food_item_link_to_log(self):
+        self.assertEqual(self.food_item.log_entry, self.food_log)
+
+    def test_decimal_field_limits(self):
+        self.food_item.protein = 999.99
+        self.food_item.save()
+        self.assertEqual(self.food_item.protein, 999.99)
+
+        with self.assertRaises(ValidationError):
+            self.food_item.carbs = 1000
+            self.food_item.full_clean()
+
+    def test_negative_calories(self):
+        with self.assertRaises(ValidationError):
+            self.food_item.calories = -10
+            self.food_item.full_clean()

@@ -5,7 +5,7 @@ from django.db import transaction
 from rest_framework import serializers
 from datetime import timedelta, datetime, date
 from workout.models import Exercise, Workout
-from .models import CardioLog, WeightLog, WorkoutLog, WorkoutSet
+from .models import CardioLog, WeightLog, WorkoutLog, WorkoutSet, FoodItem, FoodLog
 from .validators import (
     validate_not_future_date,
     validate_not_more_than_5_years_ago,
@@ -150,3 +150,62 @@ class WeightLogSerializer(serializers.ModelSerializer):
             data["date"] = datetime.strptime(data_date, "%B %d, %Y").date()
 
         return data
+
+
+class FoodItemSerializer(serializers.ModelSerializer):
+
+    def to_internal_value(self, data):
+        nutrients = ["calories", "protein", "carbs", "fat"]
+        for nutrient in nutrients:
+            try:
+                if nutrient == "calories":
+                    data[nutrient] = int(float(data.get(nutrient, 0)))
+                else:
+                    data[nutrient] = float(data.get(nutrient, 0))
+            except ValueError:
+                raise serializers.ValidationError(
+                    {nutrient: f"Invalid input for {nutrient}, must be a number."}
+                )
+
+        data.pop("serving", None)
+        return data
+
+    class Meta:
+        model = FoodItem
+        fields = ["name", "calories", "protein", "carbs", "fat"]
+
+
+class FoodLogSerializer(serializers.ModelSerializer):
+    food_items = FoodItemSerializer(many=True)
+
+    class Meta:
+        model = FoodLog
+        fields = ["date", "food_items"]
+
+    def create(self, validated_data):
+        food_items_data = validated_data.pop("food_items")
+        food_log, created = FoodLog.objects.get_or_create(**validated_data)
+
+        if not created:
+            food_log.food_items.all().delete()
+
+        for food_item_data in food_items_data:
+            FoodItem.objects.create(log_entry=food_log, **food_item_data)
+
+        return food_log
+
+    def update(self, instance, validated_data):
+        food_items_data = validated_data.pop("food_items")
+
+        # Update the FoodLog instance
+        instance.date = validated_data.get("date", instance.date)
+        instance.save()
+
+        # Remove all previous food items
+        instance.food_items.all().delete()
+
+        # Create new food item entries
+        for food_item_data in food_items_data:
+            FoodItem.objects.create(log_entry=instance, **food_item_data)
+
+        return instance

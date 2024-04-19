@@ -9,7 +9,7 @@ from log.views import LogView
 from users.models import User, UserSettings
 from workout.models import Workout, Exercise
 from rest_framework import status
-from log.models import WeightLog, CardioLog, WorkoutLog
+from log.models import WeightLog, CardioLog, WorkoutLog, FoodLog
 
 
 class TestLogView(TestCase):
@@ -174,7 +174,7 @@ class TestWeightLogViewSet(TestCase):
             "body_fat": 14,
             "date": f"January {day}, {year}",
         }
-        response = self.client.post(reverse("weightlog-list"), post_data)
+        response = self.client.post(reverse("weightlog-list"), post_data, format="json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(WeightLog.objects.count(), 2)
         self.assertEqual(WeightLog.objects.last().body_weight, 160)
@@ -379,3 +379,86 @@ class TestCardioLogViewSet(APITestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(CardioLog.objects.count(), 0)
+
+
+class FoodLogViewSetTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(
+            username="testuser", password="testpass", email="test@test.com"
+        )
+        cls.other_user = User.objects.create_user(
+            username="otheruser", password="testpass", email="other@test.com"
+        )
+
+    def setUp(self):
+        self.client.force_authenticate(user=self.user)
+        self.food_log = FoodLog.objects.create(user=self.user, date=date.today())
+        self.url_list = reverse("foodlog-list")
+        self.url_detail = reverse("foodlog-detail", kwargs={"pk": self.food_log.pk})
+        self.food_data = {
+            "date": date.today(),
+            "food_items": [
+                {
+                    "name": "Apple",
+                    "calories": 95,
+                    "protein": 0.5,
+                    "carbs": 25,
+                    "fat": 0.3,
+                },
+                {
+                    "name": "Banana",
+                    "calories": 105,
+                    "protein": 1.3,
+                    "carbs": 27,
+                    "fat": 0.4,
+                },
+            ],
+        }
+
+    def test_authentication_required(self):
+        self.client.logout()
+        response = self.client.get(self.url_list)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_access_own_logs(self):
+        response = self.client.get(self.url_list)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+
+    def test_user_cannot_access_other_user_logs(self):
+        self.client.force_authenticate(user=self.other_user)
+        response = self.client.get(self.url_detail)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_create_food_log(self):
+        response = self.client.post(self.url_list, self.food_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(
+            FoodLog.objects.filter(user=self.user).last().food_items.count(), 2
+        )
+
+    def test_update_food_log(self):
+        update_data = self.food_data
+        update_data["food_items"].append(
+            {
+                "name": "Orange",
+                "calories": 62,
+                "protein": 1.2,
+                "carbs": 15.4,
+                "fat": 0.2,
+            }
+        )
+        response = self.client.put(self.url_detail, update_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(FoodLog.objects.get(pk=self.food_log.pk).food_items.count(), 3)
+
+    def test_delete_food_log(self):
+        response = self.client.delete(self.url_detail)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(FoodLog.objects.filter(pk=self.food_log.pk).exists())
+
+    def test_unique_date_per_user(self):
+        response = self.client.post(self.url_list, self.food_data, format="json")
+        logs = FoodLog.objects.filter(user=self.user, date=date.today())
+        self.assertEqual(len(logs), 1)

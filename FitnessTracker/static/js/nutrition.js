@@ -53,7 +53,7 @@ class NutritionManager {
     const saveLogBtn = document.getElementById("save-log");
     saveLogBtn.addEventListener("click", (e) => {
       const containers = document.querySelector(".nutrition-info").children;
-      const foods = { food_item: [] };
+      const formData = { food_items: [] };
       for (let i = 7; i < containers.length - 7; i += 7) {
         const foodItem = {};
         foodItem["name"] = containers[i].textContent;
@@ -62,24 +62,23 @@ class NutritionManager {
         foodItem["protein"] = containers[i + 3].textContent;
         foodItem["carbs"] = containers[i + 4].textContent;
         foodItem["fat"] = containers[i + 5].textContent;
-        foods.food_item.push(foodItem);
+        formData.food_items.push(foodItem);
       }
-      const formData = new FormData();
-      const date = document.getElementById("date").value;
-      formData.append("foods", JSON.stringify(foods));
-      formData.append("date", date);
+      formData["date"]= document.getElementById("date").value;
 
-      pageManager
-        .fetchData({
-          url: `${this.baseURL}/save_food_log/`,
+
+      FetchUtils
+        .apiFetch({
+          url: `${pageManager.baseURL}/log/food_log/`,
           method: "POST",
-          responseType: "json",
           body: formData,
-        })
-        .then((response) => {
-          pageManager.showTempPopupMessage("Food Log Saved.", 2000);
+          successHandler: (response) => {
+            pageManager.showTempPopupMessage("Food Log Saved.", 2000);
           this.getNutritionSummary();
+          document.getElementById("food-log-pk").value = response.pk;
+          }
         });
+
     });
   }
 
