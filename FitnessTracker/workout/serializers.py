@@ -62,7 +62,6 @@ class RoutineSerializer(serializers.ModelSerializer):
         weeks_data = validated_data.pop("weeks")
         user = self.context["request"].user
         name = validated_data.get("name")
-
         routine, _ = Routine.objects.get_or_create(
             name=name, user=user, defaults=validated_data
         )
@@ -112,16 +111,21 @@ class RoutineSettingsSerializer(serializers.ModelSerializer):
 class ExerciseSerializer(serializers.ModelSerializer):
 
     def to_internal_value(self, data):
-        data["id"] = data.pop("exercise-pk")
-        data["name"] = data.pop("exercise-name")
-        data["five_rep_max"] = data.pop("five-rep-max")
-        data["default_weight"] = data.pop("default-weight")
-        data["default_reps"] = data.pop("default-reps")
+        if "exercise-pk" in data:
+            data["id"] = data.pop("exercise-pk")
+        if "exercise-name" in data:
+            data["name"] = data.pop("exercise-name")
+        if "five-rep-max" in data:
+            data["five_rep_max"] = data.pop("five-rep-max")
+        if "default-weight" in data:
+            data["default_weight"] = data.pop("default-weight")
+        if "default-reps" in data:
+            data["default_reps"] = data.pop("default-reps")
         return data
 
     class Meta:
         model = Exercise
-        fields = "__all__"
+        exclude = ("user",)
 
 
 class WorkoutSerializer(serializers.ModelSerializer):

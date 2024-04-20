@@ -1,4 +1,4 @@
-from django.views.generic import TemplateView, FormView, UpdateView, DeleteView
+from django.views.generic import TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Max
 from django.shortcuts import render
@@ -16,20 +16,17 @@ import matplotlib
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MaxNLocator
 from io import BytesIO
-import json
 from common.permissions import IsOwner
 from log.models import WorkoutSet, WeightLog
+from .models import Workout, Exercise, WorkoutSettings, Routine, RoutineSettings
+from users.models import User
 from .serializers import (
     RoutineSerializer,
     RoutineSettingsSerializer,
     ExerciseSerializer,
     WorkoutSerializer,
 )
-from .forms import (
-    ExerciseForm,
-)
-from .forms import WorkoutSettingsForm
-from .utils import *
+from .forms import WorkoutSettingsForm, ExerciseForm
 from .mixins import ExerciseMixin, WorkoutMixin
 
 matplotlib.use("Agg")
@@ -119,22 +116,7 @@ class StatsView(ExerciseMixin, TemplateView):
         return super().get(self, request, *args, **kwargs)
 
 
-class SelectWorkoutView(LoginRequiredMixin, TemplateView):
-    template_name = "workout/workout.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-        try:
-            workout = Workout.get_workout(
-                self.request.user, self.kwargs["workout_name"]
-            )
-        except Workout.DoesNotExist:
-            return context
-        context["workout"] = workout.configure_workout()
-        context["workout"]["workout_name"] = self.kwargs["workout_name"]
-        context["workout"]["pk"] = workout.pk
-
-        return context
 
 
 class WorkoutView(WorkoutMixin, TemplateView):
@@ -166,6 +148,22 @@ class WorkoutView(WorkoutMixin, TemplateView):
         else:
             return render(request, "base/index.html", self.get_context_data(**kwargs))
 
+class SelectWorkoutView(LoginRequiredMixin, TemplateView):
+    template_name = "workout/workout.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        try:
+            workout = Workout.get_workout(
+                self.request.user, self.kwargs["workout_name"]
+            )
+        except Workout.DoesNotExist:
+            return context
+        context["workout"] = workout.configure_workout()
+        context["workout"]["workout_name"] = self.kwargs["workout_name"]
+        context["workout"]["pk"] = workout.pk
+
+        return context
 
 class AddExerciseView(LoginRequiredMixin, TemplateView):
 
