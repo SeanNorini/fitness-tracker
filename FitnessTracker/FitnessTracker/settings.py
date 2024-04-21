@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-_i8_dv56($2d(+zg#kg+=9ok2q8t7tpp)^6^rwxb)rg4*au@25"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -158,5 +158,3 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 4
-
-SELENIUM_LOGIN_START_PAGE = "/workout"

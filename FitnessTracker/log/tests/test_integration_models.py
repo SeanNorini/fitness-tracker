@@ -194,15 +194,19 @@ class TestWeightLog(TestCase):
 
     def test_weight_log_creation_and_update(self):
         """Test creation and automatic update upon save"""
+        self.assertEqual(self.user_settings.body_weight, 160.0)
+
         self.assertEqual(WeightLog.objects.count(), 1)
         weight_log = WeightLog.objects.first()
         self.assertEqual(weight_log.body_weight, 175.0)
+        self.user_settings = UserSettings.get_user_settings(self.user.id)
+        self.assertEqual(self.user_settings.body_weight, 175.0)
 
         # Check updating and triggering user settings update
         weight_log.body_weight = 180.0
         weight_log.save()
-        self.user.refresh_from_db()
-        self.assertEqual(self.user.body_weight, 180.0)
+        self.user_settings = UserSettings.get_user_settings(self.user.id)
+        self.assertEqual(self.user_settings.body_weight, 180.0)
 
     def test_unique_constraint(self):
         """Test the unique constraint (one entry per user per date)"""

@@ -1,14 +1,13 @@
 from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from common.common_utils import Graph
+from common.mixins import DefaultMixin
 from .services import get_cardio_log_summaries
 
 
-class CardioTemplateView(LoginRequiredMixin, TemplateView):
+class CardioTemplateView(DefaultMixin, TemplateView):
     template_name = "cardio/cardio.html"
 
     def get_context_data(self, **kwargs):

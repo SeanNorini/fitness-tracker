@@ -27,6 +27,8 @@ from users.services import account_token_generator
 
 
 class SeleniumTestCase(StaticLiveServerTestCase):
+    driver = None
+
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -62,7 +64,7 @@ class TestLogin(SeleniumTestCase):
         self.assertEqual(self.driver.current_url, self.live_server_url + "/workout")
 
     def test_login_unsuccessful(self) -> None:
-        # Verify user can't login with incorrect credentials
+        # Verify user can't log in with incorrect credentials
         credentials = [
             {"username": USERNAME_VALID, "password": PASSWORD_INVALID},
             {"username": USERNAME_INVALID, "password": PASSWORD_INVALID},
@@ -147,7 +149,7 @@ class TestRegistration(SeleniumTestCase):
             )
 
     def test_registration_unsuccessful(self):
-        user = RegistrationForm(REGISTRATION_FORM_FIELDS).save()
+        RegistrationForm(REGISTRATION_FORM_FIELDS).save()
         self.assertTrue(User.objects.get(username=REGISTRATION_FORM_FIELDS["username"]))
 
         with patch(
@@ -352,6 +354,7 @@ class TestSettings(SeleniumTestCase):
         self.assertEqual(body_fat, "25.0")
 
     def test_delete_account(self):
+        time.sleep(1)
         click(self.driver, "id", "delete-account")
         confirmation = self.driver.switch_to.alert
         confirmation.send_keys("delete")

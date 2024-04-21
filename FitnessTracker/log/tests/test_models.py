@@ -89,16 +89,16 @@ class CardioLogTestCase(TestCase):
 class WeightLogTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create(username="weightuser")
-        UserSettings.objects.create(user=self.user, body_weight=70)
+        self.user_settings = UserSettings.objects.create(user=self.user, body_weight=70)
 
     def test_save_weight_log(self):
         weight_log = WeightLog.objects.create(
             user=self.user, body_weight=150, body_fat=20, date=timezone.now().date()
         )
         weight_log.save()
-        self.user.refresh_from_db()
-        self.assertEqual(self.user.body_weight, 150)
-        self.assertEqual(self.user.body_fat, 20)
+        self.user_settings = UserSettings.get_user_settings(self.user.id)
+        self.assertEqual(self.user_settings.body_weight, 150)
+        self.assertEqual(self.user_settings.body_fat, 20)
 
 
 class FoodLogModelTest(TestCase):

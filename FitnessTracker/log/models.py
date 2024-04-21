@@ -118,12 +118,13 @@ class WeightLog(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        most_recent_log = (
-            WeightLog.objects.filter(user=self.user).order_by("-date").first()
-        )
-        UserSettings.update(
-            self.user, most_recent_log.body_weight, most_recent_log.body_fat
-        )
+        if self.date == timezone.now().date():
+            weight_log = self
+        else:
+            weight_log = (
+                WeightLog.objects.filter(user=self.user).order_by("-date").first()
+            )
+        UserSettings.update(self.user, weight_log.body_weight, weight_log.body_fat)
 
     class Meta:
         unique_together = ("user", "date")

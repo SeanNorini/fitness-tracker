@@ -4,6 +4,7 @@ from django.utils import timezone
 from datetime import timedelta
 from log.models import CardioLog
 from common.common_utils import Graph
+from users.models import UserSettings
 from .utils import (
     format_duration,
     get_calories_burned,
@@ -12,6 +13,9 @@ from .utils import (
 
 
 def get_cardio_log_averages(log, user):
+    user_settings = UserSettings.get_user_settings(user.id)
+    distance_unit = user_settings.distance_unit
+    body_weight = user_settings.body_weight
     distance = log["total_distance"]
     duration = log["total_duration"]
     count = log["count"]
@@ -23,8 +27,7 @@ def get_cardio_log_averages(log, user):
                 "average_distance": round(distance / count, 2),
                 "average_duration": format_duration(duration / count),
                 "calories_burned": int(
-                    get_calories_burned(user.distance_unit, distance, user.body_weight)
-                    / count
+                    get_calories_burned(distance_unit, distance, body_weight) / count
                 ),
             }
         )

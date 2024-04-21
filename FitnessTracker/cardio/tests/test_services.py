@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.test import TestCase
 from unittest.mock import patch, MagicMock, PropertyMock, call
 from users.models import User
+from common.test_globals import CREATE_USER
 
 
 class TestUpdateLogDictAndGraphData(TestCase):
@@ -75,9 +76,12 @@ class TestUpdateLogDictAndGraphData(TestCase):
 
 
 class TestGetCardioLogAverages(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(**CREATE_USER)
+
     def test_count_and_distance_is_zero(self):
         log = {"total_distance": 0, "total_duration": 0, "count": 0}
-        log = get_cardio_log_averages(log, None)
+        log = get_cardio_log_averages(log, self.user)
         self.assertDictEqual(
             {
                 "total_distance": 0,
@@ -95,7 +99,7 @@ class TestGetCardioLogAverages(TestCase):
         log = {"total_distance": 1, "total_duration": 1, "count": 0}
         with patch("cardio.services.format_duration") as mock_format_duration:
             mock_format_duration.return_value = True
-            log = get_cardio_log_averages(log, None)
+            log = get_cardio_log_averages(log, self.user)
             self.assertEqual(log["pace"], True)
             mock_format_duration.assert_called_once_with(1)
 
@@ -104,15 +108,10 @@ class TestGetCardioLogAverages(TestCase):
     def test_log_update_with_count_greater_than_zero(
         self, mock_get_calories_burned, mock_format_duration
     ):
-        # Create a mock user
-        mock_user = MagicMock()
-        type(mock_user).distance_unit = PropertyMock(return_value="mi")
-        type(mock_user).body_weight = PropertyMock(return_value=150)
         mock_get_calories_burned.return_value = 1000
 
-        # Expected data to pass
         log = {"total_distance": 100, "total_duration": 10000, "count": 5}
-        updated_log = get_cardio_log_averages(log, mock_user)
+        updated_log = get_cardio_log_averages(log, self.user)
 
         # Assertions to check the updated log
         self.assertEqual(updated_log["average_distance"], 20)
@@ -123,7 +122,7 @@ class TestGetCardioLogAverages(TestCase):
         ]
         mock_format_duration.assert_has_calls(expected_calls, any_order=False)
         self.assertEqual(mock_format_duration.call_count, 2)
-        mock_get_calories_burned.assert_called_once_with("mi", 100, 150)
+        mock_get_calories_burned.assert_called_once_with("mi", 100, 160)
 
 
 class TestGetCardioLogsGroupByDay(TestCase):

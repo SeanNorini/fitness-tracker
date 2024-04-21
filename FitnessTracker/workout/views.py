@@ -75,6 +75,7 @@ class WorkoutView(WorkoutMixin):
                 self.get_context_data(**kwargs),
             )
         else:
+
             return render(request, "base/index.html", self.get_context_data(**kwargs))
 
 

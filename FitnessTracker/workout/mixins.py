@@ -1,15 +1,5 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView
-
-from users.models import UserSettings
 from workout.models import Exercise, Workout, RoutineSettings
-
-
-class DefaultMixin(LoginRequiredMixin, TemplateView):
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-        context["user_settings"] = UserSettings.get_user_settings(self.request.user.id)
-        return context
+from common.mixins import DefaultMixin
 
 
 class ExerciseMixin(DefaultMixin):

@@ -6,9 +6,10 @@ from rest_framework import viewsets
 from calendar import month_name
 from datetime import datetime
 from common.permissions import IsOwner
+from common.mixins import DefaultMixin
+from common.base import BaseOwnerViewSet
 from .utils import Calendar
 from workout.models import Workout, Exercise, get_attribute_list
-from users.models import UserSettings
 from .serializers import (
     CardioLogSerializer,
     WorkoutLogSerializer,
@@ -19,7 +20,7 @@ from .models import WorkoutLog, CardioLog, WeightLog, FoodLog
 
 
 # Create your views here.
-class LogTemplateView(LoginRequiredMixin, TemplateView):
+class LogTemplateView(DefaultMixin, TemplateView):
     def get_date(self):
         try:
             year = int(self.kwargs.get("year", ""))
@@ -49,7 +50,7 @@ class LogTemplateView(LoginRequiredMixin, TemplateView):
         return render(request, "base/index.html", context)
 
 
-class DailyLogView(TemplateView):
+class DailyLogView(DefaultMixin, TemplateView):
     template_name = "log/daily_log.html"
 
     def get_context_data(self, **kwargs):
@@ -78,32 +79,16 @@ class DailyLogView(TemplateView):
         return context
 
 
-class WeightLogTemplateView(TemplateView):
+class WeightLogTemplateView(DefaultMixin, TemplateView):
     template_name = "log/save_weight_log.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user_settings = (
-            UserSettings.objects.filter(user=self.request.user).order_by("-pk").first()
-        )
-        context["user_settings"] = user_settings
 
-        return context
-
-
-class WeightLogViewSet(viewsets.ModelViewSet):
+class WeightLogViewSet(BaseOwnerViewSet):
     queryset = WeightLog.objects.all()
     serializer_class = WeightLogSerializer
-    permission_classes = [IsAuthenticated, IsOwner]
-
-    def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
-
-    def perform_create(self, serializer):
-        return serializer.save(user=self.request.user)
 
 
-class WorkoutLogTemplateView(TemplateView):
+class WorkoutLogTemplateView(LoginRequiredMixin, TemplateView):
     template_name = "log/workout_log.html"
 
     def get_context_data(self, **kwargs):
@@ -128,34 +113,16 @@ class UpdateWorkoutLogTemplateView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class WorkoutLogViewSet(viewsets.ModelViewSet):
+class WorkoutLogViewSet(BaseOwnerViewSet):
     queryset = WorkoutLog.objects.all()
     serializer_class = WorkoutLogSerializer
-    permission_classes = [IsAuthenticated, IsOwner]
-
-    def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
 
 
-class CardioLogViewSet(viewsets.ModelViewSet):
+class CardioLogViewSet(BaseOwnerViewSet):
     queryset = CardioLog.objects.all()
-    permission_classes = [IsAuthenticated, IsOwner]
     serializer_class = CardioLogSerializer
 
-    def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
 
-    def perform_create(self, serializer):
-        return serializer.save(user=self.request.user)
-
-
-class FoodLogViewSet(viewsets.ModelViewSet):
+class FoodLogViewSet(BaseOwnerViewSet):
     queryset = FoodLog.objects.all()
     serializer_class = FoodLogSerializer
-    permission_classes = [IsAuthenticated, IsOwner]
-
-    def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
-
-    def perform_create(self, serializer):
-        return serializer.save(user=self.request.user)

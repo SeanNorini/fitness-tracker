@@ -1,12 +1,11 @@
 import json
 from log.models import FoodLog
 from datetime import timedelta
-from matplotlib import pyplot as plt
 import requests
 from django.utils import timezone
 from dotenv import load_dotenv
 import os
-from common.common_utils import Graph
+
 
 load_dotenv()
 

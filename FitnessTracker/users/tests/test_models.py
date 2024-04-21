@@ -66,37 +66,6 @@ class TestUserModel(TestCase):
         }
         assert input_validation(self, self.user, "last_name", field_inputs)
 
-    def test_distance_unit(self):
-        user_settings = UserSettings.objects.create(
-            user=self.user, system_of_measurement="Imperial"
-        )
-
-        distance_unit = self.user.distance_unit
-        self.assertEqual(distance_unit, "mi")
-
-        user_settings.system_of_measurement = "Metric"
-        user_settings.save()
-        distance_unit = self.user.distance_unit
-        self.assertEqual(distance_unit, "km")
-
-    def test_weight_unit(self):
-        user_settings = UserSettings.objects.create(
-            user=self.user, system_of_measurement="Imperial"
-        )
-
-        weight_unit = self.user.weight_unit
-        self.assertEqual(weight_unit, "Lbs")
-
-        user_settings.system_of_measurement = "Metric"
-        user_settings.save()
-        weight_unit = self.user.weight_unit
-        self.assertEqual(weight_unit, "Kg")
-
-    def test_get_body_weight(self):
-        user_settings = UserSettings.objects.create(user=self.user, body_weight=100)
-        body_weight = self.user.body_weight
-        self.assertEqual(body_weight, 100)
-
 
 class TestUserSettingsModel(TestCase):
     def setUp(self):

@@ -18,7 +18,7 @@
 {% block content %}
   {% csrf_token %}
   <div class="row gap-md">
-    {% for module in user.modules %}
+    {% for module in user_settings.modules %}
       {% include "base/module.html" %}
     {% endfor %}
   </div>
@@ -40,8 +40,8 @@
   <script type="text/javascript" src="{% static '/js/index.js' %}"></script>
   <script type="text/javascript" src="{% static '/js/workout_search_bar.js' %}"></script>
   <script type="text/javascript">
-    let distanceUnit = "{{ user.distance_unit }}";
-    let weightUnit = "{{ user.weight_unit }}";
+    let distanceUnit = "{{ user_settings.distance_unit }}";
+    let weightUnit = "{{ user_settings.weight_unit }}";
 </script>
 {% endblock %}
 

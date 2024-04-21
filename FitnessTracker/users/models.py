@@ -23,26 +23,6 @@ class User(AbstractUser):
         default="last",
     )
 
-    @property
-    def distance_unit(self):
-        return UserSettings.get_user_settings(self.id).distance_unit
-
-    @property
-    def weight_unit(self):
-        return UserSettings.get_user_settings(self.id).weight_unit
-
-    @property
-    def body_weight(self):
-        return UserSettings.get_user_settings(self.id).body_weight
-
-    @property
-    def modules(self):
-        return UserSettings.get_user_settings(self.id).modules
-
-    @property
-    def body_fat(self):
-        return UserSettings.get_user_settings(self.id).body_fat
-
     @classmethod
     def get_default_user(cls):
         """
@@ -97,10 +77,25 @@ class UserSettings(models.Model):
 
     @classmethod
     def update(cls, user, body_weight, body_fat):
-        user_settings, _ = cls.objects.get_or_create(user=user)
-        user_settings.body_weight = body_weight
-        user_settings.body_fat = body_fat
-        user_settings.save()
+        """
+        Updates the user's body weight and body fat settings and refreshes the cache.
+
+        Parameters:
+        user (User): The user object whose settings are to be updated.
+        body_weight (float): The new body weight to set.
+        body_fat (float): The new body fat percentage to set.
+
+        Returns:
+        None
+        """
+        user_settings = cls.get_user_settings(user_id=user.id)
+        if (
+            user_settings.body_weight != body_weight
+            or user_settings.body_fat != body_fat
+        ):
+            user_settings.body_weight = body_weight
+            user_settings.body_fat = body_fat
+            user_settings.save()
 
     @property
     def distance_unit(self):

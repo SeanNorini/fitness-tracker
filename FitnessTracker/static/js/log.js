@@ -297,6 +297,7 @@ class LogManager {
   deleteWeightLogSuccessHandler = (response) => {
     this.updateLogIcons("monitor_weight", "delete");
     this.toggleInfoPlaceholder("weight-log", "on");
+    document.getElementById("weight-log-pk").value = "";
     const addWeightLogBtn = document.querySelector(".add-weight-log");
     addWeightLogBtn.textContent = "Add Weight Entry";
   };

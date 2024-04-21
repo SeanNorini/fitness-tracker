@@ -35,7 +35,9 @@ class TestCardio(SeleniumTestCase):
         login(
             self.driver, self.live_server_url + "/user/login/", LOGIN_USER_FORM_FIELDS
         )
+        time.sleep(5)
         self.driver.get(self.live_server_url + "/cardio")
+        time.sleep(5)
 
     def test_summary_selection(self):
         click(self.driver, "id", "month")

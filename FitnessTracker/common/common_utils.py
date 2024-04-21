@@ -1,14 +1,11 @@
 import matplotlib
-import numpy as np
-from matplotlib.ticker import MaxNLocator, MultipleLocator
-import base64
-
-matplotlib.use("Agg")
+import matplotlib.dates as mdates
+from matplotlib.ticker import MaxNLocator
 from matplotlib import pyplot as plt
 from io import BytesIO
 import base64
 import pandas as pd
-import matplotlib.dates as mdates
+matplotlib.use("Agg")
 
 
 class Graph:
