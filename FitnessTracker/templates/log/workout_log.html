@@ -8,7 +8,7 @@
     <div>Total time: {{ workout_log.total_time }}</div>
     {% endif %}
     {% for exercise_name, sets in workout_log.exercises.items %}
-      <div class="col">{{ exercise_name }}</div>
+      <div class="col exercise-name">{{ exercise_name }}</div>
       <hr class="half-width">
       {% for weight, reps in sets.weights|zip_lists:sets.reps %}
         <div>

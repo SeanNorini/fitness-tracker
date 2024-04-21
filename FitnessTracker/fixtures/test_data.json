@@ -1,18 +1,6192 @@
+[
 {
-    "LOGIN_USER_FORM_FIELDS": {
-        "username": "testuser",
-        "password": "testpassword"
-    },
-    "REGISTRATION_FORM_FIELDS": {
-        "username": "new_user",
-        "password": "new_user_password",
-        "confirm_password": "new_user_password",
-        "first_name": "first",
-        "last_name": "last",
-        "email": "snorini@gmail.com",
-        "gender": "M",
-        "weight": "150",
-        "height": "75",
-        "age": "28"
-    }
+  "model": "log.workoutset",
+  "pk": 1,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 37,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 2,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 37,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 3,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 37,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 4,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 37,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 5,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 26,
+    "weight": 0.0,
+    "reps": 7
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 6,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 26,
+    "weight": 0.0,
+    "reps": 7
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 7,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 26,
+    "weight": 0.0,
+    "reps": 7
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 8,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 26,
+    "weight": 0.0,
+    "reps": 7
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 9,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 26,
+    "weight": 0.0,
+    "reps": 7
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 10,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 10,
+    "weight": 0.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 11,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 10,
+    "weight": 0.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 12,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 10,
+    "weight": 0.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 13,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 39,
+    "weight": 0.0,
+    "reps": 10
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 14,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 39,
+    "weight": 0.0,
+    "reps": 10
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 15,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 39,
+    "weight": 0.0,
+    "reps": 10
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 16,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 39,
+    "weight": 0.0,
+    "reps": 10
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 17,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 39,
+    "weight": 0.0,
+    "reps": 10
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 18,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 21,
+    "weight": 0.0,
+    "reps": 5
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 19,
+  "fields": {
+    "workout_log": 1,
+    "exercise": 21,
+    "weight": 0.0,
+    "reps": 5
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 20,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 14,
+    "weight": 50.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 21,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 14,
+    "weight": 60.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 22,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 14,
+    "weight": 70.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 23,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 14,
+    "weight": 80.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 24,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 14,
+    "weight": 90.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 25,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 10,
+    "weight": 50.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 26,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 10,
+    "weight": 50.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 27,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 10,
+    "weight": 60.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 28,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 10,
+    "weight": 70.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 29,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 27,
+    "weight": 10.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 30,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 27,
+    "weight": 10.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 31,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 27,
+    "weight": 20.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 32,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 27,
+    "weight": 20.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 33,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 34,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 35,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 36,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 37,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 38,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 39,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 40,
+  "fields": {
+    "workout_log": 2,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 41,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 14,
+    "weight": 50.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 42,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 14,
+    "weight": 60.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 43,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 14,
+    "weight": 70.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 44,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 14,
+    "weight": 80.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 45,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 14,
+    "weight": 90.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 46,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 10,
+    "weight": 50.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 47,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 10,
+    "weight": 50.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 48,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 10,
+    "weight": 60.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 49,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 10,
+    "weight": 70.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 50,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 27,
+    "weight": 10.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 51,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 27,
+    "weight": 10.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 52,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 27,
+    "weight": 20.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 53,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 27,
+    "weight": 20.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 54,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 55,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 56,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 57,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 58,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 59,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 60,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 61,
+  "fields": {
+    "workout_log": 3,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 62,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 14,
+    "weight": 50.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 63,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 14,
+    "weight": 60.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 64,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 14,
+    "weight": 70.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 65,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 14,
+    "weight": 80.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 66,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 14,
+    "weight": 90.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 67,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 10,
+    "weight": 50.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 68,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 10,
+    "weight": 50.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 69,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 10,
+    "weight": 60.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 70,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 10,
+    "weight": 70.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 71,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 27,
+    "weight": 10.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 72,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 27,
+    "weight": 10.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 73,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 27,
+    "weight": 20.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 74,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 27,
+    "weight": 20.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 75,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 76,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 77,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 78,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 79,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 80,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 81,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 82,
+  "fields": {
+    "workout_log": 4,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 83,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 14,
+    "weight": 50.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 84,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 14,
+    "weight": 60.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 85,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 14,
+    "weight": 70.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 86,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 14,
+    "weight": 80.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 87,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 14,
+    "weight": 90.0,
+    "reps": 11
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 88,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 10,
+    "weight": 50.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 89,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 10,
+    "weight": 50.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 90,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 10,
+    "weight": 60.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 91,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 10,
+    "weight": 70.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 92,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 27,
+    "weight": 10.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 93,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 27,
+    "weight": 10.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 94,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 27,
+    "weight": 20.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 95,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 27,
+    "weight": 20.0,
+    "reps": 13
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 96,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 97,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 98,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 99,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 23,
+    "weight": 0.0,
+    "reps": 9
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 100,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 101,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 102,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 103,
+  "fields": {
+    "workout_log": 5,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 14
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 104,
+  "fields": {
+    "workout_log": 6,
+    "exercise": 5,
+    "weight": 0.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 105,
+  "fields": {
+    "workout_log": 7,
+    "exercise": 58,
+    "weight": 0.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 106,
+  "fields": {
+    "workout_log": 7,
+    "exercise": 59,
+    "weight": 150.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 107,
+  "fields": {
+    "workout_log": 7,
+    "exercise": 60,
+    "weight": 60.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 108,
+  "fields": {
+    "workout_log": 7,
+    "exercise": 61,
+    "weight": 180.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 109,
+  "fields": {
+    "workout_log": 8,
+    "exercise": 58,
+    "weight": 0.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 110,
+  "fields": {
+    "workout_log": 8,
+    "exercise": 59,
+    "weight": 150.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 111,
+  "fields": {
+    "workout_log": 8,
+    "exercise": 60,
+    "weight": 60.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 112,
+  "fields": {
+    "workout_log": 8,
+    "exercise": 61,
+    "weight": 180.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 113,
+  "fields": {
+    "workout_log": 9,
+    "exercise": 58,
+    "weight": 0.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 114,
+  "fields": {
+    "workout_log": 9,
+    "exercise": 59,
+    "weight": 150.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 115,
+  "fields": {
+    "workout_log": 9,
+    "exercise": 60,
+    "weight": 60.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 116,
+  "fields": {
+    "workout_log": 9,
+    "exercise": 61,
+    "weight": 180.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 117,
+  "fields": {
+    "workout_log": 10,
+    "exercise": 64,
+    "weight": 250.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 118,
+  "fields": {
+    "workout_log": 10,
+    "exercise": 59,
+    "weight": 180.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 119,
+  "fields": {
+    "workout_log": 10,
+    "exercise": 63,
+    "weight": 50.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 120,
+  "fields": {
+    "workout_log": 10,
+    "exercise": 60,
+    "weight": 60.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 121,
+  "fields": {
+    "workout_log": 11,
+    "exercise": 64,
+    "weight": 250.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 122,
+  "fields": {
+    "workout_log": 11,
+    "exercise": 59,
+    "weight": 180.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 123,
+  "fields": {
+    "workout_log": 11,
+    "exercise": 63,
+    "weight": 50.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 124,
+  "fields": {
+    "workout_log": 11,
+    "exercise": 60,
+    "weight": 60.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 125,
+  "fields": {
+    "workout_log": 12,
+    "exercise": 64,
+    "weight": 250.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 126,
+  "fields": {
+    "workout_log": 12,
+    "exercise": 59,
+    "weight": 180.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 127,
+  "fields": {
+    "workout_log": 12,
+    "exercise": 63,
+    "weight": 50.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 128,
+  "fields": {
+    "workout_log": 12,
+    "exercise": 60,
+    "weight": 60.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 129,
+  "fields": {
+    "workout_log": 13,
+    "exercise": 64,
+    "weight": 250.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 130,
+  "fields": {
+    "workout_log": 13,
+    "exercise": 59,
+    "weight": 180.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 131,
+  "fields": {
+    "workout_log": 13,
+    "exercise": 63,
+    "weight": 50.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 132,
+  "fields": {
+    "workout_log": 13,
+    "exercise": 60,
+    "weight": 60.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 133,
+  "fields": {
+    "workout_log": 14,
+    "exercise": 36,
+    "weight": 0.0,
+    "reps": 8
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 134,
+  "fields": {
+    "workout_log": 14,
+    "exercise": 42,
+    "weight": 0.0,
+    "reps": 5
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 135,
+  "fields": {
+    "workout_log": 14,
+    "exercise": 42,
+    "weight": 0.0,
+    "reps": 5
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 136,
+  "fields": {
+    "workout_log": 14,
+    "exercise": 42,
+    "weight": 0.0,
+    "reps": 5
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 137,
+  "fields": {
+    "workout_log": 14,
+    "exercise": 42,
+    "weight": 0.0,
+    "reps": 5
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 138,
+  "fields": {
+    "workout_log": 14,
+    "exercise": 32,
+    "weight": 0.0,
+    "reps": 7
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 139,
+  "fields": {
+    "workout_log": 14,
+    "exercise": 32,
+    "weight": 0.0,
+    "reps": 7
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 140,
+  "fields": {
+    "workout_log": 14,
+    "exercise": 32,
+    "weight": 0.0,
+    "reps": 7
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 141,
+  "fields": {
+    "workout_log": 14,
+    "exercise": 32,
+    "weight": 0.0,
+    "reps": 7
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 142,
+  "fields": {
+    "workout_log": 14,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 12
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 143,
+  "fields": {
+    "workout_log": 14,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 12
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 144,
+  "fields": {
+    "workout_log": 14,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 12
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 145,
+  "fields": {
+    "workout_log": 14,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 12
+  }
+},
+{
+  "model": "log.workoutset",
+  "pk": 146,
+  "fields": {
+    "workout_log": 14,
+    "exercise": 18,
+    "weight": 0.0,
+    "reps": 12
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 1,
+  "fields": {
+    "log_entry": 1,
+    "name": "Ham Classic",
+    "calories": 610,
+    "protein": 29.0,
+    "carbs": 42.0,
+    "fat": 38.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 2,
+  "fields": {
+    "log_entry": 1,
+    "name": "Ham Classic",
+    "calories": 610,
+    "protein": 29.0,
+    "carbs": 42.0,
+    "fat": 38.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 3,
+  "fields": {
+    "log_entry": 1,
+    "name": "Ham Classic",
+    "calories": 610,
+    "protein": 29.0,
+    "carbs": 42.0,
+    "fat": 38.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 4,
+  "fields": {
+    "log_entry": 2,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 5,
+  "fields": {
+    "log_entry": 2,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 6,
+  "fields": {
+    "log_entry": 2,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 7,
+  "fields": {
+    "log_entry": 2,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 8,
+  "fields": {
+    "log_entry": 2,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 9,
+  "fields": {
+    "log_entry": 3,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 10,
+  "fields": {
+    "log_entry": 3,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 11,
+  "fields": {
+    "log_entry": 3,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 12,
+  "fields": {
+    "log_entry": 3,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 13,
+  "fields": {
+    "log_entry": 3,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 14,
+  "fields": {
+    "log_entry": 4,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 15,
+  "fields": {
+    "log_entry": 4,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 16,
+  "fields": {
+    "log_entry": 4,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 17,
+  "fields": {
+    "log_entry": 4,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 18,
+  "fields": {
+    "log_entry": 4,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 19,
+  "fields": {
+    "log_entry": 5,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 20,
+  "fields": {
+    "log_entry": 5,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 21,
+  "fields": {
+    "log_entry": 5,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 22,
+  "fields": {
+    "log_entry": 5,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 23,
+  "fields": {
+    "log_entry": 5,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 28,
+  "fields": {
+    "log_entry": 7,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 29,
+  "fields": {
+    "log_entry": 7,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 30,
+  "fields": {
+    "log_entry": 7,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 31,
+  "fields": {
+    "log_entry": 7,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 32,
+  "fields": {
+    "log_entry": 8,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 33,
+  "fields": {
+    "log_entry": 8,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 34,
+  "fields": {
+    "log_entry": 8,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 35,
+  "fields": {
+    "log_entry": 9,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 36,
+  "fields": {
+    "log_entry": 9,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 37,
+  "fields": {
+    "log_entry": 9,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 38,
+  "fields": {
+    "log_entry": 9,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 39,
+  "fields": {
+    "log_entry": 9,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 40,
+  "fields": {
+    "log_entry": 9,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 41,
+  "fields": {
+    "log_entry": 6,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 42,
+  "fields": {
+    "log_entry": 6,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 43,
+  "fields": {
+    "log_entry": 6,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 44,
+  "fields": {
+    "log_entry": 6,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 45,
+  "fields": {
+    "log_entry": 6,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 46,
+  "fields": {
+    "log_entry": 6,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 47,
+  "fields": {
+    "log_entry": 10,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 48,
+  "fields": {
+    "log_entry": 10,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 49,
+  "fields": {
+    "log_entry": 10,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 50,
+  "fields": {
+    "log_entry": 10,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 51,
+  "fields": {
+    "log_entry": 10,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "log.fooditem",
+  "pk": 52,
+  "fields": {
+    "log_entry": 10,
+    "name": "Hamburger",
+    "calories": 340,
+    "protein": 24.0,
+    "carbs": 35.0,
+    "fat": 12.0
+  }
+},
+{
+  "model": "workout.week",
+  "pk": 1,
+  "fields": {
+    "routine": 1,
+    "week_number": 1
+  }
+},
+{
+  "model": "workout.week",
+  "pk": 2,
+  "fields": {
+    "routine": 1,
+    "week_number": 2
+  }
+},
+{
+  "model": "workout.week",
+  "pk": 3,
+  "fields": {
+    "routine": 1,
+    "week_number": 3
+  }
+},
+{
+  "model": "workout.week",
+  "pk": 4,
+  "fields": {
+    "routine": 1,
+    "week_number": 4
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 1,
+  "fields": {
+    "week": 1,
+    "day_number": 1
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 2,
+  "fields": {
+    "week": 1,
+    "day_number": 2
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 3,
+  "fields": {
+    "week": 1,
+    "day_number": 3
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 4,
+  "fields": {
+    "week": 1,
+    "day_number": 4
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 5,
+  "fields": {
+    "week": 1,
+    "day_number": 5
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 6,
+  "fields": {
+    "week": 1,
+    "day_number": 6
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 7,
+  "fields": {
+    "week": 1,
+    "day_number": 7
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 8,
+  "fields": {
+    "week": 2,
+    "day_number": 1
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 9,
+  "fields": {
+    "week": 2,
+    "day_number": 2
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 10,
+  "fields": {
+    "week": 2,
+    "day_number": 3
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 11,
+  "fields": {
+    "week": 2,
+    "day_number": 4
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 12,
+  "fields": {
+    "week": 2,
+    "day_number": 5
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 13,
+  "fields": {
+    "week": 2,
+    "day_number": 6
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 14,
+  "fields": {
+    "week": 2,
+    "day_number": 7
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 15,
+  "fields": {
+    "week": 3,
+    "day_number": 1
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 16,
+  "fields": {
+    "week": 3,
+    "day_number": 2
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 17,
+  "fields": {
+    "week": 3,
+    "day_number": 3
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 18,
+  "fields": {
+    "week": 3,
+    "day_number": 4
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 19,
+  "fields": {
+    "week": 3,
+    "day_number": 5
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 20,
+  "fields": {
+    "week": 3,
+    "day_number": 6
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 21,
+  "fields": {
+    "week": 3,
+    "day_number": 7
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 22,
+  "fields": {
+    "week": 4,
+    "day_number": 1
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 23,
+  "fields": {
+    "week": 4,
+    "day_number": 2
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 24,
+  "fields": {
+    "week": 4,
+    "day_number": 3
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 25,
+  "fields": {
+    "week": 4,
+    "day_number": 4
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 26,
+  "fields": {
+    "week": 4,
+    "day_number": 5
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 27,
+  "fields": {
+    "week": 4,
+    "day_number": 6
+  }
+},
+{
+  "model": "workout.day",
+  "pk": 28,
+  "fields": {
+    "week": 4,
+    "day_number": 7
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 1,
+  "fields": {
+    "day": 1,
+    "workout": 17,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 2,
+  "fields": {
+    "day": 2,
+    "workout": 18,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 3,
+  "fields": {
+    "day": 3,
+    "workout": 19,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 4,
+  "fields": {
+    "day": 4,
+    "workout": 18,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 5,
+  "fields": {
+    "day": 5,
+    "workout": 20,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 6,
+  "fields": {
+    "day": 6,
+    "workout": 21,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 7,
+  "fields": {
+    "day": 7,
+    "workout": 18,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 8,
+  "fields": {
+    "day": 8,
+    "workout": 22,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 9,
+  "fields": {
+    "day": 9,
+    "workout": 18,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 10,
+  "fields": {
+    "day": 10,
+    "workout": 17,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 11,
+  "fields": {
+    "day": 11,
+    "workout": 23,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 12,
+  "fields": {
+    "day": 12,
+    "workout": 18,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 13,
+  "fields": {
+    "day": 13,
+    "workout": 24,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 14,
+  "fields": {
+    "day": 14,
+    "workout": 18,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 15,
+  "fields": {
+    "day": 15,
+    "workout": 25,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 16,
+  "fields": {
+    "day": 16,
+    "workout": 26,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 17,
+  "fields": {
+    "day": 17,
+    "workout": 18,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 18,
+  "fields": {
+    "day": 18,
+    "workout": 27,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 19,
+  "fields": {
+    "day": 19,
+    "workout": 18,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 20,
+  "fields": {
+    "day": 20,
+    "workout": 20,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 21,
+  "fields": {
+    "day": 21,
+    "workout": 18,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 22,
+  "fields": {
+    "day": 22,
+    "workout": 21,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 23,
+  "fields": {
+    "day": 23,
+    "workout": 18,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 24,
+  "fields": {
+    "day": 24,
+    "workout": 21,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 25,
+  "fields": {
+    "day": 25,
+    "workout": 18,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 26,
+  "fields": {
+    "day": 26,
+    "workout": 28,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 27,
+  "fields": {
+    "day": 27,
+    "workout": 17,
+    "order": 0
+  }
+},
+{
+  "model": "workout.dayworkout",
+  "pk": 28,
+  "fields": {
+    "day": 28,
+    "workout": 18,
+    "order": 0
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "3mfjavs6f8rihd0w8ea2jghyhm51gd29",
+  "fields": {
+    "session_data": ".eJxVjMEKwjAQRP8lZylNdkO6PQp-R9g0GxrUKl0LivjvttCDnoaZNzNvE3l5jHFRmWPNpjfWHH6zxMNZpg1sVpvda3O6cr0cd_o3GVnHtV_YecIuhZzZWyQJrgAEwXbISQA7JABLOJBdhaFzyFySp2xdZgfbqYpqvU1Rnvc6v0zffr650jlm:1ryQ6R:oC1MV6ht8Bg_nj3wKiOvhhBgB0W4NteTKY_Q9b_XPDQ",
+    "expire_date": "2024-05-05T05:51:03.420Z"
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$KPpvGmZNY4DHfY32starUZ$SRjWXrvSo3noDJNg1xiV5o/8np5LjoFkgpuy6ZKh5Ng=",
+    "last_login": "2024-04-21T05:51:03.416Z",
+    "is_superuser": false,
+    "username": "default",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-04-20T08:48:22Z",
+    "email": "demouser@demo.com",
+    "first_name": "first",
+    "last_name": "last",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$DpdA9IXbue7fzdtwp1h7v7$jqOKtAeucYvgPHRXOfWQNkuWKwwYAH6DvY4lnaJExW0=",
+    "last_login": "2024-04-20T23:15:16.145Z",
+    "is_superuser": true,
+    "username": "admin",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2024-04-20T08:49:22.137Z",
+    "email": "admin@admin.com",
+    "first_name": "first",
+    "last_name": "last",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$600000$lR2Rlb7yloLDYg7mEOM2aK$fq7WarelZgxg7XMW3zSrtg38pJ7/8Disiivrdwr9AQk=",
+    "last_login": "2024-04-21T01:34:23.697Z",
+    "is_superuser": false,
+    "username": "snorini",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-04-20T08:52:35Z",
+    "email": "snorini@gmail.com",
+    "first_name": "Sean",
+    "last_name": "Norini",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "workout.routinesettings",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "admin"
+    ],
+    "routine": null,
+    "week_number": 1,
+    "day_number": 1,
+    "workout_index": 0,
+    "last_completed": "2024-04-20T08:52:01.963Z"
+  }
+},
+{
+  "model": "workout.routinesettings",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "routine": null,
+    "week_number": 1,
+    "day_number": 1,
+    "workout_index": 0,
+    "last_completed": "2024-04-20T08:53:10.918Z"
+  }
+},
+{
+  "model": "workout.routinesettings",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "routine": 1,
+    "week_number": 2,
+    "day_number": 7,
+    "workout_index": 0,
+    "last_completed": "2024-04-20T23:16:15.973Z"
+  }
+},
+{
+  "model": "workout.routine",
+  "pk": 1,
+  "fields": {
+    "name": "Test Workout",
+    "user": [
+      "snorini"
+    ]
+  }
+},
+{
+  "model": "workout.workoutsettings",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "admin"
+    ],
+    "auto_update_five_rep_max": false,
+    "show_rest_timer": false,
+    "show_workout_timer": false
+  }
+},
+{
+  "model": "workout.workoutsettings",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "auto_update_five_rep_max": false,
+    "show_rest_timer": false,
+    "show_workout_timer": false
+  }
+},
+{
+  "model": "workout.workoutsettings",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "auto_update_five_rep_max": false,
+    "show_rest_timer": false,
+    "show_workout_timer": false
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Hiit Intensity",
+    "config": [
+      {
+        "name": "Hang Clean",
+        "pk": 33,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          }
+        ]
+      },
+      {
+        "name": "Jump Rope",
+        "pk": 27,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          }
+        ]
+      },
+      {
+        "name": "Windshield Wiper",
+        "pk": 53,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 15
+          }
+        ]
+      },
+      {
+        "name": "Sit-Up",
+        "pk": 16,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          }
+        ]
+      },
+      {
+        "name": "Front Squat",
+        "pk": 34,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          }
+        ]
+      }
+    ],
+    "exercises": [
+      16,
+      27,
+      33,
+      34,
+      53
+    ]
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Winter Warrior",
+    "config": [
+      {
+        "name": "Sumo Deadlift",
+        "pk": 36,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          }
+        ]
+      },
+      {
+        "name": "Face Pull",
+        "pk": 42,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          }
+        ]
+      },
+      {
+        "name": "Power Clean",
+        "pk": 32,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          }
+        ]
+      },
+      {
+        "name": "Plank",
+        "pk": 18,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          }
+        ]
+      }
+    ],
+    "exercises": [
+      18,
+      32,
+      36,
+      42
+    ]
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Zumba Dance",
+    "config": [
+      {
+        "name": "Face Pull",
+        "pk": 42,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          }
+        ]
+      },
+      {
+        "name": "Hang Clean",
+        "pk": 33,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          }
+        ]
+      },
+      {
+        "name": "Hip Thrust",
+        "pk": 37,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          }
+        ]
+      }
+    ],
+    "exercises": [
+      33,
+      37,
+      42
+    ]
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Full Body Detox",
+    "config": [
+      {
+        "name": "Hip Thrust",
+        "pk": 37,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          }
+        ]
+      },
+      {
+        "name": "Wall Sit",
+        "pk": 26,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          }
+        ]
+      },
+      {
+        "name": "Chest Fly",
+        "pk": 10,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          }
+        ]
+      },
+      {
+        "name": "Pec Deck Machine",
+        "pk": 39,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 10
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 10
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 10
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 10
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 10
+          }
+        ]
+      },
+      {
+        "name": "Box Jump",
+        "pk": 21,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          }
+        ]
+      }
+    ],
+    "exercises": [
+      10,
+      21,
+      26,
+      37,
+      39
+    ]
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Bootcamp Basics",
+    "config": [
+      {
+        "name": "Shoulder Shrug",
+        "pk": 14,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          }
+        ]
+      },
+      {
+        "name": "Chest Fly",
+        "pk": 10,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          }
+        ]
+      },
+      {
+        "name": "Jump Rope",
+        "pk": 27,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          }
+        ]
+      },
+      {
+        "name": "Russian Twist",
+        "pk": 23,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 9
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 9
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 9
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 9
+          }
+        ]
+      },
+      {
+        "name": "Plank",
+        "pk": 18,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          }
+        ]
+      }
+    ],
+    "exercises": [
+      10,
+      14,
+      18,
+      23,
+      27
+    ]
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Total Body Burn",
+    "config": [
+      {
+        "name": "V-Up",
+        "pk": 51,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          }
+        ]
+      },
+      {
+        "name": "Leg Curl",
+        "pk": 11,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          }
+        ]
+      },
+      {
+        "name": "Treadmill Running",
+        "pk": 28,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          }
+        ]
+      }
+    ],
+    "exercises": [
+      11,
+      28,
+      51
+    ]
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 7,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Power Lifting Session",
+    "config": [
+      {
+        "name": "Treadmill Running",
+        "pk": 28,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 6
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 6
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 6
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 6
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 6
+          }
+        ]
+      },
+      {
+        "name": "Plank",
+        "pk": 18,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          }
+        ]
+      },
+      {
+        "name": "Hang Clean",
+        "pk": 33,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          }
+        ]
+      }
+    ],
+    "exercises": [
+      18,
+      28,
+      33
+    ]
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 8,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Lower Body Blast",
+    "config": [
+      {
+        "name": "Bicycle Crunch",
+        "pk": 22,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          }
+        ]
+      },
+      {
+        "name": "Wall Sit",
+        "pk": 26,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          }
+        ]
+      },
+      {
+        "name": "Bear Crawl",
+        "pk": 50,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 10
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 10
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 10
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 10
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 10
+          }
+        ]
+      },
+      {
+        "name": "Power Clean",
+        "pk": 32,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          }
+        ]
+      },
+      {
+        "name": "Kettlebell Swing",
+        "pk": 25,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          }
+        ]
+      }
+    ],
+    "exercises": [
+      22,
+      25,
+      26,
+      32,
+      50
+    ]
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 9,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Sports Specific",
+    "config": [
+      {
+        "name": "Deadlift High Pull",
+        "pk": 47,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 7
+          }
+        ]
+      },
+      {
+        "name": "Pull-Up",
+        "pk": 6,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          }
+        ]
+      },
+      {
+        "name": "Farmer'S Walk",
+        "pk": 46,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          }
+        ]
+      },
+      {
+        "name": "Dragon Flag",
+        "pk": 55,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          }
+        ]
+      },
+      {
+        "name": "Dumbbell Row",
+        "pk": 15,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          }
+        ]
+      }
+    ],
+    "exercises": [
+      6,
+      15,
+      46,
+      47,
+      55
+    ]
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 10,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Pilates Core",
+    "config": [
+      {
+        "name": "Burpee",
+        "pk": 20,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          }
+        ]
+      },
+      {
+        "name": "Push-Up",
+        "pk": 17,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          }
+        ]
+      },
+      {
+        "name": "Calf Raise",
+        "pk": 38,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          }
+        ]
+      },
+      {
+        "name": "Barbell Row",
+        "pk": 5,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 6
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 6
+          }
+        ]
+      }
+    ],
+    "exercises": [
+      5,
+      17,
+      20,
+      38
+    ]
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 11,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Triathlon Ready",
+    "config": [
+      {
+        "name": "Hammer Curl",
+        "pk": 43,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          }
+        ]
+      },
+      {
+        "name": "Chest Fly",
+        "pk": 10,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          }
+        ]
+      },
+      {
+        "name": "Elliptical Trainer",
+        "pk": 30,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          }
+        ]
+      }
+    ],
+    "exercises": [
+      10,
+      30,
+      43
+    ]
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 12,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Yoga Retreat",
+    "config": [
+      {
+        "name": "Tricep Extension",
+        "pk": 9,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          }
+        ]
+      },
+      {
+        "name": "Pec Deck Machine",
+        "pk": 39,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          }
+        ]
+      },
+      {
+        "name": "Power Clean",
+        "pk": 32,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          }
+        ]
+      },
+      {
+        "name": "Shoulder Shrug",
+        "pk": 14,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          }
+        ]
+      }
+    ],
+    "exercises": [
+      9,
+      14,
+      32,
+      39
+    ]
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 13,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Aerobic Fitness",
+    "config": [
+      {
+        "name": "Leg Press",
+        "pk": 7,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          }
+        ]
+      },
+      {
+        "name": "Shoulder Shrug",
+        "pk": 14,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          }
+        ]
+      },
+      {
+        "name": "Lateral Raise",
+        "pk": 13,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 6
+          }
+        ]
+      },
+      {
+        "name": "Back Squat",
+        "pk": 35,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 9
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 9
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 9
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 9
+          }
+        ]
+      }
+    ],
+    "exercises": [
+      7,
+      13,
+      14,
+      35
+    ]
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 14,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Spring Into Fitness",
+    "config": [
+      {
+        "name": "Box Jump",
+        "pk": 21,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 5
+          }
+        ]
+      },
+      {
+        "name": "Plank",
+        "pk": 18,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 6
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 6
+          }
+        ]
+      },
+      {
+        "name": "Jump Rope",
+        "pk": 27,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 11
+          }
+        ]
+      },
+      {
+        "name": "Elliptical Trainer",
+        "pk": 30,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 12
+          }
+        ]
+      },
+      {
+        "name": "Deadlift",
+        "pk": 3,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          }
+        ]
+      }
+    ],
+    "exercises": [
+      3,
+      18,
+      21,
+      27,
+      30
+    ]
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 15,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Flexibility Flow",
+    "config": [
+      {
+        "name": "Calf Raise",
+        "pk": 38,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 13
+          }
+        ]
+      },
+      {
+        "name": "Hammer Curl",
+        "pk": 43,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 10
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 10
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 10
+          }
+        ]
+      },
+      {
+        "name": "Pec Deck Machine",
+        "pk": 39,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 14
+          }
+        ]
+      },
+      {
+        "name": "Face Pull",
+        "pk": 42,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 8
+          }
+        ]
+      },
+      {
+        "name": "Mountain Climber",
+        "pk": 24,
+        "five_rep_max": 0,
+        "sets": [
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 15
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 15
+          },
+          {
+            "amount": 0,
+            "modifier": "percentage",
+            "reps": 15
+          }
+        ]
+      }
+    ],
+    "exercises": [
+      24,
+      38,
+      39,
+      42,
+      43
+    ]
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 16,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Custom Workout",
+    "config": {},
+    "exercises": []
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 17,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Pilates Core",
+    "config": {},
+    "exercises": []
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 18,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Rest Day",
+    "config": {},
+    "exercises": []
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 19,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Winter Warrior",
+    "config": {},
+    "exercises": []
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 20,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Zumba Dance",
+    "config": {},
+    "exercises": []
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 21,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Hiit Intensity",
+    "config": {},
+    "exercises": []
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 22,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Full Body Detox",
+    "config": {},
+    "exercises": []
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 23,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Yoga Retreat",
+    "config": {},
+    "exercises": []
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 24,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Bootcamp Basics",
+    "config": {},
+    "exercises": []
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 25,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Flexibility Flow",
+    "config": {},
+    "exercises": []
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 26,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Aerobic Fitness",
+    "config": {},
+    "exercises": []
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 27,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Total Body Burn",
+    "config": {},
+    "exercises": []
+  }
+},
+{
+  "model": "workout.workout",
+  "pk": 28,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Power Lifting Session",
+    "config": {},
+    "exercises": []
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Squat",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Bench Press",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Deadlift",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Overhead Press",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Barbell Row",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Pull-Up",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 7,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Leg Press",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 8,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Bicep Curl",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 9,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Tricep Extension",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 10,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Chest Fly",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 11,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Leg Curl",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 12,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Leg Extension",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 13,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Lateral Raise",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 14,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Shoulder Shrug",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 15,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Dumbbell Row",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 16,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Sit-Up",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 17,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Push-Up",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 18,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Plank",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 19,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Lunge",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 20,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Burpee",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 21,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Box Jump",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 22,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Bicycle Crunch",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 23,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Russian Twist",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 24,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Mountain Climber",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 25,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Kettlebell Swing",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 26,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Wall Sit",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 27,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Jump Rope",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 28,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Treadmill Running",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 29,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Stationary Biking",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 30,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Elliptical Trainer",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 31,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Stair Climbing",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 32,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Power Clean",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 33,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Hang Clean",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 34,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Front Squat",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 35,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Back Squat",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 36,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Sumo Deadlift",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 37,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Hip Thrust",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 38,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Calf Raise",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 39,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Pec Deck Machine",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 40,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Lat Pulldown",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 41,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Seated Row",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 42,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Face Pull",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 43,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Hammer Curl",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 44,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Skull Crusher",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 45,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Turkish Get-Up",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 46,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Farmer'S Walk",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 47,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Deadlift High Pull",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 48,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "High Knees",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 49,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Tuck Jump",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 50,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Bear Crawl",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 51,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "V-Up",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 52,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Toe Touch",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 53,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Windshield Wiper",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 54,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Superman Exercise",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 55,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Dragon Flag",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 56,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Pistol Squat",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 57,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "name": "Nordic Hamstring Curl",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 58,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Bicycle Crunch",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 59,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Bench Press",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 60,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Bicep Curl",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 61,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Back Squat",
+    "five_rep_max": 0.0,
+    "default_weight": 0.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 62,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Calf Raise",
+    "five_rep_max": 50.0,
+    "default_weight": 50.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 63,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Chest Fly",
+    "five_rep_max": 80.0,
+    "default_weight": 50.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "workout.exercise",
+  "pk": 64,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "name": "Deadlift",
+    "five_rep_max": 250.0,
+    "default_weight": 250.0,
+    "default_reps": 8,
+    "default_modifier": "percentage"
+  }
+},
+{
+  "model": "log.foodlog",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "date": "2024-04-20"
+  }
+},
+{
+  "model": "log.foodlog",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "date": "2024-04-16"
+  }
+},
+{
+  "model": "log.foodlog",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "date": "2024-04-04"
+  }
+},
+{
+  "model": "log.foodlog",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "date": "2024-04-12"
+  }
+},
+{
+  "model": "log.foodlog",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "date": "2024-04-20"
+  }
+},
+{
+  "model": "log.foodlog",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "date": "2024-04-10"
+  }
+},
+{
+  "model": "log.foodlog",
+  "pk": 7,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "date": "2024-04-17"
+  }
+},
+{
+  "model": "log.foodlog",
+  "pk": 8,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "date": "2024-04-15"
+  }
+},
+{
+  "model": "log.foodlog",
+  "pk": 9,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "date": "2024-04-13"
+  }
+},
+{
+  "model": "log.foodlog",
+  "pk": 10,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "date": "2024-04-12"
+  }
+},
+{
+  "model": "log.weightlog",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "body_weight": 160.0,
+    "body_fat": 20.0,
+    "date": "2024-04-02"
+  }
+},
+{
+  "model": "log.weightlog",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "body_weight": 160.0,
+    "body_fat": 20.0,
+    "date": "2024-04-05"
+  }
+},
+{
+  "model": "log.weightlog",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "body_weight": 160.0,
+    "body_fat": 20.0,
+    "date": "2024-04-16"
+  }
+},
+{
+  "model": "log.weightlog",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "body_weight": 160.0,
+    "body_fat": 20.0,
+    "date": "2024-04-19"
+  }
+},
+{
+  "model": "log.weightlog",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "body_weight": 160.0,
+    "body_fat": 20.0,
+    "date": "2024-04-10"
+  }
+},
+{
+  "model": "log.weightlog",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "body_weight": 150.0,
+    "body_fat": 20.0,
+    "date": "2024-03-21"
+  }
+},
+{
+  "model": "log.weightlog",
+  "pk": 7,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "body_weight": 150.0,
+    "body_fat": 20.0,
+    "date": "2024-03-06"
+  }
+},
+{
+  "model": "log.weightlog",
+  "pk": 8,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "body_weight": 155.0,
+    "body_fat": 20.0,
+    "date": "2024-03-11"
+  }
+},
+{
+  "model": "log.weightlog",
+  "pk": 9,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "body_weight": 165.0,
+    "body_fat": 20.0,
+    "date": "2024-03-16"
+  }
+},
+{
+  "model": "log.weightlog",
+  "pk": 10,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "body_weight": 150.0,
+    "body_fat": 20.0,
+    "date": "2024-02-14"
+  }
+},
+{
+  "model": "log.weightlog",
+  "pk": 11,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "body_weight": 155.0,
+    "body_fat": 20.0,
+    "date": "2024-02-09"
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "datetime": "2024-04-20T09:00:36.946Z",
+    "duration": "00:30:00",
+    "distance": 5.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "datetime": "2024-04-18T09:00:36.946Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "datetime": "2024-04-15T09:00:36.946Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "datetime": "2024-04-13T09:00:36.946Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "datetime": "2024-04-09T09:00:36.946Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "datetime": "2024-04-16T21:50:46.926Z",
+    "duration": "01:30:00",
+    "distance": 14.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 7,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-04-21T01:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 8,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-04-19T01:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 9,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-04-15T01:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 10,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-04-12T01:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 11,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-04-07T01:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 12,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-04-02T01:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 13,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-03-27T01:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 14,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-03-21T01:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 15,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-03-16T01:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 16,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-03-11T01:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 17,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-03-05T02:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 18,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-02-28T02:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 19,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-02-23T02:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 20,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-02-20T02:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 21,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-02-17T02:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.cardiolog",
+  "pk": 22,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "datetime": "2024-02-11T02:14:42.506Z",
+    "duration": "00:30:00",
+    "distance": 3.0
+  }
+},
+{
+  "model": "log.workoutlog",
+  "pk": 1,
+  "fields": {
+    "workout": 4,
+    "user": [
+      "default"
+    ],
+    "date": "2024-04-20",
+    "total_time": "00:00:00"
+  }
+},
+{
+  "model": "log.workoutlog",
+  "pk": 2,
+  "fields": {
+    "workout": 5,
+    "user": [
+      "default"
+    ],
+    "date": "2024-04-20",
+    "total_time": "00:00:00"
+  }
+},
+{
+  "model": "log.workoutlog",
+  "pk": 3,
+  "fields": {
+    "workout": 5,
+    "user": [
+      "default"
+    ],
+    "date": "2024-04-17",
+    "total_time": "00:00:00"
+  }
+},
+{
+  "model": "log.workoutlog",
+  "pk": 4,
+  "fields": {
+    "workout": 5,
+    "user": [
+      "default"
+    ],
+    "date": "2024-04-04",
+    "total_time": "00:00:00"
+  }
+},
+{
+  "model": "log.workoutlog",
+  "pk": 5,
+  "fields": {
+    "workout": 5,
+    "user": [
+      "default"
+    ],
+    "date": "2024-04-08",
+    "total_time": "00:00:00"
+  }
+},
+{
+  "model": "log.workoutlog",
+  "pk": 6,
+  "fields": {
+    "workout": 16,
+    "user": [
+      "default"
+    ],
+    "date": "2024-04-20",
+    "total_time": "00:00:00"
+  }
+},
+{
+  "model": "log.workoutlog",
+  "pk": 7,
+  "fields": {
+    "workout": 16,
+    "user": [
+      "snorini"
+    ],
+    "date": "2024-04-20",
+    "total_time": "00:00:00"
+  }
+},
+{
+  "model": "log.workoutlog",
+  "pk": 8,
+  "fields": {
+    "workout": 16,
+    "user": [
+      "snorini"
+    ],
+    "date": "2024-04-18",
+    "total_time": "00:00:00"
+  }
+},
+{
+  "model": "log.workoutlog",
+  "pk": 9,
+  "fields": {
+    "workout": 16,
+    "user": [
+      "snorini"
+    ],
+    "date": "2024-04-01",
+    "total_time": "00:00:00"
+  }
+},
+{
+  "model": "log.workoutlog",
+  "pk": 10,
+  "fields": {
+    "workout": 16,
+    "user": [
+      "snorini"
+    ],
+    "date": "2024-04-20",
+    "total_time": "00:00:00"
+  }
+},
+{
+  "model": "log.workoutlog",
+  "pk": 11,
+  "fields": {
+    "workout": 16,
+    "user": [
+      "snorini"
+    ],
+    "date": "2024-04-18",
+    "total_time": "00:00:00"
+  }
+},
+{
+  "model": "log.workoutlog",
+  "pk": 12,
+  "fields": {
+    "workout": 16,
+    "user": [
+      "snorini"
+    ],
+    "date": "2024-04-08",
+    "total_time": "00:00:00"
+  }
+},
+{
+  "model": "log.workoutlog",
+  "pk": 13,
+  "fields": {
+    "workout": 16,
+    "user": [
+      "snorini"
+    ],
+    "date": "2024-04-05",
+    "total_time": "00:00:00"
+  }
+},
+{
+  "model": "log.workoutlog",
+  "pk": 14,
+  "fields": {
+    "workout": 2,
+    "user": [
+      "default"
+    ],
+    "date": "2024-04-16",
+    "total_time": "00:00:00"
+  }
+},
+{
+  "model": "users.usersettings",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "admin"
+    ],
+    "system_of_measurement": "Imperial",
+    "gender": "M",
+    "height": 70.0,
+    "body_weight": 160.0,
+    "body_fat": 20.0,
+    "age": 30,
+    "modules": [
+      "workout",
+      "cardio",
+      "nutrition",
+      "log",
+      "stats",
+      "settings"
+    ]
+  }
+},
+{
+  "model": "users.usersettings",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "default"
+    ],
+    "system_of_measurement": "Imperial",
+    "gender": "M",
+    "height": 70.0,
+    "body_weight": 160.0,
+    "body_fat": 20.0,
+    "age": 30,
+    "modules": [
+      "workout",
+      "cardio",
+      "nutrition",
+      "log",
+      "stats",
+      "settings"
+    ]
+  }
+},
+{
+  "model": "users.usersettings",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "snorini"
+    ],
+    "system_of_measurement": "Imperial",
+    "gender": "M",
+    "height": 70.0,
+    "body_weight": 160.0,
+    "body_fat": 20.0,
+    "age": 30,
+    "modules": [
+      "workout",
+      "cardio",
+      "nutrition",
+      "log",
+      "stats",
+      "settings"
+    ]
+  }
 }
+]

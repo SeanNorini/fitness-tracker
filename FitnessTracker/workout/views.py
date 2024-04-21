@@ -1,8 +1,8 @@
 from django.views.generic import TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Max
+from django.db.models import Q
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,14 +10,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import (
     RetrieveAPIView,
 )
-from dateutil.relativedelta import relativedelta
-from datetime import date
-import matplotlib
-from matplotlib import pyplot as plt
-from matplotlib.ticker import MaxNLocator
-from io import BytesIO
 from common.permissions import IsOwner
-from log.models import WorkoutSet, WeightLog
+from workout.services import (
+    get_graph,
+)
 from .models import Workout, Exercise, WorkoutSettings, Routine, RoutineSettings
 from users.models import User
 from .serializers import (
@@ -27,86 +23,16 @@ from .serializers import (
     WorkoutSerializer,
 )
 from .forms import WorkoutSettingsForm, ExerciseForm
-from .mixins import ExerciseMixin, WorkoutMixin
-
-matplotlib.use("Agg")
+from .mixins import ExerciseMixin, WorkoutMixin, DefaultMixin
 
 
-def plot_graph(stat_name, values, dates):
-    plt.plot(dates, values)
-    plt.xlabel("Date", color="#f5f5f5")
-    plt.ylabel("Lbs.", color="#f5f5f5")
-    plt.title(stat_name.capitalize(), color="#f5f5f5")
-
-    plt.gcf().set_facecolor("#212121")
-    plt.xticks(color="#f5f5f5")
-    plt.yticks(color="#f5f5f5")
-
-    ax = plt.gca()
-    ax.set_facecolor("#212121")
-    ax.xaxis.set_major_locator(MaxNLocator(12))
-    ax.yaxis.set_major_locator(MaxNLocator(15))
-    ax.tick_params(color="#f5f5f5")
-
-    for spine in ax.spines.values():
-        spine.set_edgecolor("#f5f5f5")
-
-    buffer = BytesIO()
-    plt.savefig(buffer, format="png", transparent=True)
-    plt.close()
-    buffer.seek(0)
-
-    return buffer.getvalue()
-
-
-class StatsView(ExerciseMixin, TemplateView):
+class StatsView(ExerciseMixin):
     template_name = "base/index.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        modules = ["workout", "cardio", "nutrition", "log", "stats", "settings"]
-        context["modules"] = modules
         context["template_content"] = "workout/stats.html"
         return context
-
-    def post(self, request, *args, **kwargs):
-        months = int(request.POST["date_range"])
-        stat = request.POST["stat"]
-        user = request.user
-
-        start_date = date.today() - relativedelta(months=months)
-        end_date = date.today()
-
-        dates = []
-        weights = []
-        if stat == "weightlifting":
-            exercise_name = request.POST["exercise"]
-            exercise = Exercise.objects.get(name=exercise_name, user=user)
-            max_weight_info = (
-                WorkoutSet.objects.filter(
-                    exercise=exercise,
-                    workout_log__date__range=[start_date, end_date],
-                )
-                .values("workout_log__date")
-                .annotate(max_weight=Max("weight"))
-                .order_by("workout_log__date")
-            )
-
-            for entry in max_weight_info:
-                dates.append(entry["workout_log__date"].strftime("%#m/%#d"))
-                weights.append(entry["max_weight"])
-            # exercise_values = list(workout_sets.values_list("weight", flat=True))
-            graph = plot_graph(exercise_name, weights, dates)
-            return HttpResponse(graph, content_type="image/png")
-        else:
-            weight_info = WeightLog.objects.filter(
-                user=user, date__range=[start_date, end_date]
-            ).values("date", "body_weight")
-            for entry in weight_info:
-                dates.append(entry["date"].strftime("%#d/%#m"))
-                weights.append(entry["body_weight"])
-            graph = plot_graph("Body Weight", weights, dates)
-            return HttpResponse(graph, content_type="image/png")
 
     def get(self, request, *args, **kwargs):
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
@@ -116,25 +42,28 @@ class StatsView(ExerciseMixin, TemplateView):
         return super().get(self, request, *args, **kwargs)
 
 
+class StatsGraphAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        months = int(kwargs.get("range"))
+        stat = kwargs.get("stat")
+
+        graph = get_graph(request.user, stat, months)
+        return Response(data={"graph": graph})
 
 
-
-class WorkoutView(WorkoutMixin, TemplateView):
+class WorkoutView(WorkoutMixin):
     template_name = "base/index.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        modules = ["workout", "cardio", "nutrition", "log", "stats", "settings"]
-        context["modules"] = modules
-
         context["template_content"] = "workout/workout_session.html"
 
-        user_workout_settings, _ = WorkoutSettings.objects.get_or_create(
+        context["workout_settings"], _ = WorkoutSettings.objects.get_or_create(
             user=self.request.user
         )
-        context["show_workout_timer"] = user_workout_settings.show_workout_timer
-        context["show_rest_timer"] = user_workout_settings.show_rest_timer
 
         return context
 
@@ -148,7 +77,8 @@ class WorkoutView(WorkoutMixin, TemplateView):
         else:
             return render(request, "base/index.html", self.get_context_data(**kwargs))
 
-class SelectWorkoutView(LoginRequiredMixin, TemplateView):
+
+class SelectWorkoutView(DefaultMixin):
     template_name = "workout/workout.html"
 
     def get_context_data(self, **kwargs):
@@ -165,7 +95,8 @@ class SelectWorkoutView(LoginRequiredMixin, TemplateView):
 
         return context
 
-class AddExerciseView(LoginRequiredMixin, TemplateView):
+
+class AddExerciseView(DefaultMixin):
 
     template_name = "workout/exercise.html"
 
@@ -181,7 +112,7 @@ class AddExerciseView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class AddSetView(LoginRequiredMixin, TemplateView):
+class AddSetView(DefaultMixin):
     template_name = "workout/set.html"
 
     def get_context_data(self, **kwargs):
@@ -195,7 +126,7 @@ class AddSetView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class WorkoutSettingsView(WorkoutMixin, TemplateView):
+class WorkoutSettingsView(WorkoutMixin):
     template_name = "workout/workout_settings.html"
 
     def get_context_data(self, **kwargs):
@@ -208,7 +139,7 @@ class WorkoutSettingsView(WorkoutMixin, TemplateView):
         return context
 
 
-class WorkoutSettingsSelectWorkoutView(LoginRequiredMixin, TemplateView):
+class WorkoutSettingsSelectWorkoutView(DefaultMixin):
     template_name = "workout/workout_settings_workout.html"
 
     def get_context_data(self, **kwargs):
@@ -219,7 +150,7 @@ class WorkoutSettingsSelectWorkoutView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class WorkoutSettingsAddSetView(LoginRequiredMixin, TemplateView):
+class WorkoutSettingsAddSetView(DefaultMixin):
     template_name = "workout/workout_settings_set.html"
 
     def get_context_data(self, **kwargs):
@@ -232,7 +163,7 @@ class WorkoutSettingsAddSetView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class WorkoutSettingsAddExerciseView(LoginRequiredMixin, TemplateView):
+class WorkoutSettingsAddExerciseView(DefaultMixin):
 
     template_name = "workout/workout_settings_exercise.html"
 
@@ -278,7 +209,7 @@ class WorkoutSettingsSaveWorkoutSettingsView(LoginRequiredMixin, FormView):
         return JsonResponse({"success": True}, safe=False)
 
 
-class ExerciseSettingsView(ExerciseMixin, TemplateView):
+class ExerciseSettingsView(ExerciseMixin):
     template_name = "workout/exercise_settings.html"
 
 
@@ -313,7 +244,7 @@ class ExerciseViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class RoutineSettingsView(WorkoutMixin, TemplateView):
+class RoutineSettingsView(WorkoutMixin):
     template_name = "workout/routine.html"
 
     def get_context_data(self, **kwargs):
@@ -324,13 +255,6 @@ class RoutineSettingsView(WorkoutMixin, TemplateView):
         )
 
         return context
-
-
-class SaveRoutineSettingsAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
-        pass
 
 
 class SaveRoutineAPIView(APIView):
@@ -352,7 +276,7 @@ class GetRoutineAPIView(RetrieveAPIView):
 
     def get_queryset(self):
         return Routine.objects.filter(
-            Q(user=self.request.user) | Q(user=User.default_user())
+            Q(user=self.request.user) | Q(user=User.get_default_user())
         )
 
 

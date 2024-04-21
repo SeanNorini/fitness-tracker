@@ -3,6 +3,7 @@ from django.db.models import Sum
 from django.utils import timezone
 from datetime import timedelta
 from log.models import CardioLog
+from common.common_utils import Graph
 from .utils import (
     format_duration,
     get_calories_burned,
@@ -55,32 +56,15 @@ def get_cardio_log_summaries(user, selected_range=None):
     )
 
     if selected_range == "week":
-        add_start_end_dates_to_graph_data(
-            graph_data, start_dates["extended_start_date"], today
+        graph = Graph(
+            graph_data, "Distance", "bar", start_dates["extended_start_date"], today
         )
     else:
-        add_start_end_dates_to_graph_data(
-            graph_data,
-            start_dates["start_date"],
-            today,
-        )
+        graph = Graph(graph_data, "Distance", "bar", start_dates["start_date"], today)
 
-    return [get_cardio_log_averages(log, user) for log in aggregated_logs], graph_data
-
-
-def add_start_end_dates_to_graph_data(graph_data, start, end):
-    # Add start and end range if no log data
-    if not graph_data["dates"]:
-        graph_data.update({"dates": [start, end], "distances": [0, 0]})
-        return
-
-    # Add start and end range if data doesn't exist for those dates
-    if graph_data["dates"][0] != start:
-        graph_data["dates"].insert(0, start)
-        graph_data["distances"].insert(0, 0)
-    if graph_data["dates"][-1] != end:
-        graph_data["dates"].append(end)
-        graph_data["distances"].append(0)
+    return [
+        get_cardio_log_averages(log, user) for log in aggregated_logs
+    ], graph.plot_graph()
 
 
 def get_cardio_logs_grouped_by_day(user, start, end):
@@ -106,7 +90,7 @@ def aggregate_cardio_logs(cardio_logs, start_dates, selected_range):
     )
     graph_data = {
         "dates": [],
-        "distances": [],
+        "Distance": [],
     }
 
     # Update log dictionaries for each time period
@@ -143,4 +127,4 @@ def update_log_dict_and_graph_data(log_dict, graph_data, log, update_graph):
 
     if update_graph and graph_data is not None:
         graph_data["dates"].append(log["day"].date())
-        graph_data["distances"].append(log["total_distance"])
+        graph_data["Distance"].append(log["total_distance"])

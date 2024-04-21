@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.cache import cache
 from django.core.validators import (
     MinValueValidator,
     MaxValueValidator,
@@ -24,43 +25,45 @@ class User(AbstractUser):
 
     @property
     def distance_unit(self):
-        return UserSettings.get_distance_unit(self)
+        return UserSettings.get_user_settings(self.id).distance_unit
 
     @property
     def weight_unit(self):
-        system_of_measurement = (
-            UserSettings.objects.filter(user=self.id).first().system_of_measurement
-        )
-
-        if system_of_measurement == "Imperial":
-            return "Lbs"
-        else:
-            return "Kg"
+        return UserSettings.get_user_settings(self.id).weight_unit
 
     @property
     def body_weight(self):
-        return (
-            UserSettings.objects.filter(user=self.id)
-            .order_by("-pk")
-            .first()
-            .body_weight
-        )
+        return UserSettings.get_user_settings(self.id).body_weight
+
+    @property
+    def modules(self):
+        return UserSettings.get_user_settings(self.id).modules
 
     @property
     def body_fat(self):
-        return (
-            UserSettings.objects.filter(user=self.id).order_by("-pk").first().body_fat
-        )
+        return UserSettings.get_user_settings(self.id).body_fat
 
     @classmethod
-    def default_user(cls):
-        user, created = User.objects.get_or_create(username="default")
-        if created:
-            user_settings = UserSettings.objects.create(user=user)
-        return user
+    def get_default_user(cls):
+        """
+        Retrieve UserSettings from cache or database.
+        """
+        cache_key = f"default_user"
+        default_user = cache.get(cache_key)
+
+        if not default_user:
+            default_user, _ = cls.objects.get_or_create(username="default")
+            cache.set(cache_key, default_user, timeout=3600)
+
+        return default_user
+
+
+def default_modules():
+    return ["workout", "cardio", "nutrition", "log", "stats", "settings"]
 
 
 class UserSettings(models.Model):
+
     GENDER_CHOICES = [
         ("M", "Male"),
         ("F", "Female"),
@@ -87,6 +90,8 @@ class UserSettings(models.Model):
         default=30, validators=[MinValueValidator(1), MaxValueValidator(120)]
     )
 
+    modules = models.JSONField(default=default_modules)
+
     class Meta:
         verbose_name_plural = "User Settings"
 
@@ -97,12 +102,50 @@ class UserSettings(models.Model):
         user_settings.body_fat = body_fat
         user_settings.save()
 
-    @classmethod
-    def get_distance_unit(cls, user):
-        user_settings, _ = cls.objects.get_or_create(user=user)
-        system_of_measurement = user_settings.system_of_measurement
+    @property
+    def distance_unit(self):
+        system_of_measurement = self.system_of_measurement
 
         if system_of_measurement == "Imperial":
             return "mi"
         else:
             return "km"
+
+    @property
+    def weight_unit(self):
+        system_of_measurement = self.system_of_measurement
+
+        if system_of_measurement == "Imperial":
+            return "Lbs"
+        else:
+            return "Kg"
+
+    @staticmethod
+    def get_user_settings(user_id):
+        """
+        Retrieve UserSettings from cache or database.
+        """
+        cache_key = f"user_settings_{user_id}"
+        user_settings = cache.get(cache_key)
+
+        if not user_settings:
+            user_settings, _ = UserSettings.objects.get_or_create(user_id=user_id)
+            cache.set(cache_key, user_settings, timeout=3600)
+
+        return user_settings
+
+    def save(self, *args, **kwargs):
+        """
+        Ensure the cache is invalidated or updated when the UserSettings are saved.
+        """
+        super().save(*args, **kwargs)
+        cache_key = f"user_settings_{self.user_id}"
+        cache.set(cache_key, self, timeout=3600)
+
+    def delete(self, *args, **kwargs):
+        """
+        Ensure the cache is invalidated when the UserSettings are deleted.
+        """
+        super().delete(*args, **kwargs)
+        cache_key = f"user_settings_{self.user_id}"
+        cache.delete(cache_key)

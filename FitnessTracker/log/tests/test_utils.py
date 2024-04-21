@@ -32,7 +32,9 @@ class TestCalendar(TestCase):
 
         self.cardio_log = CardioLog.objects.create(
             user=self.user,
-            datetime=timezone.datetime(self.year, self.month, 15, 10, 30),
+            datetime=timezone.make_aware(
+                timezone.datetime(self.year, self.month, 15, 10, 30)
+            ),
             duration=timezone.timedelta(minutes=30),
             distance=5.0,
         )

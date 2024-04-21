@@ -19,9 +19,6 @@ from common.selenium_utils import (
     find_element,
 )
 from common.test_utils import (
-    form_without_csrf_token,
-    form_with_invalid_csrf_token,
-    form_with_valid_csrf_token,
     get_cookie_expiration_time,
 )
 
@@ -47,7 +44,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
 class TestLogin(SeleniumTestCase):
 
     def setUp(self) -> None:
-        self.user = User.objects.create_user(**CREATE_USER)
+        super().setUp()
         self.driver.get(self.live_server_url + "/user/login")
 
     def test_login_successful_with_email(self) -> None:

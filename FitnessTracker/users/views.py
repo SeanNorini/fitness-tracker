@@ -241,15 +241,6 @@ class SettingsView(LoginRequiredMixin, FormView):
             instance=user_settings_instance
         )
 
-        context["modules"] = [
-            "workout",
-            "cardio",
-            "nutrition",
-            "log",
-            "stats",
-            "settings",
-        ]
-
         context["template_content"] = "users/settings.html"
 
         return context

@@ -67,7 +67,11 @@ class TestFoodLogService(TestCase):
             username="emptyuser", email="other@test.com"
         )
         summary = FoodLogService.get_user_food_summary(user_with_no_logs)
-        self.assertIsNone(summary)
+        expected_summary = {
+            "bar_graph_data": {"dates": [], "Calories": []},
+            "pie_chart_data": [],
+        }
+        self.assertDictEqual(summary, expected_summary)
 
     def test_get_user_food_summary_with_logs(self):
         summary = FoodLogService.get_user_food_summary(self.user)

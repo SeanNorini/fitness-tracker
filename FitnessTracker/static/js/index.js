@@ -343,6 +343,27 @@ class PageManager {
     elementTemplate.innerHTML = contentHTML.trim();
     return elementTemplate.content.firstChild;
   }
+
+  updateGraph(graph, containerID) {
+    const graphImg = this.createGraphImg(graph);
+    const graphContainer = document.getElementById(containerID);
+
+    graphContainer.innerHTML = "";
+    graphContainer.appendChild(graphImg);
+  }
+
+  createGraphImg(base64Graph) {
+    if (base64Graph) {
+      const img = document.createElement("img");
+      img.src = "data:image/png;base64," + base64Graph;
+      return img;
+    } else {
+      const div = document.createElement("div");
+      div.textContent = "No Chart To Display";
+      return div;
+    }
+  }
+
 }
 
 class Collapsible {

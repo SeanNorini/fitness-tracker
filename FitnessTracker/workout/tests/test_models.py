@@ -1,4 +1,5 @@
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
+from django.core.cache import cache
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from common.test_globals import CREATE_USER
@@ -102,8 +103,9 @@ class TestExerciseModel(TestCase):
 
 
 class TestWorkoutModel(TestCase):
-    @classmethod
-    def setUpTestData(cls):
+
+    def setUp(cls):
+        cache.clear()
         cls.user = User.objects.create_user(
             username="testuser", password="testpass", email="test@test.com"
         )
@@ -115,9 +117,7 @@ class TestWorkoutModel(TestCase):
         )
         cls.workout = Workout.objects.create(user=cls.user, name="Leg Day")
         cls.workout.exercises.add(cls.exercise1, cls.exercise2)
-
-    def setUp(self):
-        self.user = User.objects.get(username="testuser")
+        cls.user = User.objects.get(username="testuser")
 
     def test_name_not_null(self):
         with self.assertRaises(ValidationError):
@@ -142,20 +142,19 @@ class TestWorkoutModel(TestCase):
         self.assertEqual(str(self.workout), "Leg Day")
 
     def test_configure_workout(self):
-        config = {
-            "exercises": [
-                {
-                    "name": "Squat",
-                    "five_rep_max": 300,
-                    "sets": [{"amount": 80, "reps": 10, "modifier": "percentage"}],
-                },
-                {
-                    "name": "Bench Press",
-                    "five_rep_max": 200,
-                    "sets": [{"amount": 50, "reps": 5, "modifier": "exact"}],
-                },
-            ]
-        }
+        config = [
+            {
+                "name": "Squat",
+                "five_rep_max": 300,
+                "sets": [{"amount": 80, "reps": 10, "modifier": "percentage"}],
+            },
+            {
+                "name": "Bench Press",
+                "five_rep_max": 200,
+                "sets": [{"amount": 50, "reps": 5, "modifier": "exact"}],
+            },
+        ]
+
         self.workout.config = config
         workout_config = self.workout.configure_workout()
 
@@ -176,7 +175,7 @@ class TestWorkoutModel(TestCase):
         self.assertEqual(workout.name, "Leg Day")
         self.assertEqual(workout.user, self.user)
 
-        # Test default/fallback workout creation
+        # # Test default/fallback workout creation
         default_workout = Workout.get_workout(self.user, "Cardio Day")
         self.assertEqual(default_workout.name, "Custom Workout")
         self.assertIsNotNone(default_workout)
@@ -200,31 +199,29 @@ class WorkoutSettingsModelTest(TestCase):
         )
 
 
-class RoutineModelTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = User.objects.create_user(
-            username="testuser", password="testpass", email="test@test.com"
-        )
-        cls.default_user = User.objects.create(
-            username="default", password="defaultpass"
-        )
-        Routine.objects.create(user=cls.default_user, name="Default Routine")
+class RoutineModelTest(TransactionTestCase):
 
     def setUp(self):
+        cache.clear()
+        self.user = User.objects.create_user(
+            username="testuser", password="testpass", email="test@test.com"
+        )
+        self.default_user = User.objects.create_user(
+            username="default", password="defaultpass"
+        )
         self.routine = Routine.objects.create(user=self.user, name="Leg Day")
+        Routine.objects.create(user=self.default_user, name="Default Routine")
 
     def test_string_representation(self):
         self.assertEqual(str(self.routine), "Leg Day")
 
     def test_unique_together_constraint(self):
         with self.assertRaises(Exception):
-            Routine.objects.create(user=self.user, name="Leg Day")  # This should fail
+            Routine.objects.create(user=self.user, name="Leg Day")
 
     def test_get_routines(self):
-        # Add a custom routine for the test user and check retrieval
         user_routines = Routine.get_routines(self.user)
-        self.assertEqual(len(user_routines), 2)  # Should include default routines
+        self.assertEqual(len(user_routines), 2)
         self.assertIn("Leg Day", [routine.name for routine in user_routines])
 
     def test_get_weeks(self):

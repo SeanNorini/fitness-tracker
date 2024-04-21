@@ -177,21 +177,9 @@ class CardioManager {
     this.updateCardioSummaries(selectedRange.value);
   };
 
-  createGraphImg(base64Graph) {
-    if (base64Graph) {
-      const img = document.createElement("img");
-      img.src = "data:image/png;base64," + base64Graph;
-      return img;
-    } else {
-      const div = document.createElement("div");
-      div.textContent = "No Chart To Display";
-      return div;
-    }
-  }
-
   updateCardioSummaries(selectedRange) {
     this.getSummaries(selectedRange).then((response) => {
-      this.updateGraph(response["graph"]);
+      pageManager.updateGraph(response["graph"], "cardio-chart");
       this.updateSummaryContainers(selectedRange, response);
     });
   }
@@ -231,13 +219,7 @@ class CardioManager {
     }
   }
 
-  updateGraph(graph) {
-    const graphImg = this.createGraphImg(graph);
-    const graphContainer = document.getElementById("cardio-chart");
 
-    graphContainer.innerHTML = "";
-    graphContainer.appendChild(graphImg);
-  }
 }
 
 window.cardioManager = new CardioManager();

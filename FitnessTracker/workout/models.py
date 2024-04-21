@@ -8,7 +8,7 @@ from users.models import User
 
 
 def get_attribute_list(model_class, user, attribute_name):
-    default_user = User.default_user()
+    default_user = User.get_default_user()
 
     objects = model_class.objects.filter(
         Q(user=user) | Q(user=default_user.id)
@@ -125,7 +125,7 @@ class Workout(models.Model):
     @classmethod
     def get_workout(cls, user, workout_name) -> Type["Workout"]:
         # Get default user
-        default_user = User.default_user()
+        default_user = User.get_default_user()
 
         # Get workout for user or default user, prioritizing user
         workout = (
@@ -154,7 +154,7 @@ class Workout(models.Model):
     def configure_workout(self) -> dict:
         workout_config = {"exercises": []}
 
-        for exercise in self.config["exercises"]:
+        for exercise in self.config:
             weights, reps = self.configure_exercise(
                 exercise["five_rep_max"], exercise["sets"]
             )
@@ -210,7 +210,7 @@ class Routine(models.Model):
         routine_list = user_routines.values_list("name", flat=True)
 
         default_user_routines = Routine.objects.filter(
-            user=User.default_user().id
+            user=User.get_default_user().id
         ).exclude(name__in=routine_list)
 
         return list(user_routines) + list(default_user_routines)

@@ -520,7 +520,6 @@ class TestSettingsView(TestUserViews):
         self.assertTemplateUsed(response, "base/index.html")
         self.assertIsInstance(response.context["form"], UpdateAccountForm)
         self.assertIsInstance(response.context["user_settings_form"], UserSettingsForm)
-        self.assertIn("modules", response.context)
         self.assertIn("template_content", response.context)
         self.assertEqual(response.context["template_content"], "users/settings.html")
 

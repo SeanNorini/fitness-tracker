@@ -47,7 +47,7 @@ def get_start_dates(today, selected_range):
 
 
 def get_start_dates_for_week(today):
-    # Returns date ranges for today, yesterday, and last 7 days for cardio summaries and graph.
+    """Returns date ranges for today, yesterday, and last 7 days for cardio summaries and graph."""
     start_date = today
     previous_start_date = today - timezone.timedelta(days=1)
     extended_start_date = today - timezone.timedelta(days=6)
@@ -60,7 +60,7 @@ def get_start_dates_for_week(today):
 
 
 def get_start_dates_for_month(today):
-    # Returns date ranges for current month, previous month, and 6 months for cardio summaries and graph.
+    """Returns date ranges for current month, previous month, and 6 months for cardio summaries and graph."""
     start_date = today - timezone.timedelta(days=30)
     previous_start_date = today - timezone.timedelta(days=60)
     extended_start_date = today - timezone.timedelta(days=180)
@@ -73,7 +73,7 @@ def get_start_dates_for_month(today):
 
 
 def get_start_dates_for_year(today):
-    # Returns date ranges for current year, previous year, and all-time for cardio summaries and graph.
+    """Returns date ranges for current year, previous year, and all-time for cardio summaries and graph."""
     start_date = today - timezone.timedelta(days=365)
     previous_start_date = today - timezone.timedelta(days=730)
     extended_start_date = today.replace(year=today.year - 100)

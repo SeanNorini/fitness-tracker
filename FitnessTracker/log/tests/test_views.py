@@ -1,23 +1,40 @@
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
 from django.utils import timezone
+from django.core.cache import cache
 from django.test import Client
 from rest_framework.test import APIClient, APITestCase
 from datetime import timedelta, date
 from bs4 import BeautifulSoup
-from log.views import LogView
+from log.views import LogTemplateView
 from users.models import User, UserSettings
 from workout.models import Workout, Exercise
 from rest_framework import status
 from log.models import WeightLog, CardioLog, WorkoutLog, FoodLog
+from common.test_utils import ViewSharedTests
+from unittest.mock import patch, MagicMock
 
 
-class TestLogView(TestCase):
+class TestLogTemplateView(ViewSharedTests, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("log")
+        cls.title = "Fitness Tracker"
+        cls.elements = [
+            {"class": "calendar"},
+            {"id": "nav-prev"},
+            {"id": "nav-next"},
+            {"id": "month-name"},
+            {"class": "day"},
+            {"class": "noday"},
+        ]
+        cls.regular_template = "base/index.html"
+        cls.fetch_template = "log/log.html"
+
     def setUp(self):
+        super().setUp()
         self.factory = RequestFactory()
-        self.user = User.objects.create_user(username="testuser")
-        self.client.force_login(user=self.user)
-        self.user_settings = UserSettings.objects.create(user=self.user)
         self.workout = Workout.objects.create(user=self.user, name="Test Workout")
         WorkoutLog.objects.create(
             user=self.user,
@@ -32,55 +49,69 @@ class TestLogView(TestCase):
             body_fat=20,
         )
 
-    def test_log_view_with_valid_date(self):
-        # Create a URL with a valid year and month
+    @patch("log.views.LogTemplateView.get_date")
+    @patch("log.views.Calendar")
+    def test_get_context_data(self, mock_calendar, mock_get_date):
+        """Verify get_context_data calls the correct functions with the proper params and returns
+        the expected context data."""
+        mock_get_date.return_value = (
+            2024,
+            4,
+        )
+        mock_calendar_instance = MagicMock()
+        mock_calendar_instance.formatmonth.return_value = "calendar_html"
+        mock_calendar.return_value = mock_calendar_instance
+
+        response = self.client.get(self.url)
+
+        mock_get_date.assert_called_once_with()
+        mock_calendar.assert_called_once_with(user=self.user, year=2024, month=4)
+        mock_calendar_instance.formatmonth.assert_called_once_with()
+
+        self.assertIn("calendar", response.context)
+        self.assertEqual(response.context["calendar"], "calendar_html")
+
+    def test_get_with_valid_date(self):
+        """Verify view returns correct month with valid params"""
         url = reverse("log", kwargs={"year": "2024", "month": "4"})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "base/index.html")
 
-    def test_log_view_with_invalid_date(self):
-        # Create a URL with an invalid month
+        soup = BeautifulSoup(response.content, "html.parser")
+        calendar_date = soup.find(id="month-name")
+        self.assertEqual(calendar_date.text, "April 2024")
+
+    def test_get_with_invalid_date(self):
+        """Verify view returns calendar with current month and year with invalid params"""
         url = reverse("log", kwargs={"year": "2024", "month": "13"})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "base/index.html")
-        # Check if default month and year are used
+
         soup = BeautifulSoup(response.content, "html.parser")
         calendar_date = soup.find(id="month-name")
         self.assertEqual(calendar_date.text, date.today().strftime("%B %Y"))
 
-    def test_log_view_fetch_request(self):
-        url = reverse("log", kwargs={"year": "2024", "month": "4"})
-        response = self.client.get(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "log/log.html")
-        self.assertIn("calendar", response.context)
-
-    def test_log_view_user_not_authenticated(self):
-        self.client.logout()
-        url = reverse("log")
-        response = self.client.get(url)
-        self.assertNotEqual(response.status_code, 200)
-        self.assertRedirects(response, f"/user/login/?next={url}")
-
     def test_get_date_with_valid_params(self):
-        request = self.factory.get("/fake-url/", {"year": "2024", "month": "4"})
-        view = LogView()
+        """Verify get date returns correct date with valid params"""
+        view = LogTemplateView()
         view.kwargs = {"year": "2024", "month": "4"}
         year, month = view.get_date()
         self.assertEqual(year, 2024)
         self.assertEqual(month, 4)
 
     def test_get_date_with_invalid_params(self):
-        view = LogView()
+        """Verify get date returns current month and year on invalid params"""
+        view = LogTemplateView()
         view.kwargs = {"year": "abcd", "month": "efgh"}  # Non-integer values
         year, month = view.get_date()
         self.assertEqual(year, timezone.now().year)
         self.assertEqual(month, timezone.now().month)
 
     def test_get_date_with_out_of_range_month(self):
-        view = LogView()
+        """Verify get date returns current month and year on invalid month"""
+        view = LogTemplateView()
         view.kwargs = {"year": "2024", "month": "13"}  # Invalid month
         year, month = view.get_date()
         self.assertEqual(year, timezone.now().year)
@@ -258,6 +289,7 @@ class TestUpdateWorkoutLogTemplateView(TestCase):
 
 class TestWorkoutLogViewSet(APITestCase):
     def setUp(self):
+        cache.clear()
         self.user = User.objects.create_user(
             username="user", password="pass", email="test@test.com"
         )

@@ -18,7 +18,7 @@
 {% block content %}
   {% csrf_token %}
   <div class="row gap-md">
-    {% for module in modules %}
+    {% for module in user.modules %}
       {% include "base/module.html" %}
     {% endfor %}
   </div>

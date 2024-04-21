@@ -1,12 +1,12 @@
 <div class="col gap-md">
   <div class="row gap-md">
-    <div>Duration:</div><div>{{ cardio_log.get_duration }}</div>
+    <div>Duration:</div><div class="duration">{{ cardio_log.get_duration }}</div>
   </div>
   <div class="row gap-md">
-    <div>Distance:</div><div>{{ cardio_log.distance }}</div>
+    <div>Distance:</div><div class="distance">{{ cardio_log.distance }}</div>
   </div>
   <div class="row gap-md">
-    <div>Pace:</div><div>{{ cardio_log.get_pace }}</div>
+    <div>Pace:</div><div class="pace">{{ cardio_log.get_pace }}</div>
   </div>
   {% if not forloop.last %}
     <hr class="half-width">

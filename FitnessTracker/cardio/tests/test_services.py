@@ -1,11 +1,10 @@
 from datetime import timedelta
-
+from common.common_utils import is_base64
 from log.models import CardioLog
 from cardio.services import (
     update_log_dict_and_graph_data,
     get_cardio_log_averages,
     get_cardio_logs_grouped_by_day,
-    add_start_end_dates_to_graph_data,
     get_cardio_log_summaries,
     aggregate_cardio_logs,
 )
@@ -33,7 +32,7 @@ class TestUpdateLogDictAndGraphData(TestCase):
 
     def test_update_graph_data(self):
         log_dict = {"total_distance": 0, "total_duration": 0, "count": 0}
-        graph_data = {"dates": [], "distances": []}
+        graph_data = {"dates": [], "Distance": []}
         log = {
             "total_distance": 5,
             "total_duration": timedelta(minutes=30),
@@ -43,11 +42,11 @@ class TestUpdateLogDictAndGraphData(TestCase):
         update_log_dict_and_graph_data(log_dict, graph_data, log, True)
 
         self.assertEqual(graph_data["dates"][0], log["day"].date())
-        self.assertEqual(graph_data["distances"][0], 5)
+        self.assertEqual(graph_data["Distance"][0], 5)
 
     def test_do_not_update_graph_data_when_flag_is_false(self):
         log_dict = {"total_distance": 0, "total_duration": 0, "count": 0}
-        graph_data = {"dates": [], "distances": []}
+        graph_data = {"dates": [], "Distance": []}
         log = {
             "total_distance": 5,
             "total_duration": timedelta(minutes=30),
@@ -57,7 +56,7 @@ class TestUpdateLogDictAndGraphData(TestCase):
         update_log_dict_and_graph_data(log_dict, graph_data, log, False)
 
         self.assertEqual(len(graph_data["dates"]), 0)
-        self.assertEqual(len(graph_data["distances"]), 0)
+        self.assertEqual(len(graph_data["Distance"]), 0)
 
     def test_no_graph_data_provided(self):
         log_dict = {"total_distance": 0, "total_duration": 0, "count": 0}
@@ -155,7 +154,8 @@ class TestGetCardioLogsGroupByDay(TestCase):
         )
 
     def test_get_cardio_logs_grouped_by_day(self):
-        today = timezone.now().date()
+        """Verify cardio logs within range are retrieved and grouped by day"""
+        today = timezone.localdate()
         yesterday = today - timedelta(days=1)
         two_days_ago = today - timedelta(days=2)
 
@@ -165,10 +165,8 @@ class TestGetCardioLogsGroupByDay(TestCase):
         logs = get_cardio_logs_grouped_by_day(self.user, start_date, end_date)
         result = list(logs)
 
-        # Check the number of days returned
         self.assertEqual(len(result), 3)
 
-        # Check the calculations and grouping
         expected_results = [
             {
                 "day": two_days_ago,
@@ -193,52 +191,19 @@ class TestGetCardioLogsGroupByDay(TestCase):
             self.assertEqual(log_day["total_duration"], expected["total_duration"])
 
 
-class TestAddStartEndDatesToGraphData(TestCase):
-    def setUp(self):
-        self.start = timezone.now() - timedelta(days=10)
-        self.end = timezone.now()
-        self.graph_data = {"dates": [], "distances": []}
-
-    def test_graph_data_empty(self):
-        add_start_end_dates_to_graph_data(self.graph_data, self.start, self.end)
-        self.assertEqual(len(self.graph_data["dates"]), 2)
-        self.assertEqual(self.graph_data["dates"][0], self.start)
-        self.assertEqual(self.graph_data["dates"][1], self.end)
-
-    def test_graph_data_one_day(self):
-        day = self.end - timedelta(days=1)
-        self.graph_data.update({"dates": [day], "distances": [10]})
-        add_start_end_dates_to_graph_data(self.graph_data, self.start, self.end)
-        self.assertEqual(len(self.graph_data["dates"]), 3)
-        self.assertDictEqual(
-            self.graph_data,
-            {"dates": [self.start, day, self.end], "distances": [0, 10, 0]},
-        )
-
-    def test_graph_data_start_and_end_exist(self):
-        self.graph_data = {"dates": [self.start, self.end], "distances": [5, 10]}
-        add_start_end_dates_to_graph_data(self.graph_data, self.start, self.end)
-        self.assertEqual(len(self.graph_data["dates"]), 2)
-        self.assertDictEqual(
-            self.graph_data, {"dates": [self.start, self.end], "distances": [5, 10]}
-        )
-
-
 class TestGetCardioLogSummaries(TestCase):
     def setUp(self):
         self.user = MagicMock()
         self.selected_range = "week"
-        self.today = timezone.now().date()
+        self.today = timezone.localdate()
 
     @patch("cardio.services.get_start_dates")
     @patch("cardio.services.get_cardio_logs_grouped_by_day")
     @patch("cardio.services.aggregate_cardio_logs")
-    @patch("cardio.services.add_start_end_dates_to_graph_data")
     @patch("cardio.services.get_cardio_log_averages")
     def test_get_cardio_log_summaries(
         self,
         mock_get_cardio_log_averages,
-        mock_add_start_end_dates_to_graph_data,
         mock_aggregate_cardio_logs,
         mock_get_cardio_logs_grouped_by_day,
         mock_get_start_dates,
@@ -261,16 +226,15 @@ class TestGetCardioLogSummaries(TestCase):
         }
 
         # Execute the function
-        result, graph_data = get_cardio_log_summaries(self.user, self.selected_range)
+        result, graph = get_cardio_log_summaries(self.user, self.selected_range)
 
         # Asserts
         mock_get_start_dates.assert_called_once_with(self.today, self.selected_range)
         mock_get_cardio_logs_grouped_by_day.assert_called_once()
         mock_aggregate_cardio_logs.assert_called_once()
-        mock_add_start_end_dates_to_graph_data.assert_called_once()
         self.assertEqual(len(result), 1)
         self.assertIsInstance(result, list)
-        self.assertIsInstance(graph_data, dict)
+        self.assertTrue(is_base64(graph))
 
 
 class TestAggregateCardioLogs(TestCase):
@@ -296,7 +260,7 @@ class TestAggregateCardioLogs(TestCase):
             )
             if update_graph:
                 graph_data["dates"].append(log["day"].date())
-                graph_data["distances"].append(log["total_distance"])
+                graph_data["Distance"].append(log["total_distance"])
 
         mock_update_log_dict_and_graph_data.side_effect = side_effect
 

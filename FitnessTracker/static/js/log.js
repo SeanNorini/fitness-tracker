@@ -75,7 +75,7 @@ class LogManager {
       }
     } else {
       currentCalendarDate.month++;
-      if (currentCalendarDate.month === 12) {
+      if (currentCalendarDate.month === 13) {
         currentCalendarDate.month = 1;
         currentCalendarDate.year++;
       }

@@ -19,7 +19,7 @@ from .models import WorkoutLog, CardioLog, WeightLog, FoodLog
 
 
 # Create your views here.
-class LogView(LoginRequiredMixin, TemplateView):
+class LogTemplateView(LoginRequiredMixin, TemplateView):
     def get_date(self):
         try:
             year = int(self.kwargs.get("year", ""))
@@ -35,9 +35,6 @@ class LogView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         year, month = self.get_date()
         user = self.request.user
-
-        modules = ["workout", "cardio", "nutrition", "log", "stats", "settings"]
-        context["modules"] = modules
 
         context["calendar"] = Calendar(user=user, year=year, month=month).formatmonth()
 

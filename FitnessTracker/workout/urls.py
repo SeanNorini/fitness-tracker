@@ -11,6 +11,11 @@ urlpatterns = [
     path("", views.WorkoutView.as_view(), name="index"),
     path("stats/", views.StatsView.as_view(), name="stats"),
     path(
+        "stats/<str:stat>/<str:range>/",
+        views.StatsGraphAPIView.as_view(),
+        name="stats_graph",
+    ),
+    path(
         "workout/add_exercise/<str:exercise>",
         views.AddExerciseView.as_view(),
         name="add_exercise",
@@ -69,11 +74,6 @@ urlpatterns = [
         "workout/routine_settings/save_routine/",
         views.SaveRoutineAPIView.as_view(),
         name="save_routine",
-    ),
-    path(
-        "workout/routine_settings/save_routine_settings/",
-        views.SaveRoutineSettingsAPIView.as_view(),
-        name="save_routine_settings",
     ),
     path(
         "workout/get_routine/<int:pk>",

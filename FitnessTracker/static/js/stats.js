@@ -1,67 +1,31 @@
 class StatsManager {
   constructor() {
-    this.baseURL = pageManager.baseURL + "/stats/";
-  }
-
-  getGraph() {
-    const formData = this.getGraphSettings();
-
-    return pageManager
-      .fetchData({
-        url: this.baseURL,
-        method: "POST",
-        body: formData,
-        responseType: "arrayBuffer",
-      })
-      .then((graphBuffer) => {
-        return graphBuffer;
-      });
+    this.baseURL = pageManager.baseURL + "/stats";
   }
 
   getGraphSettings() {
-    const formData = new FormData();
     const selections = document.querySelectorAll(".active");
 
     const dateRange = selections[0].value;
-    formData.append("date_range", dateRange);
 
-    const stat = selections[1].value;
-    formData.append("stat", stat);
-
+    let stat = selections[1].value;
     if (stat === "weightlifting") {
-      const exercise = document.getElementById("select-exercise").value;
-      formData.append("exercise", exercise);
+      stat = document.getElementById("select-exercise").value;
     }
 
-    const csrftoken = document.querySelector(
-      "[name=csrfmiddlewaretoken]",
-    ).value;
-    formData.append("csrfmiddlewaretoken", csrftoken);
-
-    return formData;
-  }
-
-  convertBufferToImg(buffer) {
-    // Convert array buffer to Uint8Array
-    const byteArray = new Uint8Array(buffer);
-
-    // Convert bytes data to base64
-    const base64String = btoa(String.fromCharCode(...byteArray));
-
-    // Create image element and set src to base64 data
-    const img = document.createElement("img");
-    img.src = "data:image/png;base64," + base64String;
-
-    return img;
+    return { dateRange: dateRange, stat: stat };
   }
 
   updateGraph() {
-    this.getGraph().then((graphBuffer) => {
-      const graphImg = this.convertBufferToImg(graphBuffer);
-      const graphContainer = document.getElementById("graph");
+    const graphSettings = this.getGraphSettings();
 
-      graphContainer.innerHTML = "";
-      graphContainer.appendChild(graphImg);
+    FetchUtils.apiFetch({
+      url: `${this.baseURL}/${graphSettings["stat"]}/${graphSettings["dateRange"]}`,
+      method: "GET",
+      successHandler: (response) => {
+        pageManager.updateGraph(response["graph"], "graph");
+      },
+      errorHandler: {},
     });
   }
 

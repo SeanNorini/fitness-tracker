@@ -14,40 +14,39 @@ class NutritionManager {
   }
 
   getNutritionSummary() {
-    pageManager
-      .fetchData({
-        url: `${this.baseURL}/get_nutrition_summary/week/`,
-        method: "GET",
-        responseType: "json",
-      })
-      .then((response) => {
-        const pieChart = this.createGraphImg(response["pie_chart"]);
-        const barChart = this.createGraphImg(response["bar_chart"]);
-        const pieChartContainer = document.getElementById("pie-chart");
-        const barChartContainer = document.getElementById("bar-chart");
-        pieChartContainer.innerHTML = "";
-        barChartContainer.innerHTML = "";
-        pieChartContainer.appendChild(pieChart);
-        barChartContainer.appendChild(barChart);
-
-        const proteinContainer = document.querySelector(".avg-protein");
-        proteinContainer.textContent = response["avg_protein"]
-          ? `${response["avg_protein"]}g`
-          : "0g";
-        const carbsContainer = document.querySelector(".avg-carbs");
-        carbsContainer.textContent = response["avg_carbs"]
-          ? `${response["avg_carbs"]}g`
-          : "0g";
-        const fatContainer = document.querySelector(".avg-fat");
-        fatContainer.textContent = response["avg_fat"]
-          ? `${response["avg_fat"]}g`
-          : "0g";
-        const caloriesContainer = document.querySelector(".avg-calories");
-        caloriesContainer.textContent = response["avg_calories"]
-          ? response["avg_calories"]
-          : "0";
-      });
+    FetchUtils.apiFetch({
+      url: `${this.baseURL}/get_nutrition_summary/week/`,
+      method: "GET",
+      successHandler: this.getNutritionSummarySuccessHandler,
+      errorHandler: {},
+    });
   }
+
+  getNutritionSummarySuccessHandler = (response) => {
+    const pieChart = this.createGraphImg(response["pie_chart"]);
+    const pieChartContainer = document.getElementById("pie-chart");
+    pieChartContainer.innerHTML = "";
+    pieChartContainer.appendChild(pieChart);
+
+    pageManager.updateGraph(response["bar_chart"], "bar-chart");
+
+    const proteinContainer = document.querySelector(".avg-protein");
+    proteinContainer.textContent = response["avg_protein"]
+      ? `${response["avg_protein"]}g`
+      : "0g";
+    const carbsContainer = document.querySelector(".avg-carbs");
+    carbsContainer.textContent = response["avg_carbs"]
+      ? `${response["avg_carbs"]}g`
+      : "0g";
+    const fatContainer = document.querySelector(".avg-fat");
+    fatContainer.textContent = response["avg_fat"]
+      ? `${response["avg_fat"]}g`
+      : "0g";
+    const caloriesContainer = document.querySelector(".avg-calories");
+    caloriesContainer.textContent = response["avg_calories"]
+      ? response["avg_calories"]
+      : "0";
+  };
 
   saveLogListener() {
     const saveLogBtn = document.getElementById("save-log");
@@ -64,21 +63,18 @@ class NutritionManager {
         foodItem["fat"] = containers[i + 5].textContent;
         formData.food_items.push(foodItem);
       }
-      formData["date"]= document.getElementById("date").value;
+      formData["date"] = document.getElementById("date").value;
 
-
-      FetchUtils
-        .apiFetch({
-          url: `${pageManager.baseURL}/log/food_log/`,
-          method: "POST",
-          body: formData,
-          successHandler: (response) => {
-            pageManager.showTempPopupMessage("Food Log Saved.", 2000);
+      FetchUtils.apiFetch({
+        url: `${pageManager.baseURL}/log/food_log/`,
+        method: "POST",
+        body: formData,
+        successHandler: (response) => {
+          pageManager.showTempPopupMessage("Food Log Saved.", 2000);
           this.getNutritionSummary();
           document.getElementById("food-log-pk").value = response.pk;
-          }
-        });
-
+        },
+      });
     });
   }
 

@@ -7,6 +7,7 @@ from cardio.services import get_cardio_log_averages, get_cardio_log_summaries
 from log.models import CardioLog
 from users.models import User, UserSettings
 from common.test_globals import CREATE_USER
+import base64
 
 
 class TestIntegrationServices(TestCase):
@@ -49,7 +50,7 @@ class TestIntegrationServices(TestCase):
             duration=timedelta(seconds=1800),
             distance=3,
         )
-        cardio_log_summaries, graph_data = get_cardio_log_summaries(self.user, "week")
+        cardio_log_summaries, graph = get_cardio_log_summaries(self.user, "week")
 
         expected_summaries = [
             {
@@ -81,14 +82,11 @@ class TestIntegrationServices(TestCase):
             },
         ]
 
-        expected_graph_data = {
-            "dates": [
-                datetime.date(2024, 4, 12),
-                datetime.date(2024, 4, 17),
-                datetime.date(2024, 4, 18),
-            ],
-            "distances": [3.0, 3.0, 3.0],
-        }
-
         self.assertEqual(expected_summaries, cardio_log_summaries)
-        self.assertDictEqual(expected_graph_data, graph_data)
+        try:
+            base64_bytes = base64.b64decode(graph, validate=True)
+            is_base64 = True
+        except Exception:
+            is_base64 = False
+
+        self.assertTrue(is_base64, "The string is not a valid base64 encoded string.")
