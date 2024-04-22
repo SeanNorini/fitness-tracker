@@ -38,18 +38,11 @@ class CardioManager {
     }
   }
 
-  readCardioSessionForm() {
-    const formData = {};
-
-    const formInputs = document.querySelectorAll("input");
-    formInputs.forEach((input) => {
-      if (!input.readOnly) {
-        formData[input.name] = input.value;
-      }
-    });
+  getDateTimeStr(formData) {
+    // Reads the date input on the input spinner and converts it to a string for a python datetime object
     const date = this.inputSpinner.spinners["8"].getDateObj();
-
     let hours = parseInt(formData["hours"]);
+    hours = hours > 0 ? hours : hours + 12;
 
     if (formData["period"] === "AM") {
       hours = hours < 12 ? hours : 0;
@@ -59,14 +52,52 @@ class CardioManager {
 
     date.setHours(hours);
     date.setMinutes(formData["minutes"]);
-    formData["datetime"] = date.toISOString();
-
-    return formData;
+    return this.toISOWithTimezone(date);
   }
 
+  toISOWithTimezone(date) {
+    const tzOffset = -date.getTimezoneOffset();
+    const diff = tzOffset >= 0 ? "+" : "-";
+    const pad = (num) => (num < 10 ? "0" + num : num);
+
+    const offset = Math.abs(tzOffset);
+    const hoursOffset = Math.floor(offset / 60);
+    const minutesOffset = offset % 60;
+
+    return (
+      date.getFullYear() +
+      "-" +
+      pad(date.getMonth() + 1) +
+      "-" +
+      pad(date.getDate()) +
+      "T" +
+      pad(date.getHours()) +
+      ":" +
+      pad(date.getMinutes()) +
+      ":" +
+      pad(date.getSeconds()) +
+      diff +
+      pad(hoursOffset) +
+      ":" +
+      pad(minutesOffset)
+    );
+  }
+
+  postprocessCardioSessionForm = (formData) => {
+    const datetime = this.getDateTimeStr(formData);
+    const distance = `${formData["distance-integer"]}.${formData["distance-decimal"]}`;
+    const duration =
+      formData["duration-hours"] * 3600 +
+      formData["duration-minutes"] * 60 +
+      formData["duration-seconds"] * 1;
+    return { datetime: datetime, distance: distance, duration: duration };
+  };
+
   saveCardioSession() {
-    const formData = this.readCardioSessionForm();
-    console.log(JSON.stringify(formData));
+    const formData = FormUtils.getFormData("cardio-session-form", {
+      postprocessFunc: this.postprocessCardioSessionForm,
+    });
+
     FetchUtils.apiFetch({
       url: `${pageManager.baseURL}/log/cardio_log/`,
       method: "POST",
@@ -158,6 +189,11 @@ class CardioManager {
       inputIndex: 1,
       noWrap: true,
     });
+
+    const now = new Date();
+    if (now.getHours() === 0 && now.getMinutes() < 30) {
+      this.inputSpinner.spinners[8].update(-1);
+    }
   }
 
   getSummaries(selectedRange) {
@@ -218,8 +254,6 @@ class CardioManager {
       extendedHeader.textContent = "All-Time Summary (Avg. Daily):";
     }
   }
-
-
 }
 
 window.cardioManager = new CardioManager();

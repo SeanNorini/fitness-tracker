@@ -109,11 +109,8 @@ class TestCardioLogSerializer(TestCase):
     def test_to_internal_value(self):
         data = {
             "datetime": timezone.now() - timedelta(days=1),
-            "duration-hours": 1,
-            "duration-minutes": 30,
-            "duration-seconds": 0,
-            "distance-integer": 5,
-            "distance-decimal": 75,
+            "duration": 5400,
+            "distance": 5.75,
         }
         serializer = CardioLogSerializer(data=data)
         serializer.is_valid()
@@ -124,8 +121,8 @@ class TestCardioLogSerializer(TestCase):
     def test_create_cardio_log(self):
         data = {
             "datetime": timezone.now() - timedelta(days=1),
-            "duration-hours": 1,
-            "distance-integer": 10,
+            "duration": 3600,
+            "distance": 10,
         }
         serializer = CardioLogSerializer(data=data, context={"user": self.user})
         self.assertTrue(serializer.is_valid())

@@ -85,7 +85,6 @@ class WorkoutLogSerializer(serializers.ModelSerializer):
             try:
                 workout_log.full_clean()
             except ValidationError as e:
-                print(e.message_dict)
                 raise serializers.ValidationError(e.message_dict)
             return workout_log
 
@@ -122,17 +121,8 @@ class CardioLogSerializer(serializers.ModelSerializer):
         updated_data = (
             {"datetime": data.get("datetime")} if data.get("datetime") else {}
         )
-
-        duration_hours = int(data.get("duration-hours", 0))
-        duration_minutes = int(data.get("duration-minutes", 0))
-        duration_seconds = int(data.get("duration-seconds", 0))
-        updated_data["duration"] = timedelta(
-            hours=duration_hours, minutes=duration_minutes, seconds=duration_seconds
-        )
-
-        distance_integer = data.get("distance-integer", 0)
-        distance_decimal = data.get("distance-decimal", 0)
-        updated_data["distance"] = float(f"{distance_integer}.{distance_decimal}")
+        updated_data["duration"] = timedelta(seconds=int(data.get("duration", 0)))
+        updated_data["distance"] = float(data.get("distance", 0))
 
         return super().to_internal_value(updated_data)
 

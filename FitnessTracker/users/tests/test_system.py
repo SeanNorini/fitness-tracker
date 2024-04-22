@@ -193,6 +193,7 @@ class TestChangePassword(SeleniumTestCase):
         super().setUp()
         login(self.driver, self.live_server_url + "/user/login", LOGIN_USER_FORM_FIELDS)
         self.driver.get(self.live_server_url + "/user/settings/")
+        time.sleep(1)
         click(self.driver, "id", "change-password")
 
     def test_change_password_success(self) -> None:

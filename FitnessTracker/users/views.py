@@ -11,6 +11,7 @@ from rest_framework.generics import UpdateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
+from common.mixins import DefaultMixin
 from .forms import (
     LoginForm,
     RegistrationForm,
@@ -220,7 +221,7 @@ class ResetPasswordConfirmView(FormView):
             )
 
 
-class SettingsView(LoginRequiredMixin, FormView):
+class SettingsView(DefaultMixin, FormView):
     form_class = UpdateAccountForm
     form_class2 = UserSettingsForm
     template_name = "base/index.html"

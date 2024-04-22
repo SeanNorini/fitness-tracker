@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import matplotlib
 import matplotlib.dates as mdates
 from matplotlib.ticker import MaxNLocator
@@ -5,6 +7,7 @@ from matplotlib import pyplot as plt
 from io import BytesIO
 import base64
 import pandas as pd
+
 matplotlib.use("Agg")
 
 

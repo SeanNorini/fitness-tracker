@@ -363,7 +363,6 @@ class PageManager {
       return div;
     }
   }
-
 }
 
 class Collapsible {
@@ -404,29 +403,49 @@ class Collapsible {
 const pageManager = new PageManager();
 
 class FormUtils {
-  static getFormData(formID, blankFields = false, postprocessFunc = null) {
-    const formData = {};
+  /*
+   * Static method to extract data from a form.
+   *
+   * Parameters:
+   *   formID - The ID of the form element to process.
+   *   args - An object that may contain:
+   *     blankFields - A boolean indicating whether to include empty input values (default: false).
+   *     postprocessFunc - A function to execute after processing each input (default: null).
+   *     readOnly - A boolean indicating whether to include readonly input values (default: false).
+   *
+   * Returns:
+   *   An object containing key-value pairs of form inputs, where keys are the names of the inputs.
+   *
+   * This method processes all input types, handling read-only fields based on settings,
+   * and selectively including radio button inputs only if they are checked.
+   */
+  static getFormData(formID, args) {
+    const settings = {
+      blankFields: false,
+      postprocessFunc: null,
+      readOnly: false,
+      ...args,
+    };
+    let formData = {};
 
-    // Get form inputs
     const formElements = document
       .getElementById(formID)
       .querySelectorAll("input");
     formElements.forEach((element) => {
-      // Read inputs if not null or blankFields = true
-      if (element.type === "radio") {
-        if (element.checked) {
-          formData[element.name] = element.value;
-        }
-      } else if (element.value || blankFields) {
-        formData[element.name] = element.value;
+      if (element.readOnly && !settings.readOnly) {
+        return;
       }
 
-      // Run optional function for additional processing
-      if (postprocessFunc) {
-        postprocessFunc();
+      if (element.type === "radio" && element.checked) {
+        formData[element.name] = element.value;
+      } else if (element.value || settings.blankFields) {
+        formData[element.name] = element.value;
       }
     });
 
+    if (settings.postprocessFunc) {
+      formData = settings.postprocessFunc(formData);
+    }
     return formData;
   }
 

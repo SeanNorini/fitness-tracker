@@ -379,11 +379,8 @@ class TestCardioLogViewSet(APITestCase):
     def test_create_cardio_log(self):
         data = {
             "datetime": "2024-01-02T15:00:00Z",
-            "duration-hours": "1",
-            "duration-minutes": "15",
-            "duration-seconds": "30",
-            "distance-integer": "7",
-            "distance-decimal": "5",
+            "duration": 4530,
+            "distance": "7.5",
         }
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -400,7 +397,7 @@ class TestCardioLogViewSet(APITestCase):
 
     def test_update_cardio_log(self):
         url = reverse("cardiolog-detail", kwargs={"pk": self.cardio_log.pk})
-        data = {"distance-integer": "10", "distance-decimal": "25"}
+        data = {"distance": "10.25"}
         response = self.client.patch(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.cardio_log.refresh_from_db()
