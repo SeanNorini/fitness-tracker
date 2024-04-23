@@ -56,7 +56,7 @@ class RoutineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Routine
-        fields = ["name", "weeks"]
+        fields = ["name", "weeks", "pk"]
 
     def create(self, validated_data):
         weeks_data = validated_data.pop("weeks")

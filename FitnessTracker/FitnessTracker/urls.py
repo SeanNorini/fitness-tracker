@@ -25,4 +25,5 @@ urlpatterns = [
     path("log/", include("log.urls")),
     path("cardio/", include("cardio.urls")),
     path("nutrition/", include("nutrition_tracker.urls")),
+    path("stats/", include("stats.urls")),
 ]

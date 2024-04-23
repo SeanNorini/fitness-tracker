@@ -5,16 +5,11 @@ from . import views
 router = DefaultRouter()
 router.register(r"exercises", views.ExerciseViewSet)
 router.register(r"workouts", views.WorkoutViewSet)
+router.register(r"routines", views.RoutineViewSet)
 
 urlpatterns = [
     path("workout/", views.WorkoutView.as_view(), name="workout"),
     path("", views.WorkoutView.as_view(), name="index"),
-    path("stats/", views.StatsView.as_view(), name="stats"),
-    path(
-        "stats/<str:stat>/<str:range>/",
-        views.StatsGraphAPIView.as_view(),
-        name="stats_graph",
-    ),
     path(
         "workout/add_exercise/<str:exercise>",
         views.AddExerciseView.as_view(),
@@ -69,16 +64,6 @@ urlpatterns = [
         "workout/routine_settings/",
         views.RoutineSettingsView.as_view(),
         name="routine_settings",
-    ),
-    path(
-        "workout/routine_settings/save_routine/",
-        views.SaveRoutineAPIView.as_view(),
-        name="save_routine",
-    ),
-    path(
-        "workout/get_routine/<int:pk>",
-        views.GetRoutineAPIView.as_view(),
-        name="get_routine",
     ),
     path(
         "workout/routine_settings/update_routine_settings/",

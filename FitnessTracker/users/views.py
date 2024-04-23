@@ -11,7 +11,7 @@ from rest_framework.generics import UpdateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
-from common.mixins import DefaultMixin
+from common.base import BaseTemplateView
 from .forms import (
     LoginForm,
     RegistrationForm,
@@ -221,10 +221,11 @@ class ResetPasswordConfirmView(FormView):
             )
 
 
-class SettingsView(DefaultMixin, FormView):
+class SettingsView(BaseTemplateView, FormView):
     form_class = UpdateAccountForm
     form_class2 = UserSettingsForm
     template_name = "base/index.html"
+    fetch_template_name = "users/settings.html"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -245,11 +246,6 @@ class SettingsView(DefaultMixin, FormView):
         context["template_content"] = "users/settings.html"
 
         return context
-
-    def get_template_names(self):
-        if self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
-            return ["users/settings.html"]
-        return [self.template_name]
 
 
 class DeleteUserAPIView(DestroyAPIView):

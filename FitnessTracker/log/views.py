@@ -6,8 +6,7 @@ from rest_framework import viewsets
 from calendar import month_name
 from datetime import datetime
 from common.permissions import IsOwner
-from common.mixins import DefaultMixin
-from common.base import BaseOwnerViewSet
+from common.base import BaseOwnerViewSet, BaseTemplateView
 from .utils import Calendar
 from workout.models import Workout, Exercise, get_attribute_list
 from .serializers import (
@@ -20,7 +19,7 @@ from .models import WorkoutLog, CardioLog, WeightLog, FoodLog
 
 
 # Create your views here.
-class LogTemplateView(DefaultMixin, TemplateView):
+class LogTemplateView(BaseTemplateView, TemplateView):
     def get_date(self):
         try:
             year = int(self.kwargs.get("year", ""))
@@ -50,7 +49,7 @@ class LogTemplateView(DefaultMixin, TemplateView):
         return render(request, "base/index.html", context)
 
 
-class DailyLogView(DefaultMixin, TemplateView):
+class DailyLogView(BaseTemplateView, TemplateView):
     template_name = "log/daily_log.html"
 
     def get_context_data(self, **kwargs):
@@ -79,7 +78,7 @@ class DailyLogView(DefaultMixin, TemplateView):
         return context
 
 
-class WeightLogTemplateView(DefaultMixin, TemplateView):
+class WeightLogTemplateView(BaseTemplateView, TemplateView):
     template_name = "log/save_weight_log.html"
 
 

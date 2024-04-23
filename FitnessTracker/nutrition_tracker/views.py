@@ -9,13 +9,13 @@ from rest_framework import status
 from .services import Nutritionix, FoodLogService
 from django.utils import timezone
 from common.common_utils import Graph
-from common.mixins import DefaultMixin
+from common.base import BaseTemplateView
 
 
 # Create your views here.
 
 
-class NutritionTrackerView(DefaultMixin, TemplateView):
+class NutritionTrackerView(BaseTemplateView, TemplateView):
     template_name = "nutrition_tracker/nutrition.html"
 
     def get_context_data(self, **kwargs):

@@ -79,7 +79,7 @@ class RoutineSettingsManager {
 
       pageManager
         .fetchData({
-          url: `${pageManager.baseURL}/workout/get_routine/${routinePK}`,
+          url: `${pageManager.baseURL}/workout/routines/${routinePK}`,
           method: "GET",
           responseType: "json",
         })
@@ -370,6 +370,13 @@ class RoutineSettingsManager {
     newOption.textContent = routineName;
     newOption.classList.add("row", "row-center", "hover", "border", "routine");
     routineOptions.appendChild(newOption);
+
+    const clonedOption = newOption.cloneNode();
+    clonedOption.textContent = routineName;
+    const routineSearchOptions = document
+      .getElementById("edit-routine-search-bar")
+      .querySelector(".search-list");
+    routineSearchOptions.appendChild(clonedOption);
   }
 
   saveRoutine = (e) => {
@@ -398,7 +405,7 @@ class RoutineSettingsManager {
 
     pageManager
       .fetchData({
-        url: `${this.baseURL}/save_routine/`,
+        url: `${pageManager.baseURL}/workout/routines/`,
         method: "POST",
         responseType: "json",
         body: JSON.stringify(this.routineData),

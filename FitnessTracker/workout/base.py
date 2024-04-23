@@ -1,8 +1,8 @@
 from workout.models import Exercise, Workout, RoutineSettings
-from common.mixins import DefaultMixin
+from common.base import BaseTemplateView
 
 
-class ExerciseMixin(DefaultMixin):
+class ExerciseTemplateView(BaseTemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -11,7 +11,7 @@ class ExerciseMixin(DefaultMixin):
         return context
 
 
-class WorkoutMixin(ExerciseMixin):
+class WorkoutTemplateView(ExerciseTemplateView):
     def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
 
@@ -28,6 +28,6 @@ class WorkoutMixin(ExerciseMixin):
             workout = context["routine_settings"].get_workout()
 
             if workout:
-                context["workout"] = workout.configure_workout()
+                context["workout"] = workout.get_configured_workout()
                 context["workout"]["workout_name"] = workout.name
         return context

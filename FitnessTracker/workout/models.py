@@ -4,7 +4,10 @@ from django.db.models import Q, When, Case
 from django.db import models
 from django.utils import timezone
 from typing import Type
+
+from common.common_utils import get_user_model_or_default
 from users.models import User
+from workout.services import configure_workout
 
 
 def get_attribute_list(model_class, user, attribute_name):
@@ -101,6 +104,11 @@ class Exercise(models.Model):
             return True
         return False
 
+    @property
+    def is_default(self):
+        """Check if the exercise belongs to a default user setup."""
+        return self.user is not None and self.user.username.lower() == "default"
+
 
 class Workout(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -123,65 +131,20 @@ class Workout(models.Model):
         return get_attribute_list(Workout, user, "name")
 
     @classmethod
-    def get_workout(cls, user, workout_name) -> Type["Workout"]:
-        # Get default user
-        default_user = User.get_default_user()
-
+    def get_workout(cls, user, workout_name):
         # Get workout for user or default user, prioritizing user
-        workout = (
-            cls.objects.filter(
-                Q(name__iexact=workout_name), Q(user=user) | Q(user=default_user.id)
-            )
-            .annotate(
-                priority=Case(
-                    When(user=user, then=1),
-                    When(user=default_user.id, then=2),
-                    default=3,
-                )
-            )
-            .order_by("priority")
-            .first()
-        )
+        workout = get_user_model_or_default(user, Workout, workout_name).first()
 
         # If workout does not exist, get custom workout
         if not workout:
             workout, _ = cls.objects.get_or_create(
-                user=default_user, name="Custom Workout"
+                user=User.get_default_user(), name="Custom Workout"
             )
 
         return workout
 
-    def configure_workout(self) -> dict:
-        workout_config = {"exercises": []}
-
-        for exercise in self.config:
-            weights, reps = self.configure_exercise(
-                exercise["five_rep_max"], exercise["sets"]
-            )
-
-            workout_config["exercises"].append(
-                {exercise["name"]: {"weights": weights, "reps": reps}}
-            )
-
-        return workout_config
-
-    @staticmethod
-    def configure_exercise(five_rep_max, exercise_sets):
-        weights, reps = [], []
-        for exercise_set in exercise_sets:
-            weight = 0
-            match exercise_set["modifier"]:
-                case "exact":
-                    weight = exercise_set["amount"]
-                case "percentage":
-                    weight = (exercise_set["amount"] / 100) * five_rep_max
-                case "increment":
-                    weight = five_rep_max + exercise_set["amount"]
-                case "decrement":
-                    weight = five_rep_max - exercise_set["amount"]
-            weights.append(weight)
-            reps.append(exercise_set["reps"])
-        return weights, reps
+    def get_configured_workout(self) -> dict:
+        return configure_workout(self)
 
 
 class WorkoutSettings(models.Model):
@@ -206,14 +169,7 @@ class Routine(models.Model):
 
     @classmethod
     def get_routines(cls, user):
-        user_routines = Routine.objects.filter(user=user)
-        routine_list = user_routines.values_list("name", flat=True)
-
-        default_user_routines = Routine.objects.filter(
-            user=User.get_default_user().id
-        ).exclude(name__in=routine_list)
-
-        return list(user_routines) + list(default_user_routines)
+        return get_user_model_or_default(user, cls)
 
     def get_weeks(self):
         return Week.objects.filter(routine=self)

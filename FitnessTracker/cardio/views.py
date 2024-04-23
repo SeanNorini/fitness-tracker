@@ -1,27 +1,18 @@
-from django.views.generic import TemplateView
-from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from common.mixins import DefaultMixin
+from common.base import BaseTemplateView
 from .services import get_cardio_log_summaries
 
 
-class CardioTemplateView(DefaultMixin, TemplateView):
-    template_name = "cardio/cardio.html"
+class CardioTemplateView(BaseTemplateView):
+    template_name = "base/index.html"
+    fetch_template_name = "cardio/cardio.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["template_content"] = "cardio/cardio.html"
         return context
-
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-
-        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-            return render(request, "cardio/cardio.html", context)
-        else:
-            return render(request, "base/index.html", context)
 
 
 class CardioLogSummariesAPIView(APIView):

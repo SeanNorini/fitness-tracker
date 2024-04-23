@@ -156,7 +156,7 @@ class TestWorkoutModel(TestCase):
         ]
 
         self.workout.config = config
-        workout_config = self.workout.configure_workout()
+        workout_config = self.workout.get_configured_workout()
 
         self.assertIn("Squat", workout_config["exercises"][0])
         self.assertIn("Bench Press", workout_config["exercises"][1])

@@ -1,5 +1,7 @@
 from datetime import timedelta
-
+from django.db.models import Q, When, Case, QuerySet, Model, Subquery, OuterRef
+from django.db import models
+from django.shortcuts import get_object_or_404
 import matplotlib
 import matplotlib.dates as mdates
 from matplotlib.ticker import MaxNLocator
@@ -7,6 +9,7 @@ from matplotlib import pyplot as plt
 from io import BytesIO
 import base64
 import pandas as pd
+from users.models import User
 
 matplotlib.use("Agg")
 
@@ -155,3 +158,66 @@ def is_base64(s):
         return True
     except ValueError:
         return False
+
+
+def clone_for_user(instance: models.Model, user) -> models.Model:
+    """
+    Clone an instance of a Django model for a specific user.
+
+    Parameters:
+        instance (models.Model): The instance to clone.
+        user (User): The user for whom the clone is created.
+
+    Returns:
+        models.Model: A new cloned instance.
+    """
+    if not instance.pk:
+        raise ValueError("Cannot clone unsaved model instance")
+
+    instance.pk = None
+    instance.user = user
+    instance.save()
+    return instance
+
+
+def get_user_model_or_default(
+    user: User,
+    model: Model,
+    name: str = None,
+    include_default: bool = True,
+) -> QuerySet:
+
+    query = Q(name__iexact=name) & Q(user=user) if name else Q(user=user)
+
+    if include_default:
+        default_user = User.get_default_user()
+        query |= Q(user=default_user)
+        return query_default_included(model, user, default_user, query)
+    else:
+        return model.objects.filter(query)
+
+
+def query_default_included(
+    model: Model, user: User, default_user: User, query: Q
+) -> QuerySet:
+    instances = (
+        model.objects.filter(query)
+        .annotate(
+            priority=Case(
+                When(user=user, then=1), When(user=default_user, then=2), default=3
+            )
+        )
+        .order_by("name", "priority")
+    )
+    subquery = (
+        model.objects.filter(name=OuterRef("name"))
+        .annotate(
+            priority=Case(
+                When(user=user, then=1), When(user=default_user, then=2), default=3
+            )
+        )
+        .order_by("priority")
+        .values("id")[:1]
+    )
+
+    return instances.filter(id__in=Subquery(subquery))
