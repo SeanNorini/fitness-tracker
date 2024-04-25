@@ -11,43 +11,13 @@ urlpatterns = [
     path("workout/", views.WorkoutView.as_view(), name="workout"),
     path("", views.WorkoutView.as_view(), name="index"),
     path(
-        "workout/add_exercise/<str:exercise>",
-        views.AddExerciseView.as_view(),
-        name="add_exercise",
-    ),
-    path(
-        "workout/select_workout/<str:workout_name>",
-        views.SelectWorkoutView.as_view(),
-        name="select_workout",
-    ),
-    path(
-        "workout/add_set/<str:exercise_name>",
-        views.AddSetView.as_view(),
-        name="add_set",
-    ),
-    path(
-        "workout/workout_settings",
+        "workout/settings",
         views.WorkoutSettingsView.as_view(),
         name="workout_settings",
     ),
     path(
-        "workout/workout_settings/select_workout/<str:workout_name>",
-        views.WorkoutSettingsSelectWorkoutView.as_view(),
-        name="workout_settings_select_workout",
-    ),
-    path(
-        "workout/workout_settings/add_exercise/<str:exercise_name>",
-        views.WorkoutSettingsAddExerciseView.as_view(),
-        name="workout_settings_add_exercise",
-    ),
-    path(
-        "workout/workout_settings/add_set/<str:exercise_name>",
-        views.WorkoutSettingsAddSetView.as_view(),
-        name="workout_settings_add_set",
-    ),
-    path(
-        "workout/workout_settings/save_workout_settings/",
-        views.WorkoutSettingsSaveWorkoutSettingsView.as_view(),
+        "workout/settings/save/",
+        views.WorkoutSettingsSaveView.as_view(),
         name="workout_settings_save_workout",
     ),
     path(

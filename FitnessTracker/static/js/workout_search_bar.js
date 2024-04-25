@@ -94,7 +94,7 @@ class SearchBar_ {
     }
   }
 
-  addItem(itemName, itemClass) {
+  addItem(itemName, itemClass, args = null) {
     if (!this.itemExists(itemName)) {
       const element = document.createElement("div");
       element.textContent = capitalize(itemName);
@@ -107,6 +107,11 @@ class SearchBar_ {
         itemClass,
       );
       this.searchList.appendChild(element);
+      if (args) {
+        for (const key of Object.keys(args)) {
+          element.dataset[key] = args[key];
+        }
+      }
       return true;
     }
     return false;

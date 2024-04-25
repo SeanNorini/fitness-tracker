@@ -23,7 +23,6 @@ class LogManager {
     days.forEach((day) => {
       // Verify that date is on or before current date
       if (this.validDate(day)) {
-        // noinspection JSUnusedLocalSymbols
         day.addEventListener("click", (e) => {
           // Set current log to selection and retrieve log
           this.currentLog = day;
@@ -107,16 +106,17 @@ class LogManager {
 
   openUpdateWorkoutLogPopup(e) {
     const workoutLog = e.target.closest(".workout");
-    this.workoutLogPK = workoutLog.querySelector(".workout-log-pk").value;
-    const url = `${this.baseURL}/update_workout_log_template/${this.workoutLogPK}/`;
+    const pk = workoutLog.querySelector(".workout-log-pk").value;
+    const url = `${this.baseURL}/update_workout_log_template/${pk}`;
     pageManager
       .fetchData({ url: url, method: "GET", responseType: "text" })
       .then((updateWorkoutLogHTML) => {
         pageManager.updateContent(updateWorkoutLogHTML, "add-log-content");
         pageManager.openPopup("add-log-popup");
         document.getElementById("date").style.pointerEvents = "none";
-        this.loadWorkoutLogManager();
-        this.addUpdateWorkoutLogBtnListener();
+        const updateWorkoutBtn = document.getElementById("save-workout");
+        updateWorkoutBtn.textContent = "Update Workout Log";
+        this.loadWorkoutLogManager(pk);
       });
   }
 
@@ -143,14 +143,6 @@ class LogManager {
     });
   }
 
-  addUpdateWorkoutLogBtnListener() {
-    const updateWorkoutBtn = document.getElementById("save-workout");
-    updateWorkoutBtn.textContent = "Update Workout Log";
-    updateWorkoutBtn.addEventListener("click", (e) => {
-      this.updateWorkoutLog(e);
-    });
-  }
-
   addWorkoutLogListeners() {
     const workoutLogElements = document.querySelectorAll(".workout");
     if (workoutLogElements) {
@@ -168,24 +160,12 @@ class LogManager {
     this.addAddWorkoutLogBtnListener();
   }
 
-  updateWorkoutLog(e) {
-    this.workoutLogManager.updateWorkoutLog(
-      this.workoutLogPK,
-      this.updateWorkoutLogSuccessHandler,
-    );
-  }
-
-  updateWorkoutLogSuccessHandler = (response) => {
-    pageManager.currentPopup.querySelector(".close-popup-container").click();
-    this.updateWorkoutLogInfo(response);
-  };
-
   updateWorkoutLogInfo(response) {
     this.getWorkoutLog(response["pk"]).then((updatedLog) => {
       const workoutLogs = document.querySelectorAll(".workout");
       workoutLogs.forEach((workoutLog) => {
         const workoutLogPK = workoutLog.querySelector(".workout-log-pk").value;
-        if (workoutLogPK === response["pk"]) {
+        if (workoutLogPK === response["pk"].toString()) {
           const workoutLogTemplate = document.createElement("template");
 
           workoutLogTemplate.innerHTML = updatedLog.trim();
@@ -262,14 +242,13 @@ class LogManager {
     }
   };
 
-  saveWorkout() {
-    this.workoutLogManager.saveWorkout(this.saveWorkoutSuccessHandler);
-  }
-
   saveWorkoutSuccessHandler = (response) => {
     pageManager.currentPopup.querySelector(".close-popup-container").click();
     this.updateLogIcons("exercise", "add");
-    this.updateWorkoutLogs(response.pk);
+    if (!this.workoutLogManager.pk) {
+      this.updateWorkoutLogs(response.pk);
+    }
+    this.updateWorkoutLogInfo(response);
   };
 
   addWeightLogBtnListener() {
@@ -331,22 +310,25 @@ class LogManager {
         pageManager.updateContent(addWorkoutLogHTML, "add-log-content");
         pageManager.openPopup("add-log-popup");
         this.loadWorkoutLogManager();
-        this.addSaveWorkoutBtnListener();
       });
   }
 
-  loadWorkoutLogManager() {
+  loadWorkoutLogManager(pk) {
     const script = pageManager.addScript("/static/js/workout.js");
     if (script) {
       script.onload = () => {
-        this.workoutLogManager = new WorkoutLogManager();
-        this.workoutLogManager.initialize();
+        this.workoutLogManager = new WorkoutLogManager(
+          this.saveWorkoutSuccessHandler,
+        );
+        this.workoutLogManager.initialize(pk);
       };
     } else {
       if (!this.workoutLogManager) {
-        this.workoutLogManager = new WorkoutLogManager();
+        this.workoutLogManager = new WorkoutLogManager(
+          this.saveWorkoutSuccessHandler,
+        );
       }
-      this.workoutLogManager.initialize();
+      this.workoutLogManager.initialize(pk);
     }
   }
 
@@ -356,14 +338,6 @@ class LogManager {
       "weight-log-header-text",
     );
     weightLogHeaderText.innerHTML = `Weight Log - ` + dailyLogDate;
-  }
-
-  addSaveWorkoutBtnListener() {
-    const saveWorkoutBtn = document.querySelector("#save-workout");
-    saveWorkoutBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      this.saveWorkout();
-    });
   }
 
   upsertWeightLog() {

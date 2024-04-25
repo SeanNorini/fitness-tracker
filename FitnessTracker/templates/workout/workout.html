@@ -11,9 +11,8 @@
 </div>
 
 {% if workout %}
-  {% for exercise in workout.exercises %}
-    {% for exercise_name, sets in exercise.items %}
-      {% include "workout/exercise.html" %}
-    {% endfor %}
+  {% for exercise, sets in workout.exercises.items %}
+    {% include "workout/exercise.html" %}
   {% endfor %}
 {% endif %}
+

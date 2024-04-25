@@ -1,0 +1,54 @@
+<template id="exercise-template">
+  <div class="drag-and-drop-element exercise col-lg gap-md border bg-secondary p">
+    <input type="hidden" class="name">
+    <input type="hidden" class="id">
+    <input type="hidden" class="default_modifier">
+    <input type="hidden" class="default_weight">
+    <input type="hidden" class="default_reps">
+    <div class="col col-align-center gap-md">
+      <div class="row full-width gap-md">
+        <div class="row row-center full-width">
+          <div class="exercise-name drag-and-drop-handlebar">
+            <input type="hidden" name="exercise-pk" value="{{ exercise.pk }}">
+            {{ exercise.name }}
+          </div>
+          <div>
+            <span class="material-symbols-outlined delete-exercise hover-red text-xxl">
+              delete
+            </span>
+          </div>
+        </div>
+        <div>
+          <span class="material-symbols-outlined tooltip">
+            help
+          </span>
+          <div class="modifier-tooltip bg-blue tooltip-message">
+            Determines set weight based on your five rep max.<br>
+            Exact: Exact value with no modification.<br>
+            %: A percentage of your five rep max.<br>
+            +: Adds a flat value to your five rep max.<br>
+            -: Subtracts a flat value from your five rep max.
+          </div>
+        </div>
+      </div>
+      <div class="row row-center gap-lg">
+        <label for="5-rep-max">5-Rep Max:</label>
+        <input type="number" id="5-rep-max" class="input-sm text-center five_rep_max" data-type="float">
+        {{ user_settings.weight_unit }}
+      </div>
+      <hr class="hr-half-width">
+      <div class="sets col col-align-center gap-md">
+      </div>
+      <hr class="hr-half-width">
+      <div class="row row-center text-md">
+        <span class="material-symbols-outlined delete-set hover-red text-xxl">
+          remove
+        </span>
+          &nbspSet&nbsp
+        <span class="material-symbols-outlined add-set hover-red text-xxl">
+          add
+        </span>
+      </div>
+    </div>
+  </div>
+</template>

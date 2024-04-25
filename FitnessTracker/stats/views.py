@@ -8,7 +8,7 @@ from workout.base import ExerciseTemplateView
 # Create your views here.
 class StatsView(ExerciseTemplateView):
     template_name = "base/index.html"
-    fetch_template_name = "workout/stats.html"
+    fetch_template_name = "stats/stats.html"
 
 
 class StatsGraphAPIView(APIView):

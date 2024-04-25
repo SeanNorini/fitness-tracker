@@ -44,7 +44,7 @@
   <div class="col col-center">
     <select id="select-exercise" class="border radius-2 bg-secondary text-md text-primary px hidden">
       {% for exercise in exercises %}
-        <option>{{ exercise }}</option>
+        <option data-id="{{ exercise.1 }}">{{ exercise.0 }}</option>
       {% endfor %}
     </select>
   </div>

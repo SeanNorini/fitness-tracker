@@ -1,9 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
+from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 from common.permissions import IsOwner
-from users.models import UserSettings
+from users.models import UserSettings, User
 from django.shortcuts import render
 
 
@@ -18,13 +20,21 @@ class BaseOwnerViewSet(viewsets.ModelViewSet):
         """
         Return objects related to the logged-in user only.
         """
-        return self.queryset.filter(user=self.request.user)
+        return self.queryset.filter(
+            Q(user=self.request.user) | Q(user=User.get_default_user())
+        )
 
     def perform_create(self, serializer):
         """
         Automatically set the user of the created object to the logged-in user.
         """
         serializer.save(user=self.request.user)
+
+    def destroy(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user == User.get_default_user():
+            raise PermissionDenied("Default workouts cannot be deleted.")
+        return super().destroy(request, *args, **kwargs)
 
 
 class BaseTemplateView(LoginRequiredMixin, TemplateView):

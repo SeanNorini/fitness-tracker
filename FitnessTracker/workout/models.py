@@ -1,35 +1,40 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.shortcuts import get_object_or_404
-from django.db.models import Q, When, Case
+from django.db.models import Q, Case, When, OuterRef, Subquery
 from django.db import models
 from django.utils import timezone
-from typing import Type
-
 from common.common_utils import get_user_model_or_default
 from users.models import User
 from workout.services import configure_workout
 
 
-def get_attribute_list(model_class, user, attribute_name):
+def get_attribute_list(model, user, *attribute_names):
     default_user = User.get_default_user()
+    query = Q(user=user) | Q(user=default_user.id)
 
-    objects = model_class.objects.filter(
-        Q(user=user) | Q(user=default_user.id)
-    ).distinct()
-
-    attribute_values = set()
-    user_values = set(objects.filter(user=user).values_list(attribute_name, flat=True))
-
-    # Add user values first
-    attribute_values.update(user_values)
-
-    # Add default user values if not already present
-    default_user_values = set(
-        objects.filter(user=default_user).values_list(attribute_name, flat=True)
+    instances = (
+        model.objects.filter(query)
+        .annotate(
+            priority=Case(When(user=user, then=1), When(user=default_user, then=2))
+        )
+        .order_by("name", "priority")
     )
-    attribute_values.update(default_user_values - user_values)
+    subquery = (
+        model.objects.filter(name=OuterRef("name"))
+        .annotate(
+            priority=Case(
+                When(user=user, then=1), When(user=default_user, then=2), default=3
+            )
+        )
+        .order_by("priority")
+        .values("id")[:1]
+    )
 
-    return sorted(list(attribute_values))
+    result = instances.filter(id__in=Subquery(subquery)).values_list(
+        *attribute_names, flat=len(attribute_names) == 1
+    )
+
+    return list(result)
 
 
 # Create your models here.
@@ -84,7 +89,7 @@ class Exercise(models.Model):
 
     @classmethod
     def get_exercise_list(cls, user):
-        return get_attribute_list(Exercise, user, "name")
+        return get_attribute_list(Exercise, user, "name", "pk")
 
     @classmethod
     def get_exercise(cls, user, exercise_name):
@@ -128,7 +133,7 @@ class Workout(models.Model):
 
     @classmethod
     def get_workout_list(cls, user):
-        return get_attribute_list(Workout, user, "name")
+        return get_attribute_list(Workout, user, "name", "pk")
 
     @classmethod
     def get_workout(cls, user, workout_name):
@@ -201,7 +206,7 @@ class Day(models.Model):
         ordering = ["day_number"]
 
     def __str__(self):
-        return f"{self.get_day_number_display()} of {self.week}"
+        return f"Day {self.day_number} of {self.week}"
 
     def get_workouts(self):
         return Workout.objects.filter(dayworkout__day=self).order_by(

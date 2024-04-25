@@ -363,6 +363,31 @@ class PageManager {
       return div;
     }
   }
+
+  appendElement(element, container) {
+    if (typeof container === "string") {
+      container = document.getElementById(container);
+    }
+    container.appendChild(element);
+    return container.lastElementChild;
+  }
+
+  cloneAndAppend(elementToClone, container) {
+    if (typeof elementToClone === "string") {
+      elementToClone = document.getElementById(elementToClone).content;
+    }
+    const clone = elementToClone.cloneNode(true);
+    return this.appendElement(clone, container);
+  }
+
+  setValues(element, values) {
+    for (const [key, value] of Object.entries(values)) {
+      const input = element.querySelector(`.${key}`);
+      if (input) {
+        input.value = value;
+      }
+    }
+  }
 }
 
 class Collapsible {
@@ -477,6 +502,7 @@ class FormUtils {
     });
   }
 }
+
 class FetchUtils {
   static apiFetch(args) {
     fetch(args.url, {
@@ -510,6 +536,33 @@ class FetchUtils {
       .catch((error) => {
         console.error("Server did not respond.", error);
       });
+  }
+}
+
+class InputUtils {
+  static roundedFloatHandler(element, min, max, increment) {
+    /* Rounds to the nearest given increment min-max range, out of range values
+    will return min if less than min or max if greater than max.*/
+    let value = parseFloat(element.value);
+    value = this.validateNumberInput(value, min, max);
+    element.value = Math.round(value / increment) * increment;
+  }
+
+  static roundedIntegerHandler(element, min, max) {
+    /* Rounds to nearest integer within min-max range, out of range values
+    will return min if less than min or max if greater than max.*/
+    let value = Math.round(parseFloat(element.value));
+    element.value = this.validateNumberInput(value, min, max);
+  }
+
+  static validateNumberInput(value, min, max) {
+    if (isNaN(value) || value < min) {
+      value = min;
+    }
+    if (value > max) {
+      value = max;
+    }
+    return value;
   }
 }
 

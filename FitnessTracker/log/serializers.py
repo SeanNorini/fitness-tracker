@@ -17,9 +17,22 @@ from .validators import (
 class WorkoutSetSerializer(serializers.ModelSerializer):
     exercise = serializers.StringRelatedField()
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if self.context.get("include_defaults"):
+            data["default_weight"] = instance.exercise.default_weight
+            data["default_reps"] = instance.exercise.default_reps
+            data["id"] = instance.exercise.id
+        return data
+
     class Meta:
         model = WorkoutSet
-        fields = ["workout_log", "exercise", "weight", "reps"]
+        fields = [
+            "workout_log",
+            "exercise",
+            "weight",
+            "reps",
+        ]
 
 
 class WorkoutLogSerializer(serializers.ModelSerializer):
@@ -37,7 +50,8 @@ class WorkoutLogSerializer(serializers.ModelSerializer):
             data["date"] = timezone.make_aware(
                 datetime(date_values[0], date_values[1], date_values[2]),
                 timezone.get_default_timezone(),
-            )
+            ).date()
+
         return data
 
     def to_representation(self, instance):
@@ -48,7 +62,18 @@ class WorkoutLogSerializer(serializers.ModelSerializer):
         for workout_set in data["workout_sets"]:
             exercise_name = workout_set["exercise"]
             if exercise_name not in exercises:
-                exercises[exercise_name] = {"reps": [], "weights": []}
+                exercises[exercise_name] = {
+                    "reps": [],
+                    "weights": [],
+                }
+                if self.context.get("include_defaults"):
+                    exercises[exercise_name].update(
+                        {
+                            "default_weight": workout_set["default_weight"],
+                            "default_reps": workout_set["default_reps"],
+                            "id": workout_set["id"],
+                        }
+                    )
 
             exercises[exercise_name]["reps"].append(workout_set["reps"])
             exercises[exercise_name]["weights"].append(workout_set["weight"])
@@ -60,33 +85,60 @@ class WorkoutLogSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        workout_log_data = {
+        workout_log_data = self.extract_workout_log_data(validated_data)
+        with transaction.atomic():
+            workout_log = WorkoutLog.objects.create(**workout_log_data)
+            self.handle_workout_sets_creation(
+                workout_log, validated_data.get("workout_exercises", [])
+            )
+            self.validate_and_save(workout_log)
+            return workout_log
+
+    def update(self, instance, validated_data):
+        with transaction.atomic():
+            self.delete_workout_sets(instance)
+            self.handle_workout_sets_creation(
+                instance, validated_data.get("workout_exercises", [])
+            )
+            self.validate_and_save(instance)
+        return instance
+
+    def delete_workout_sets(self, instance):
+        WorkoutSet.objects.filter(workout_log=instance).delete()
+
+    def handle_workout_sets_creation(self, workout_log, workout_exercises):
+        for exercise in workout_exercises:
+            ((exercise_name, sets),) = exercise.items()
+            exercise, _ = Exercise.objects.get_or_create(
+                user=workout_log.user, name=exercise_name
+            )
+            self.create_workout_sets(workout_log, exercise, sets)
+
+    def create_workout_sets(self, workout_log, exercise, sets):
+        for rep, weight in zip(sets["reps"], sets["weights"]):
+            workout_set = WorkoutSet(
+                workout_log=workout_log,
+                exercise=exercise,
+                reps=rep,
+                weight=weight,
+            )
+            workout_set.full_clean()
+            workout_set.save()
+
+    def validate_and_save(self, instance):
+        try:
+            instance.full_clean()
+            instance.save()
+        except ValidationError as e:
+            raise serializers.ValidationError(e.message_dict)
+
+    def extract_workout_log_data(self, validated_data):
+        return {
             "workout": validated_data.get("workout"),
             "user": validated_data.get("user"),
             "date": validated_data.get("date"),
             "total_time": validated_data.get("total_time"),
         }
-        with transaction.atomic():
-
-            workout_log = WorkoutLog.objects.create(**workout_log_data)
-            for exercise in validated_data.get("workout_exercises"):
-                ((exercise_name, sets),) = exercise.items()
-                exercise, _ = Exercise.objects.get_or_create(
-                    user=validated_data["user"], name=exercise_name
-                )
-                for i in range(len(sets["reps"])):
-                    workout_set = WorkoutSet.objects.create(
-                        workout_log=workout_log,
-                        exercise=exercise,
-                        reps=sets["reps"][i],
-                        weight=sets["weights"][i],
-                    )
-                    workout_set.full_clean()
-            try:
-                workout_log.full_clean()
-            except ValidationError as e:
-                raise serializers.ValidationError(e.message_dict)
-            return workout_log
 
     class Meta:
         model = WorkoutLog

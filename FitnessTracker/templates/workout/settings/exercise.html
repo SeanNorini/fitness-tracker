@@ -34,11 +34,11 @@
     <div class="sets col col-align-center gap-md">
       {% if workout %}
         {% for exercise_set in exercise.sets %}
-          {% include 'workout/workout_settings_set.html' %}
+          {% include 'workout/settings/exercise_set.html' %}
         {% endfor %}
       {% else %}
         {% with exercise_set=exercise.exercise_set %}
-          {% include 'workout/workout_settings_set.html' %}
+          {% include 'workout/settings/exercise_set.html' %}
         {% endwith %}
       {% endif %}
     </div>

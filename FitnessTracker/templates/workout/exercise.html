@@ -1,9 +1,13 @@
 {% load custom_filters %}
 <div class="drag-and-drop-element exercise col-lg gap-md border bg-secondary p">
+  <input type="hidden" class="default_weight" value="{{ sets.default_weight|default:'0' }}">
+  <input type="hidden" class="default_reps" value="{{ sets.default_reps|default:'0' }}">
+  <input type="hidden" class="name" value="{{ exercise }}">
+  <input type="hidden" class="id" value="{{ sets.id }}">
   <div class="col col-align-center gap-md">
     <div class="row row row-center gap-md">
       <div class="exercise-name drag-and-drop-handlebar">
-        {{ exercise_name }}
+        {{ exercise }}
       </div>
       <div>
         <span class="material-symbols-outlined delete-exercise hover-red text-xxl">

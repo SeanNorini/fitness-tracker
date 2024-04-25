@@ -24,7 +24,10 @@ class WorkoutTemplateView(ExerciseTemplateView):
         return context
 
     def get_routine_context(self, context) -> dict:
-        if context["routine_settings"].routine:
+        if (
+            self.template_name != "workout/settings/settings.html"
+            and context["routine_settings"].routine
+        ):
             workout = context["routine_settings"].get_workout()
 
             if workout:

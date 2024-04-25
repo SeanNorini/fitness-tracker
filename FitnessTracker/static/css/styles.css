@@ -49,69 +49,56 @@ body {
 .row, .col {
   display: flex;
 }
-
 .row-lg, .col-lg {
   width: 100%;
   max-width: 50rem;
 }
-
 .row-md, .col-md {
   width: 100%;
   max-width: 40rem;
 }
-
 .row-sm, .col-sm {
   width: 100%;
   max-width: 30rem;
 }
-
 .row-justify-start, .col-justify-start {
   justify-content: flex-start;
 }
-
 .row-justify-center, .col-justify-center {
   justify-content: center;
 }
-
 .row-justify-space-between, .col-justify-space-between {
   justify-content: space-between;
 }
-
 .row-justify-end, .col-justify-end {
   justify-content: flex-end;
 }
-
 .row-align-center, .col-align-center {
   align-items: center;
 }
-
 .row-align-start, .col-align-start {
   align-items: flex-start;
 }
-
 .row-align-end, .col-align-end {
   align-items: flex-end;
 }
-
 .row-center, .col-center {
   justify-content: center;
   align-items: center;
 }
-
 .row-nowrap, .col-nowrap {
   flex-wrap: nowrap !important;
 }
-
 @media (max-width: 780px) {
   .row, .col {
     flex-wrap: wrap;
   }
 }
+
 .col {
   flex-direction: column;
   width: 100%;
 }
-
 .col-3 {
   min-width: 7rem;
   max-width: 30%;
@@ -151,68 +138,54 @@ img {
   max-width: 50rem;
   gap: 0.2rem;
 }
-
 .grid--col-3 {
   grid-template-columns: 35% repeat(2, 1fr);
 }
-
 .grid--col-2 {
   grid-template-columns: 1fr 1fr;
 }
-
 .grid--small {
   width: 100%;
   max-width: 25rem;
 }
-
 .grid--rows-small {
   grid-auto-rows: 2rem;
 }
-
 .grid__item {
   display: flex;
   align-items: center;
   padding: 0 0.5rem;
 }
-
 .grid__item--center {
   justify-content: center;
 }
-
 .grid__item--left {
   justify-content: flex-start;
 }
-
 .grid input {
   border: 0;
   background: none;
   text-align: center;
 }
-
 .grid__input--text-left {
   text-align: left !important;
 }
-
 .grid--cardio-date {
   grid-template-columns: 50% repeat(4, 1fr);
 }
-
 .grid--cardio-duration {
   justify-content: flex-end;
   grid-template-columns: 20% 5% 20% 5% 20%;
 }
-
 .grid--cardio-summary {
   grid-template-columns: 30% 70%;
   grid-template-rows: repeat(3, 10rem);
   width: 90%;
 }
-
 .grid--cardio-distance {
   justify-content: flex-end;
   grid-template-columns: 11% 3% 11% 50%;
 }
-
 .grid--cardio-header {
   grid-template-columns: 25% 75%;
 }
@@ -237,18 +210,15 @@ img {
   transition: all 0.3s ease-in;
   cursor: pointer;
 }
-
 .hover:hover {
   background-color: var(--highlight-color);
   border: var(--hover-border);
 }
-
 .hover-red:hover {
   transition: all 0.3s ease-in;
   cursor: pointer;
   color: var(--red-font);
 }
-
 .hover-pointer {
   cursor: pointer;
 }
@@ -257,15 +227,12 @@ img {
   border: 2px solid var(--highlight-color);
   border-radius: 1rem;
 }
-
 .border-invis {
   border: 2px solid transparent;
 }
-
 .border-right {
   border-right: 2px solid var(--highlight-color);
 }
-
 .border-bottom {
   border-bottom: 2px solid var(--highlight-color);
 }
@@ -273,19 +240,15 @@ img {
 .p {
   padding: 0.5rem;
 }
-
 .p-0_2 {
   padding: 0.2rem;
 }
-
 .py {
   padding: 0.5rem 0;
 }
-
 .px {
   padding: 0 0.5rem;
 }
-
 .px-1 {
   padding: 0 1rem;
 }
@@ -293,15 +256,12 @@ img {
 .bg-primary {
   background-color: var(--primary-color);
 }
-
 .bg-secondary {
   background-color: var(--secondary-color);
 }
-
 .bg-tertiary {
   background-color: var(--tertiary-color);
 }
-
 .bg-blue {
   background-color: var(--blue-background);
 }
@@ -309,19 +269,15 @@ img {
 .gap-xs {
   gap: 0.1rem;
 }
-
 .gap-sm {
   gap: 0.2rem;
 }
-
 .gap-md {
   gap: 0.5rem;
 }
-
 .gap-lg {
   gap: 1rem;
 }
-
 .gap-xl {
   gap: 2rem;
 }
@@ -329,39 +285,30 @@ img {
 .m-auto {
   margin: auto;
 }
-
 .m-top-1 {
   margin-top: 1rem;
 }
-
 .m-top-2 {
   margin-top: 2rem;
 }
-
 .m-top-3 {
   margin-top: 3rem;
 }
-
 .m-right-1 {
   margin-right: 1rem;
 }
-
 .m-left-1 {
   margin-left: 1rem;
 }
-
 .m-top_-1_5 {
   margin-top: -1.5rem;
 }
-
 .m-top_-3_8 {
   margin-top: -3.8rem;
 }
-
 .m-bottom-10 {
   margin-bottom: 10rem;
 }
-
 .m-left {
   margin-left: auto;
 }
@@ -369,39 +316,30 @@ img {
 .text-sm {
   font-size: 1rem;
 }
-
 .text-md {
   font-size: 1.4rem;
 }
-
 .text-lg {
   font-size: 1.6rem;
 }
-
 .text-xl {
   font-size: 2rem !important;
 }
-
 .text-xxl {
   font-size: 2.2rem !important;
 }
-
 .text-center {
   text-align: center;
 }
-
 .text-primary {
   color: var(--primary-font);
 }
-
 .text-secondary {
   color: var(--secondary-font);
 }
-
 .text-green {
   color: var(--green-font);
 }
-
 .text-red {
   color: var(--red-font);
 }
@@ -409,11 +347,9 @@ img {
 .radius {
   border-radius: 1rem;
 }
-
 .radius-2 {
   border-radius: 2rem;
 }
-
 .radius-3 {
   border-radius: 3rem;
 }
@@ -427,14 +363,12 @@ a {
   text-align: center;
   text-shadow: var(--text-shadow);
 }
-
 a:hover {
   transition: 0.3s all ease-in;
   font-weight: var(--bold);
   color: var(--red-font);
   text-shadow: var(--text-shadow);
 }
-
 a::after {
   content: attr(data-text)/"";
   height: 0;
@@ -460,7 +394,6 @@ a::after {
   border: 2px solid var(--highlight-color);
   min-width: 13rem;
 }
-
 .btn:hover {
   transition: all 0.3s ease-in;
   background-color: var(--highlight-color);
@@ -478,30 +411,24 @@ input {
   font-size: 1.2rem;
   outline: none;
 }
-
 input:not([type=checkbox], [type=radio]) {
   height: 2rem;
 }
-
 input:not([type=checkbox], [type=radio], [type=date]) {
   width: 100%;
 }
-
 input[type=radio], input [type=checkbox] {
   cursor: pointer;
   width: 1rem;
   height: 1rem;
 }
-
 input:not([readonly]):focus {
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
 }
-
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
 input[type=number] {
   -moz-appearance: textfield;
 }
@@ -509,7 +436,6 @@ input[type=number] {
 .input-xs {
   max-width: 4rem;
 }
-
 .input-sm {
   max-width: 6rem;
 }
@@ -517,7 +443,6 @@ input[type=number] {
 .pos-rel {
   position: relative;
 }
-
 .pos-abs {
   position: absolute;
 }
@@ -527,7 +452,6 @@ input[type=number] {
   max-height: 25rem;
   overflow-y: auto;
 }
-
 .search-list-bottom {
   bottom: 100%;
 }
@@ -535,7 +459,5 @@ input[type=number] {
 .vis-hidden {
   visibility: hidden;
 }
-
-
 
 /*# sourceMappingURL=styles.css.map */

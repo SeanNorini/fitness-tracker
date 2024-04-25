@@ -105,10 +105,12 @@ class UpdateWorkoutLogTemplateView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         pk = self.kwargs.get("pk")
         workout_log = WorkoutLog.objects.filter(user=self.request.user, pk=pk).first()
-        context["workout"] = WorkoutLogSerializer(instance=workout_log).data
+        context["workout"] = WorkoutLogSerializer(
+            instance=workout_log, context={"include_defaults": True}
+        ).data
 
-        context["workouts"] = get_attribute_list(Workout, self.request.user, "name")
-        context["exercises"] = get_attribute_list(Exercise, self.request.user, "name")
+        context["workouts"] = Workout.get_workout_list(self.request.user)
+        context["exercises"] = Exercise.get_exercise_list(self.request.user)
         return context
 
 

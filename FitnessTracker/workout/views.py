@@ -5,7 +5,8 @@ from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from common.permissions import IsOwner
+from rest_framework.exceptions import PermissionDenied
+from users.models import User
 from .models import Workout, Exercise, WorkoutSettings, Routine, RoutineSettings
 from .serializers import (
     RoutineSerializer,
@@ -33,54 +34,8 @@ class WorkoutView(WorkoutTemplateView):
         return context
 
 
-class SelectWorkoutView(BaseTemplateView):
-    template_name = "workout/workout.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-
-        try:
-            workout = Workout.get_workout(
-                self.request.user, self.kwargs["workout_name"]
-            )
-        except Workout.DoesNotExist:
-            return context
-        context["workout"] = workout.get_configured_workout()
-
-        return context
-
-
-class AddExerciseView(BaseTemplateView):
-    template_name = "workout/exercise.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        exercise = Exercise.get_exercise(self.request.user, self.kwargs["exercise"])
-        context["exercise_name"] = exercise.name
-        context["sets"] = {
-            "weights": [exercise.default_weight],
-            "reps": [exercise.default_reps],
-        }
-
-        return context
-
-
-class AddSetView(BaseTemplateView):
-    template_name = "workout/set.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        exercise_name = self.kwargs.get("exercise_name")
-        exercise = Exercise.get_exercise(self.request.user, exercise_name)
-        context["weight"] = exercise.default_weight
-        context["reps"] = exercise.default_reps
-
-        return context
-
-
 class WorkoutSettingsView(WorkoutTemplateView):
-    template_name = "workout/workout_settings.html"
+    template_name = "workout/settings/settings.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -92,48 +47,17 @@ class WorkoutSettingsView(WorkoutTemplateView):
         return context
 
 
-class WorkoutSettingsSelectWorkoutView(BaseTemplateView):
-    template_name = "workout/workout_settings_workout.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-        workout = Workout.get_workout(self.request.user, self.kwargs["workout_name"])
-        context["workout"] = workout.config
-
-        return context
-
-
-class WorkoutSettingsAddSetView(BaseTemplateView):
-    template_name = "workout/workout_settings_set.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        exercise = Exercise.get_exercise(
-            self.request.user, self.kwargs["exercise_name"]
-        )
-        context["exercise_set"] = exercise.exercise_set
-
-        return context
-
-
-class WorkoutSettingsAddExerciseView(BaseTemplateView):
-
-    template_name = "workout/workout_settings_exercise.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        exercise = Exercise.get_exercise(
-            self.request.user, self.kwargs["exercise_name"]
-        )
-        context["exercise"] = exercise
-
-        return context
-
-
-class WorkoutViewSet(viewsets.ModelViewSet):
+class WorkoutViewSet(BaseOwnerViewSet):
     queryset = Workout.objects.all()
     serializer_class = WorkoutSerializer
-    permission_classes = [IsAuthenticated, IsOwner]
+
+    def retrieve(self, request, *args, **kwargs):
+        workout = self.get_object()
+        configure = self.request.query_params.get("configure")
+        if configure:
+            data = workout.get_configured_workout()
+            return Response(data, status=status.HTTP_200_OK)
+        return super().retrieve(request, args, kwargs)
 
     def perform_create(self, serializer):
         instance = serializer.save(user=self.request.user)
@@ -143,7 +67,7 @@ class WorkoutViewSet(viewsets.ModelViewSet):
             obj.save()
 
 
-class WorkoutSettingsSaveWorkoutSettingsView(LoginRequiredMixin, FormView):
+class WorkoutSettingsSaveView(LoginRequiredMixin, FormView):
     model = WorkoutSettings
     form_class = WorkoutSettingsForm
 

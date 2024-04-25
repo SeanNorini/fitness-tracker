@@ -7,7 +7,6 @@
   --secondary-background: #000000;
   --blue-background: #1f538d;
   --primary-font: #f5f5f5;
-  --secondary-font: #8d8d8d;
   --blue-font: #6884ff;
   --red-font: #ff004c;
   --green-font: #28a745;
@@ -18,5 +17,7 @@
   --text-shadow: 1px 0 8px rgb(0, 0, 0);
   --box-shadow: 3px 3px 10px 3px rgba(0, 0, 0, .5);
 }
+
+
 
 /*# sourceMappingURL=variables.css.map */

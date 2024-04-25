@@ -8,7 +8,7 @@
       <h1 id="timer" class="text-center">00:00</h1>
     {% elif workouts %}
       {% for workout in workouts %}
-        <div class="workout border border-invis hover p-0_2">{{ workout }}</div>
+        <div class="workout border border-invis hover p-0_2" data-pk="{{ workout.1 }}">{{ workout.0 }}</div>
       {% endfor %}
     {% endif %}
   </div>

@@ -9,7 +9,7 @@
     <div class="row row-lg row-justify-space-between row-align-center row-nowrap bg-primary p gap-md">
       {% include "base/navigate.html" with direction="before" %}
       <div class="row row-center gap-md">
-        <h1 id="routine">
+        <h1 id="workout-routine">
           {{ routine_settings.routine }}, 
           Week #{{ routine_settings.week_number }}, 
           Day #{{ routine_settings.day_number }}
@@ -74,4 +74,6 @@
   </div>
 
 </form>
+{% include "workout/exercise_template.html"  %}
+{% include "workout/exercise_set_template.html"  %}
 {% include "base/popup.html" with popup_id="rest-timer-popup" content_id="rest-timer"%}
