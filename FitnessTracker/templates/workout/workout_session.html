@@ -28,8 +28,11 @@
           calendar_month
         </span>
       </div>
-      
     </div>
+
+    {% if workout_settings.show_workout_timer %}
+      {% include "workout/workout_timer.html" %}
+    {% endif %}
   
     <div class="row row-center row-nowrap">
       

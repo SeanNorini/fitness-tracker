@@ -572,3 +572,32 @@ function capitalize(str) {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
 }
+
+function getCurrentDate() {
+  const currentDate = new Date();
+  return new Date(
+    currentDate.getTime() - currentDate.getTimezoneOffset() * 60000,
+  );
+}
+
+function validateDate(date) {
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
+  const currentDay = new Date().getDate();
+
+  return (
+    date.year < currentYear ||
+    (date.year === currentYear && date.month < currentMonth) ||
+    (date.year === currentYear &&
+      date.month === currentMonth &&
+      date.day <= currentDay)
+  );
+}
+
+function splitDate(date) {
+  const dateParts = date.split("-");
+  const year = parseInt(dateParts[0], 10);
+  const month = parseInt(dateParts[1], 10);
+  const day = parseInt(dateParts[2], 10);
+  return { year: year, month: month, day: day };
+}

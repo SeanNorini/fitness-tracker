@@ -260,7 +260,9 @@ class BaseWorkoutManager {
     const workoutData = { workout_name: workoutName, workout_exercises: [] };
     const dateInput = document.getElementById("date");
     workoutData["date"] = dateInput.value;
-    workoutData["total_time"] = "0";
+    workoutData["total_time"] = this.workoutTimer
+      ? this.workoutTimer.getDurationSeconds()
+      : "0";
 
     exercises.forEach((exercise, index) => {
       const exerciseName = exercise
@@ -297,24 +299,44 @@ class BaseWorkoutManager {
 class WorkoutManager extends BaseWorkoutManager {
   constructor() {
     super();
-
-    this.restTimerRunning = false;
   }
 
   initialize() {
-    this.setDate();
-    this.dragAndDrop.initialize();
-
-    this.showRestTimerSetting = document.getElementById("show-rest-timer");
+    this.dateInput = document.getElementById("date");
+    this.showRestTimerSetting =
+      document.getElementById("show-rest-timer").value;
     this.showWorkoutTimerSetting =
-      document.getElementById("show-workout-timer");
+      document.getElementById("show-workout-timer").value;
 
     this.routine = document.getElementById("workout-routine");
     if (this.routine) {
       this.navNext = document.getElementById("nav-next");
       this.navPrev = document.getElementById("nav-before");
     }
+    this.dateInput.valueAsDate = getCurrentDate();
+    this.dragAndDrop.initialize();
+    this.initializeTimers();
     super.initialize();
+  }
+
+  initializeTimers() {
+    if (this.showRestTimerSetting === "True") {
+      this.restTimer = new Timer("rest-timer");
+    } else {
+      this.restTimer = null;
+    }
+
+    if (this.showWorkoutTimerSetting === "True") {
+      this.timerBtn = document.getElementById("timer-btn");
+      this.resetTimerBtn = document.getElementById("reset-timer-btn");
+      this.timerControl = document.querySelector(".timer-control");
+      this.workoutTimer = new Timer("workout-timer", {
+        resetOnStop: false,
+        showHours: true,
+      });
+    } else {
+      this.workoutTimer = null;
+    }
   }
 
   addWorkoutListeners() {
@@ -333,6 +355,56 @@ class WorkoutManager extends BaseWorkoutManager {
       this.navPrev.addEventListener(
         "click",
         this.navigateRoutineWorkoutHandler,
+      );
+    }
+
+    if (this.showWorkoutTimerSetting === "True") {
+      this.timerBtn.addEventListener("click", this.workoutTimerHandler);
+      this.resetTimerBtn.addEventListener(
+        "click",
+        this.workoutResetTimerHandler,
+      );
+    }
+
+    this.dateInput.addEventListener("change", (e) => {
+      this.dateHandler();
+    });
+  }
+
+  workoutTimerHandler = (e) => {
+    if (!(e.target === this.timerControl)) {
+      return;
+    }
+    if (this.timerControl.textContent.trim() === "play_circle") {
+      this.timerControl.textContent = "pause_circle";
+      this.workoutTimer.start();
+    } else {
+      this.timerControl.textContent = "play_circle";
+      this.workoutTimer.stop();
+    }
+  };
+
+  workoutResetTimerHandler = (e) => {
+    if (!e.target.classList.contains("timer-reset-control")) {
+      return;
+    }
+    const confirmation = confirm(
+      "Are you sure you want to reset the current workout timer?",
+    );
+    if (confirmation) {
+      this.workoutTimer.stop();
+      this.timerControl.textContent = "play_circle";
+      this.workoutTimer.resetTimer();
+    }
+  };
+
+  dateHandler() {
+    const date = splitDate(this.dateInput.value);
+    if (!validateDate(date)) {
+      this.dateInput.valueAsDate = getCurrentDate();
+      pageManager.showTempPopupMessage(
+        "Cannot set day to a future date.",
+        2000,
       );
     }
   }
@@ -357,61 +429,11 @@ class WorkoutManager extends BaseWorkoutManager {
     }
   }
 
-  restTimer() {
-    const restTimerElement = document.getElementById("timer");
-    let minutes = 0;
-    let seconds = 0;
-
-    // Function to update timer display
-    const updateRestTimer = () => {
-      seconds++;
-
-      if (seconds === 60) {
-        seconds = 0;
-        minutes++;
-      }
-
-      const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
-      const formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
-
-      restTimerElement.textContent = formattedMinutes + ":" + formattedSeconds;
-
-      if (this.restTimerRunning) {
-        setTimeout(updateRestTimer, 1000);
-      }
-    };
-
-    return {
-      stop: () => {
-        // Stop timer and reset display
-        this.restTimerRunning = false;
-        minutes = 0;
-        seconds = 0;
-        restTimerElement.textContent = "00:00";
-      },
-      start: () => {
-        // Start timer
-        this.restTimerRunning = true;
-        updateRestTimer();
-      },
-    };
-  }
-
   showRestTimer() {
-    const restTimerInstance = this.restTimer();
-    if (!this.restTimerRunning) {
-      restTimerInstance.start(); // Start the timer when showing the popup
-    }
-    pageManager.openPopup("rest-timer-popup", restTimerInstance.stop);
-  }
-
-  setDate(date) {
-    // Set calendar date to today
-    const dateInput = document.getElementById("date");
-
-    const currentDate = new Date();
-    dateInput.valueAsDate = new Date(
-      currentDate.getTime() - currentDate.getTimezoneOffset() * 60000,
+    this.restTimer.start();
+    pageManager.openPopup(
+      "rest-timer-popup",
+      this.restTimer.stop.bind(this.restTimer),
     );
   }
 }
@@ -733,6 +755,85 @@ class WorkoutSettingsManager extends BaseWorkoutManager {
     document.getElementById("workout-name").value = response["workout_name"];
     document.getElementById("workout-pk").value = response["pk"];
   };
+}
+
+class Timer {
+  constructor(id, options = {}) {
+    this.element = document.getElementById(id);
+    this.timerRunning = false;
+    this.showHours = options.showHours ?? false;
+    this.resetOnStop = options.resetOnStop ?? true;
+    this.hours = 0;
+    this.minutes = 0;
+    this.seconds = 0;
+  }
+
+  start() {
+    // Set timerRunning to true and start recursive loop of updateTimer
+    if (!this.timerRunning) {
+      this.timerRunning = true;
+      this.timerInterval = setInterval(this.updateTimer.bind(this), 1000);
+    }
+  }
+
+  stop() {
+    // Stops the timer and resets it to zero if resetOnStop is true
+    if (this.timerRunning) {
+      this.timerRunning = false;
+      if (this.resetOnStop) {
+        this.resetTimer();
+      }
+      clearInterval(this.timerInterval);
+    }
+  }
+
+  resetTimer() {
+    // Set timer values to 0
+    this.hours = 0;
+    this.minutes = 0;
+    this.seconds = 0;
+    this.element.textContent = this.showHours ? "00:00:00" : "00:00";
+  }
+
+  updateTimer() {
+    // Updates the timer display every second while timerRunning is true
+    this.seconds++;
+    if (this.seconds === 60) {
+      this.seconds = 0;
+      this.minutes++;
+    }
+
+    if (this.minutes === 60) {
+      this.minutes = 0;
+      this.hours++;
+    }
+    this.updateDisplay();
+  }
+
+  updateDisplay() {
+    // Sets the timer display
+    const formattedMinutes =
+      this.minutes < 10 ? "0" + this.minutes : this.minutes;
+    const formattedSeconds =
+      this.seconds < 10 ? "0" + this.seconds : this.seconds;
+
+    if (this.showHours) {
+      const formattedHours = this.hours < 10 ? "0" + this.hours : this.hours;
+      this.element.textContent = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+    } else {
+      this.element.textContent = `${formattedMinutes}:${formattedSeconds}`;
+    }
+  }
+
+  getDurationSeconds() {
+    // Returns the total duration of the timer as seconds
+    const timeParts = this.element.textContent.trim().split(":");
+    if (this.showHours) {
+      return timeParts[0] * 3600 + timeParts[1] * 60 + timeParts[2];
+    } else {
+      return timeParts[0] * 60 + timeParts[1];
+    }
+  }
 }
 
 window.workoutManager = new WorkoutManager();

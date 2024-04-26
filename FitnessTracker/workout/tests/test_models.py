@@ -14,7 +14,7 @@ from workout.models import (
     RoutineSettings,
 )
 from users.models import User
-
+from workout.serializers import WorkoutSerializer
 
 MAX_NAME_LENGTH = 100
 
@@ -156,7 +156,7 @@ class TestWorkoutModel(TestCase):
         ]
 
         self.workout.config = config
-        workout_config = self.workout.get_configured_workout()
+        workout_config = WorkoutSerializer(instance=self.workout).data
 
         self.assertIn("Squat", workout_config["exercises"][0])
         self.assertIn("Bench Press", workout_config["exercises"][1])

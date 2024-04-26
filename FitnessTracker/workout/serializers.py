@@ -8,6 +8,7 @@ from .models import (
     DayWorkout,
     Exercise,
 )
+from .services import configure_workout
 
 
 class DaySerializer(serializers.ModelSerializer):
@@ -95,7 +96,7 @@ class RoutineSettingsSerializer(serializers.ModelSerializer):
             "day_number",
             "workout_index",
             "last_completed",
-        ]  # Include all updatable fields
+        ]
 
     def update(self, instance, validated_data):
         if "routine" in validated_data:
@@ -129,6 +130,15 @@ class ExerciseSerializer(serializers.ModelSerializer):
 
 
 class WorkoutSerializer(serializers.ModelSerializer):
+
+    def to_representation(self, instance):
+        if self.context.get("configure"):
+            exercises = [
+                ExerciseSerializer(instance=exercise).data
+                for exercise in instance.exercises.all()
+            ]
+            return configure_workout(instance, exercises)
+        return super().to_representation(instance)
 
     class Meta:
         fields = "__all__"

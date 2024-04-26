@@ -1,16 +1,17 @@
-def configure_workout(workout):
-    workout_config = {
+def configure_workout(workout, exercises):
+    configured_workout = {
         "workout_name": workout.name,
         "pk": workout.pk,
-        "exercises": workout.config,
     }
 
-    for i in range(len(workout_config["exercises"])):
-        exercise = workout_config["exercises"][i]
+    config = workout.config
+    for i in range(len(config)):
+        exercise = config[i]
         weights, reps = configure_exercise(exercise["five_rep_max"], exercise["sets"])
-        exercise["sets"] = {"weights": weights, "reps": reps}
-        workout_config["exercises"][i] = exercise
-    return workout_config
+        exercise_sets = {"sets": {"weights": weights, "reps": reps}}
+        exercises[i].update(exercise_sets)
+    configured_workout["exercises"] = exercises
+    return configured_workout
 
 
 def configure_exercise(five_rep_max, exercise_sets):

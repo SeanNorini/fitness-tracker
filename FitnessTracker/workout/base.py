@@ -1,5 +1,6 @@
 from workout.models import Exercise, Workout, RoutineSettings
 from common.base import BaseTemplateView
+from workout.serializers import WorkoutSerializer
 
 
 class ExerciseTemplateView(BaseTemplateView):
@@ -31,6 +32,6 @@ class WorkoutTemplateView(ExerciseTemplateView):
             workout = context["routine_settings"].get_workout()
 
             if workout:
-                context["workout"] = workout.get_configured_workout()
+                context["workout"] = WorkoutSerializer(instance=workout).data
                 context["workout"]["workout_name"] = workout.name
         return context

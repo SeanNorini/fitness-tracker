@@ -5,7 +5,6 @@ from django.db import models
 from django.utils import timezone
 from common.common_utils import get_user_model_or_default
 from users.models import User
-from workout.services import configure_workout
 
 
 def get_attribute_list(model, user, *attribute_names):
@@ -147,9 +146,6 @@ class Workout(models.Model):
             )
 
         return workout
-
-    def get_configured_workout(self) -> dict:
-        return configure_workout(self)
 
 
 class WorkoutSettings(models.Model):

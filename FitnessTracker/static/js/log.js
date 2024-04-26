@@ -2,10 +2,6 @@ class LogManager {
   constructor() {
     this.baseURL = pageManager.baseURL + "/log";
     this.currentLog = null;
-
-    this.currentYear = new Date().getFullYear();
-    this.currentMonth = new Date().getMonth() + 1;
-    this.currentDay = new Date().getDate();
   }
 
   initialize() {
@@ -22,7 +18,8 @@ class LogManager {
     const days = document.querySelectorAll(".day");
     days.forEach((day) => {
       // Verify that date is on or before current date
-      if (this.validDate(day)) {
+      const date = this.getCalendarDate(day);
+      if (validateDate(date)) {
         day.addEventListener("click", (e) => {
           // Set current log to selection and retrieve log
           this.currentLog = day;
@@ -34,24 +31,11 @@ class LogManager {
       }
     });
   }
-
-  validDate(day) {
-    const calendarDate = this.getCalendarDate();
-    return (
-      calendarDate.year < this.currentYear ||
-      (calendarDate.year === this.currentYear &&
-        calendarDate.month < this.currentMonth) ||
-      (calendarDate.year === this.currentYear &&
-        calendarDate.month === this.currentMonth &&
-        day.dataset.day <= this.currentDay)
-    );
-  }
-
-  getCalendarDate() {
+  getCalendarDate(day) {
     const monthAndYear = document.querySelector("#month-name");
     let month = parseInt(monthAndYear.dataset.month);
     let year = parseInt(monthAndYear.dataset.year);
-    return { year: year, month: month };
+    return { year: year, month: month, day: parseInt(day.dataset.day) };
   }
   getCalendar(calendarNav) {
     const navDate = this.getCalendarNavDate(calendarNav);

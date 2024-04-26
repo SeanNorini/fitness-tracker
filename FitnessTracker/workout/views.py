@@ -52,10 +52,12 @@ class WorkoutViewSet(BaseOwnerViewSet):
     serializer_class = WorkoutSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        workout = self.get_object()
+        instance = self.get_object()
         configure = self.request.query_params.get("configure")
         if configure:
-            data = workout.get_configured_workout()
+            data = self.get_serializer(
+                instance=instance, context={"configure": True}
+            ).data
             return Response(data, status=status.HTTP_200_OK)
         return super().retrieve(request, args, kwargs)
 
