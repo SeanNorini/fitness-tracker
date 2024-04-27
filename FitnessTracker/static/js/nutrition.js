@@ -66,7 +66,7 @@ class NutritionManager {
       formData["date"] = document.getElementById("date").value;
 
       FetchUtils.apiFetch({
-        url: `${pageManager.baseURL}/log/food_log/`,
+        url: `${API.BASE_URL}${API.FOOD_LOGS}`,
         method: "POST",
         body: formData,
         successHandler: (response) => {

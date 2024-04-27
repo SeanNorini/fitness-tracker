@@ -62,7 +62,7 @@ class BaseWorkoutManager {
 
   fetchWorkout(workoutPK) {
     FetchUtils.apiFetch({
-      url: `${this.baseURL}/workouts/${workoutPK}/?configure=True`,
+      url: `${API.BASE_URL}${API.WORKOUTS}${workoutPK}/?configure=True`,
       method: "GET",
       successHandler: this.fetchWorkoutSuccessHandler.bind(this),
     });
@@ -70,6 +70,7 @@ class BaseWorkoutManager {
 
   fetchWorkoutSuccessHandler(response) {
     this.clearWorkout();
+    console.log(response);
     for (let i = 0; i < response["exercises"].length; i++) {
       const exercise = response["exercises"][i];
       this.updateExercises(exercise);
@@ -87,7 +88,7 @@ class BaseWorkoutManager {
   addExercise(exercisePK) {
     //Retrieves exercise information from API and on success updates the exercises in the workout
     FetchUtils.apiFetch({
-      url: `${this.baseURL}/exercises/${exercisePK}`,
+      url: `${API.BASE_URL}${API.EXERCISES}${exercisePK}`,
       method: "GET",
       successHandler: this.updateExercises,
     });
@@ -215,9 +216,9 @@ class BaseWorkoutManager {
 
     let url = "";
     if (this.pk) {
-      url = `${pageManager.baseURL}/log/workout_log/${this.pk}/`;
+      url = `${API.BASE_URL}${API.WORKOUT_LOGS}${this.pk}/`;
     } else {
-      url = `${pageManager.baseURL}/log/workout_log/`;
+      url = `${API.BASE_URL}${API.WORKOUT_LOGS}`;
     }
 
     // Send workout data and display response
@@ -410,17 +411,13 @@ class WorkoutManager extends BaseWorkoutManager {
   }
 
   navigateRoutineWorkoutHandler = (e) => {
-    const direction = e.target.id === "nav-before" ? "prev" : "next";
-    pageManager
-      .fetchData({
-        url: `${this.baseURL}/get_routine_workout/${direction}`,
-        method: "GET",
-        responseType: "text",
-      })
-      .then((contentHTML) => {
-        pageManager.updateContent(contentHTML, "content");
-        this.initialize();
-      });
+    const direction =
+      e.target.id === "nav-before" ? "previous_workout/" : "next_workout/";
+    FetchUtils.apiFetch({
+      url: `${API.BASE_URL}${API.ROUTINE_SETTINGS}${direction}`,
+      method: "GET",
+      successHandler: this.fetchWorkoutSuccessHandler.bind(this),
+    });
   };
 
   setComplete(e) {
@@ -628,7 +625,7 @@ class WorkoutSettingsManager extends BaseWorkoutManager {
     }
 
     FetchUtils.apiFetch({
-      url: `${pageManager.baseURL}/workout/workouts/${pk}`,
+      url: `${API.BASE_URL}${API.WORKOUTS}${pk}`,
       method: method,
       body: formData,
       successHandler: (response) => {
@@ -729,7 +726,7 @@ class WorkoutSettingsManager extends BaseWorkoutManager {
     );
     if (confirmation) {
       FetchUtils.apiFetch({
-        url: `${this.baseURL}/workouts/${pk}`,
+        url: `${API.BASE_URL}${API.WORKOUTS}${pk}`,
         method: "DELETE",
         successHandler: this.deleteWorkoutSuccessHandler,
         errorHandler: this.deleteWorkoutErrorHandler,

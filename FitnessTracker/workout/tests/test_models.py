@@ -144,11 +144,13 @@ class TestWorkoutModel(TestCase):
     def test_configure_workout(self):
         config = [
             {
+                "id": 1,
                 "name": "Squat",
                 "five_rep_max": 300,
                 "sets": [{"amount": 80, "reps": 10, "modifier": "percentage"}],
             },
             {
+                "id": 2,
                 "name": "Bench Press",
                 "five_rep_max": 200,
                 "sets": [{"amount": 50, "reps": 5, "modifier": "exact"}],
@@ -156,14 +158,14 @@ class TestWorkoutModel(TestCase):
         ]
 
         self.workout.config = config
-        workout_config = WorkoutSerializer(instance=self.workout).data
+        workout_config = WorkoutSerializer(
+            instance=self.workout, context={"configure": True}
+        ).data
 
-        self.assertIn("Squat", workout_config["exercises"][0])
-        self.assertIn("Bench Press", workout_config["exercises"][1])
-        self.assertEqual(workout_config["exercises"][0]["Squat"]["weights"][0], 240)
-        self.assertEqual(
-            workout_config["exercises"][1]["Bench Press"]["weights"][0], 50
-        )
+        self.assertEqual("Squat", workout_config["exercises"][0]["name"])
+        self.assertEqual("Bench Press", workout_config["exercises"][1]["name"])
+        self.assertEqual(workout_config["exercises"][0]["sets"]["weights"][0], 240)
+        self.assertEqual(workout_config["exercises"][1]["sets"]["weights"][0], 50)
 
     def test_unique_together_constraint(self):
         Workout.objects.create(user=self.user, name="Arm Day")
@@ -177,7 +179,7 @@ class TestWorkoutModel(TestCase):
 
         # # Test default/fallback workout creation
         default_workout = Workout.get_workout(self.user, "Cardio Day")
-        self.assertEqual(default_workout.name, "Custom Workout")
+        self.assertEqual(default_workout.name, "Cardio Day")
         self.assertIsNotNone(default_workout)
 
 
@@ -309,7 +311,7 @@ class RoutineSettingsModelTest(TestCase):
         self.settings.workout_index = 1
         self.settings.save()
 
-        workout = self.settings.get_prev_workout()
+        workout = self.settings.get_previous_workout()
         self.assertEqual(workout, self.workout1)
         self.assertEqual(self.settings.workout_index, 0)
 
@@ -321,7 +323,7 @@ class RoutineSettingsModelTest(TestCase):
 
     def test_boundary_prev_workout(self):
         self.settings.workout_index = 0
-        self.settings.get_prev_workout()
+        self.settings.get_previous_workout()
         self.assertEqual(self.settings.workout_index, 1)
         self.assertEqual(self.settings.day_number, 7)
 

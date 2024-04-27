@@ -90,7 +90,7 @@ class Command(BaseCommand):
             config.append(
                 {
                     "name": exercise.name,
-                    "pk": exercise.pk,
+                    "id": exercise.pk,
                     "five_rep_max": 0,
                     "sets": sets,
                 }

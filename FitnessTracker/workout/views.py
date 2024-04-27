@@ -1,11 +1,12 @@
 from django.views.generic import TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.decorators import action
 from users.models import User
 from .models import Workout, Exercise, WorkoutSettings, Routine, RoutineSettings
 from .serializers import (
@@ -134,38 +135,6 @@ class RoutineViewSet(BaseOwnerViewSet):
     serializer_class = RoutineSerializer
 
 
-class UpdateRoutineSettingsAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        user = self.request.user
-        obj, created = RoutineSettings.objects.get_or_create(user=user)
-        return obj
-
-    def patch(self, request, *args, **kwargs):
-        routine_settings = self.get_object()
-        serializer = RoutineSettingsSerializer(
-            routine_settings, data=request.data, partial=True
-        )
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class GetActiveWorkoutSearchListView(TemplateView):
-    template_name = "workout/active_workout_search_list.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["settings"], _ = RoutineSettings.objects.get_or_create(
-            user=self.request.user
-        )
-
-        return context
-
-
 class GetRoutineWorkoutView(WorkoutTemplateView, TemplateView):
     template_name = "workout/workout_session.html"
 
@@ -178,4 +147,35 @@ class GetRoutineWorkoutView(WorkoutTemplateView, TemplateView):
         elif direction == "prev":
             routine_settings.get_prev_workout()
         context = super().get_context_data(**kwargs)
+        return context
+
+
+class RoutineSettingsViewSet(BaseOwnerViewSet):
+    queryset = RoutineSettings.objects.all()
+    serializer_class = RoutineSettingsSerializer
+
+    @action(detail=False, methods=["get"], url_path="next_workout")
+    def next_workout(self, request):
+        routine_settings = RoutineSettings.objects.get(user=request.user)
+        next_workout = routine_settings.get_next_workout()
+        serializer = WorkoutSerializer(next_workout, context={"configure": True})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["get"], url_path="previous_workout")
+    def previous_workout(self, request):
+        routine_settings = RoutineSettings.objects.get(user=request.user)
+        previous_workout = routine_settings.get_previous_workout()
+        serializer = WorkoutSerializer(previous_workout, context={"configure": True})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class GetActiveWorkoutSearchListView(TemplateView):
+    template_name = "workout/active_workout_search_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["settings"], _ = RoutineSettings.objects.get_or_create(
+            user=self.request.user
+        )
+
         return context

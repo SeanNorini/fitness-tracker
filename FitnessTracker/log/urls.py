@@ -4,10 +4,10 @@ from rest_framework.routers import DefaultRouter
 from .views import WorkoutLogViewSet, WeightLogViewSet, CardioLogViewSet, FoodLogViewSet
 
 router = DefaultRouter()
-router.register(r"workout_log", WorkoutLogViewSet)
-router.register(r"weight_log", WeightLogViewSet)
-router.register(r"cardio_log", CardioLogViewSet)
-router.register(r"food_log", FoodLogViewSet)
+router.register(r"workout_logs", WorkoutLogViewSet)
+router.register(r"weight_logs", WeightLogViewSet)
+router.register(r"cardio_logs", CardioLogViewSet)
+router.register(r"food_logs", FoodLogViewSet)
 
 urlpatterns = [
     re_path(
@@ -35,5 +35,8 @@ urlpatterns = [
         views.UpdateWorkoutLogTemplateView.as_view(),
         name="update_workout_log_template",
     ),
+]
+
+api_urlpatterns = [
     path("", include(router.urls)),
 ]

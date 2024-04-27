@@ -17,6 +17,8 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from workout.urls import api_urlpatterns as workout_api
+from log.urls import api_urlpatterns as log_api
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -26,4 +28,6 @@ urlpatterns = [
     path("cardio/", include("cardio.urls")),
     path("nutrition/", include("nutrition_tracker.urls")),
     path("stats/", include("stats.urls")),
+    path("api/", include(workout_api)),
+    path("api/", include(log_api)),
 ]

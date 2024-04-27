@@ -99,7 +99,7 @@ class CardioManager {
     });
 
     FetchUtils.apiFetch({
-      url: `${pageManager.baseURL}/log/cardio_log/`,
+      url: `${API.BASE_URL}${API.CARDIO_LOGS}`,
       method: "POST",
       body: formData,
       successHandler: () =>

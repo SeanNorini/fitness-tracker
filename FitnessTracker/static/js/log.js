@@ -206,7 +206,7 @@ class LogManager {
     const workoutLogPK = workoutLog.querySelector(".workout-log-pk").value;
 
     FetchUtils.apiFetch({
-      url: `${this.baseURL}/workout_log/${workoutLogPK}`,
+      url: `${API.BASE_URL}${API.WORKOUTS}${workoutLogPK}`,
       method: "DELETE",
       successHandler: (response) => {
         this.deleteWorkoutLogSuccessHandler(workoutLog);
@@ -269,7 +269,7 @@ class LogManager {
     const weightLogPK = document.getElementById("weight-log-pk").value;
 
     FetchUtils.apiFetch({
-      url: `${this.baseURL}/weight_log/${weightLogPK}`,
+      url: `${API.BASE_URL}${API.WEIGHT_LOGS}${weightLogPK}`,
       method: "DELETE",
       successHandler: (response) => {
         this.deleteWeightLogSuccessHandler(response);
@@ -343,7 +343,7 @@ class LogManager {
     }
 
     FetchUtils.apiFetch({
-      url: `${this.baseURL}/weight_log/${pk}`,
+      url: `${API.BASE_URL}${API.WEIGHT_LOGS}${pk}`,
       method: method,
       body: formData,
       successHandler: (response) =>

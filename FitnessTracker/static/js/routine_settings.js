@@ -53,6 +53,7 @@ class RoutineSettingsManager {
   };
 
   updateActiveWorkout = (activeWorkout = null) => {
+    const settingsPK = document.getElementById("settings-pk").value;
     if (!activeWorkout) {
       activeWorkout = activeWorkout = {
         week_number: 1,
@@ -60,17 +61,13 @@ class RoutineSettingsManager {
         workout_index: 0,
       };
     }
-    pageManager
-      .fetchData({
-        url: `${this.baseURL}/update_routine_settings/`,
-        method: "PATCH",
-        responseType: "json",
-        body: JSON.stringify(activeWorkout),
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((response) => {
-        pageManager.showTempPopupMessage("Active Workout Updated.", 2000);
-      });
+    FetchUtils.apiFetch({
+      url: `${pageManager.apiURL}/routine_settings/${settingsPK}/`,
+      method: "PATCH",
+      body: activeWorkout,
+      successHandler: () =>
+        pageManager.showTempPopupMessage("Active Workout Updated.", 2000),
+    });
   };
 
   editRoutineSearchHandler = (e) => {
@@ -79,7 +76,7 @@ class RoutineSettingsManager {
 
       pageManager
         .fetchData({
-          url: `${pageManager.baseURL}/workout/routines/${routinePK}`,
+          url: `${pageManager.apiURL}/routines/${routinePK}`,
           method: "GET",
           responseType: "json",
         })
@@ -96,28 +93,31 @@ class RoutineSettingsManager {
 
   activeRoutineSearchHandler = (e) => {
     if (e.target.classList.contains("routine")) {
+      const settingsPK = document.getElementById("settings-pk").value;
       const routinePK = e.target.dataset.pk;
+      const routineActiveWorkout = {
+        routine: routinePK,
+        week_number: 1,
+        day_number: 1,
+        workout_index: 0,
+      };
 
-      pageManager
-        .fetchData({
-          url: `${this.baseURL}/update_routine_settings/`,
-          method: "PATCH",
-          responseType: "json",
-          body: JSON.stringify({
-            routine: routinePK,
-            week_number: 1,
-            day_number: 1,
-            workout_index: 0,
-          }),
-          headers: { "Content-Type": "application/json" },
-        })
-        .then((response) => {
-          this.activeRoutineSearchBar.searchInput.placeholder =
-            e.target.textContent.trim();
-          this.activeRoutineSearchBar.closeSearchList();
-          this.updateActiveWorkoutSearchList();
-        });
+      FetchUtils.apiFetch({
+        url: `${pageManager.apiURL}/routine_settings/${settingsPK}/`,
+        method: "PATCH",
+        body: routineActiveWorkout,
+        context: { event: e },
+        successHandler: this.updateRoutineActiveWorkout,
+      });
     }
+  };
+
+  updateRoutineActiveWorkout = (response, context) => {
+    pageManager.showTempPopupMessage("Active routine updated.", 2000);
+    this.activeRoutineSearchBar.searchInput.placeholder =
+      context.event.target.textContent.trim();
+    this.activeRoutineSearchBar.closeSearchList();
+    this.updateActiveWorkoutSearchList();
   };
 
   updateActiveWorkoutSearchList() {
@@ -405,7 +405,7 @@ class RoutineSettingsManager {
 
     pageManager
       .fetchData({
-        url: `${pageManager.baseURL}/workout/routines/`,
+        url: `${pageManager.apiURL}/routines/`,
         method: "POST",
         responseType: "json",
         body: JSON.stringify(this.routineData),

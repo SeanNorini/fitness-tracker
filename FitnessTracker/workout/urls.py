@@ -6,6 +6,7 @@ router = DefaultRouter()
 router.register(r"exercises", views.ExerciseViewSet)
 router.register(r"workouts", views.WorkoutViewSet)
 router.register(r"routines", views.RoutineViewSet)
+router.register(r"routine_settings", views.RoutineSettingsViewSet)
 
 urlpatterns = [
     path("workout/", views.WorkoutView.as_view(), name="workout"),
@@ -36,11 +37,6 @@ urlpatterns = [
         name="routine_settings",
     ),
     path(
-        "workout/routine_settings/update_routine_settings/",
-        views.UpdateRoutineSettingsAPIView.as_view(),
-        name="update_routine_settings",
-    ),
-    path(
         "workout/routine_settings/get_active_workout_search_list/",
         views.GetActiveWorkoutSearchListView.as_view(),
         name="get_active_workout_search_list",
@@ -50,5 +46,8 @@ urlpatterns = [
         views.GetRoutineWorkoutView.as_view(),
         name="get_routine_workout",
     ),
-    path("workout/", include(router.urls)),
+]
+
+api_urlpatterns = [
+    path("", include(router.urls)),
 ]

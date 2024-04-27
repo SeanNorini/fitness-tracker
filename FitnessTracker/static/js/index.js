@@ -1,6 +1,19 @@
+const URLS = { BASE_URL: window.location.origin };
+const API = {
+  BASE_URL: window.location.origin + "/api",
+  ROUTINE_SETTINGS: "/routine_settings/",
+  WORKOUTS: "/workouts/",
+  EXERCISES: "/exercises/",
+  WORKOUT_LOGS: "/workout_logs/",
+  FOOD_LOGS: "/food_logs/",
+  CARDIO_LOGS: "/cardio_logs/",
+  WEIGHT_LOGS: "/weight_logs/",
+};
+
 class PageManager {
   constructor() {
     this.baseURL = window.location.origin;
+    this.apiURL = this.baseURL + "/api";
     this.overlay = document.getElementById("overlay");
     this.popupStack = [];
     this.date = new Date();
@@ -505,6 +518,7 @@ class FormUtils {
 
 class FetchUtils {
   static apiFetch(args) {
+    const context = args.context || {};
     fetch(args.url, {
       method: args.method,
       headers: {
@@ -521,15 +535,15 @@ class FetchUtils {
             response.status === 204 ||
             response.headers.get("Content-Length") === "0"
           ) {
-            args.successHandler({});
+            args.successHandler({}, context);
           } else {
             response.json().then((response) => {
-              args.successHandler(response);
+              args.successHandler(response, context);
             });
           }
         } else {
           response.json().then((response) => {
-            args.errorHandler(response);
+            args.errorHandler(response, context);
           });
         }
       })

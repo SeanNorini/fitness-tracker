@@ -1,9 +1,10 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.shortcuts import get_object_or_404
 from django.db.models import Q, Case, When, OuterRef, Subquery
 from django.db import models
 from django.utils import timezone
-from common.common_utils import get_user_model_or_default
+from common.common_utils import get_user_model_or_default, clone_for_user
 from users.models import User
 
 
@@ -93,7 +94,12 @@ class Exercise(models.Model):
     @classmethod
     def get_exercise(cls, user, exercise_name):
         exercise_name = exercise_name.strip().title()
-        exercise, created = cls.objects.get_or_create(user=user, name=exercise_name)
+
+        exercise = get_user_model_or_default(user, cls, exercise_name).first()
+        if not exercise:
+            exercise = Exercise.objects.create(user=user, name=exercise_name)
+        elif exercise.user == User.get_default_user():
+            exercise = clone_for_user(exercise, user)
         return exercise
 
     def update_five_rep_max(self, weight, reps):
@@ -139,11 +145,12 @@ class Workout(models.Model):
         # Get workout for user or default user, prioritizing user
         workout = get_user_model_or_default(user, Workout, workout_name).first()
 
-        # If workout does not exist, get custom workout
         if not workout:
             workout, _ = cls.objects.get_or_create(
-                user=User.get_default_user(), name="Custom Workout"
+                user=User.get_default_user(), name=workout_name
             )
+        elif workout.user == User.get_default_user():
+            workout = clone_for_user(workout, user)
 
         return workout
 
@@ -292,7 +299,7 @@ class RoutineSettings(models.Model):
         self._update_workout_day_week("next")
         return self.get_workout()
 
-    def get_prev_workout(self):
+    def get_previous_workout(self):
         """Move to the previous workout and retrieve it."""
         self._update_workout_day_week("prev")
         return self.get_workout()

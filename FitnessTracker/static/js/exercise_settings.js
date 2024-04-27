@@ -42,7 +42,7 @@ class ExerciseSettingsManager {
     const exercisePK = document.getElementById("exercise-pk").value;
 
     FetchUtils.apiFetch({
-      url: `${pageManager.baseURL}/workout/exercises/${exercisePK}`,
+      url: `${API.BASE_URL}${API.EXERCISES}${exercisePK}`,
       method: "DELETE",
       successHandler: (response) => {
         this.addExerciseSearchBar.deleteItem(exerciseName);
@@ -91,7 +91,7 @@ class ExerciseSettingsManager {
       console.log(formData);
 
       FetchUtils.apiFetch({
-        url: `${pageManager.baseURL}/workout/exercises/${formData["exercise-pk"]}/`,
+        url: `${API.BASE_URL}${API.EXERCISES}${formData["exercise-pk"]}/`,
         method: "PUT",
         body: formData,
         successHandler: this.saveExerciseSuccessHandler,

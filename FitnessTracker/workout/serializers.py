@@ -133,10 +133,10 @@ class WorkoutSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         if self.context.get("configure"):
-            exercises = [
-                ExerciseSerializer(instance=exercise).data
+            exercises = {
+                exercise.pk: ExerciseSerializer(instance=exercise).data
                 for exercise in instance.exercises.all()
-            ]
+            }
             return configure_workout(instance, exercises)
         return super().to_representation(instance)
 
