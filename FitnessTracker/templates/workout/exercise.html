@@ -7,7 +7,7 @@
   <div class="col col-align-center gap-md">
     <div class="row row row-center gap-md">
       <div class="exercise-name drag-and-drop-handlebar">
-        {{ exercise }}
+        {{ exercise.name }}
       </div>
       <div>
         <span class="material-symbols-outlined delete-exercise hover-red text-xxl">
@@ -17,7 +17,7 @@
     </div>
     <hr class="hr half-width">
     <div class="sets col col-align-center gap-md">
-      {% for weight, reps in sets.weights|zip_lists:sets.reps %}
+      {% for weight, reps in exercise.sets.weights|zip_lists:exercise.sets.reps %}
         {% include 'workout/set.html' %}
       {% endfor %}
     </div>

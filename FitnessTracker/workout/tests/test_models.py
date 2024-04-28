@@ -57,7 +57,7 @@ class TestExerciseModel(TestCase):
         self.assertEqual(exercise.five_rep_max, 400)
 
     def test_string_representation(self):
-        exercise = Exercise.objects.create(user=self.user, name="Bench Press")
+        exercise = Exercise.objects.create(user=self.user, name="bench press")
         self.assertEqual(str(exercise), "Bench Press")
 
     def test_unique_together_constraint(self):
@@ -324,7 +324,7 @@ class RoutineSettingsModelTest(TestCase):
     def test_boundary_prev_workout(self):
         self.settings.workout_index = 0
         self.settings.get_previous_workout()
-        self.assertEqual(self.settings.workout_index, 1)
+        self.assertEqual(self.settings.workout_index, 0)
         self.assertEqual(self.settings.day_number, 7)
 
     def test_no_workouts_available(self):

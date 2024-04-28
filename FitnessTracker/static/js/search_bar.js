@@ -10,7 +10,7 @@ class SearchBar {
     this.searchInput = this.searchBar.querySelector("input");
     this.clearSearchBtn = this.searchBar.querySelector(".delete-search");
     this.searchResultList = document.querySelector("#items");
-    const debouncedSearch = this.debounce(this.inputHandler, 300);
+    const debouncedSearch = debounce(this.inputHandler, 300);
     this.searchInput.addEventListener("input", debouncedSearch);
     this.clearSearchBtn.addEventListener("click", (e) => {
       this.searchInput.value = "";
@@ -19,7 +19,7 @@ class SearchBar {
       searchResultContainer.classList.add("hidden");
     });
 
-    const debouncedItemDetails = this.debounce(this.fetchItemDetails, 300);
+    const debouncedItemDetails = debounce(this.fetchItemDetails, 300);
     const itemList = document.getElementById("items");
     itemList.addEventListener("click", debouncedItemDetails);
     if (this.tabs) {
@@ -200,17 +200,5 @@ class SearchBar {
 
     const fatContainer = document.getElementById("detail-fat");
     fatContainer.textContent = food["nf_total_fat"];
-  }
-
-  debounce(func, delay) {
-    let timer;
-    return function () {
-      const context = this;
-      const args = arguments;
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        func.apply(context, args);
-      }, delay);
-    };
   }
 }

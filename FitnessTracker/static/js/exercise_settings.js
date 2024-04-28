@@ -18,8 +18,7 @@ class ExerciseSettingsManager {
 
   addExerciseSearchHandler = (e) => {
     if (e.target.classList.contains("exercise-option")) {
-      const exerciseName = e.target.textContent.trim();
-      this.fetchExercise(exerciseName);
+      this.fetchExercise(e.target.dataset.pk);
     }
   };
 
@@ -46,7 +45,7 @@ class ExerciseSettingsManager {
       method: "DELETE",
       successHandler: (response) => {
         this.addExerciseSearchBar.deleteItem(exerciseName);
-        document.getElementById("exercise").remove();
+        this.clearExercise();
       },
       errorHandler: (response) => {
         pageManager.showTempPopupMessage("Error. Please Try Again", 2000);
@@ -68,8 +67,24 @@ class ExerciseSettingsManager {
             2000,
           );
         }
-        this.fetchExercise(exerciseName);
+        this.createExercise(exerciseName);
       }
+    });
+  }
+
+  clearExercise() {
+    const element = document.getElementById("exercise");
+    if (element) {
+      element.remove();
+    }
+  }
+
+  createExercise(name) {
+    FetchUtils.apiFetch({
+      url: `${API.BASE_URL}${API.EXERCISES}`,
+      method: "POST",
+      body: { name: name },
+      successHandler: this.fetchExerciseSuccessHandler,
     });
   }
 
@@ -107,16 +122,22 @@ class ExerciseSettingsManager {
     pageManager.showTempPopupMessage("Exercise Saved", 2000);
   };
 
-  fetchExercise(exerciseName) {
-    pageManager
-      .fetchData({
-        url: `${pageManager.baseURL}/workout/exercise_settings/edit_exercise/${exerciseName}`,
-        method: "GET",
-        responseType: "text",
-      })
-      .then((contentHTML) => {
-        pageManager.updateContent(contentHTML, "exercises-container");
-      });
+  fetchExercise(pk) {
+    FetchUtils.apiFetch({
+      url: `${API.BASE_URL}${API.EXERCISES}${pk}`,
+      method: "GET",
+      successHandler: this.fetchExerciseSuccessHandler,
+    });
   }
+
+  fetchExerciseSuccessHandler = (data) => {
+    this.clearExercise();
+    const element = pageManager.cloneAndAppend(
+      "exercise-template",
+      "exercise-container",
+    );
+    pageManager.setValues(element, data);
+    document.querySelector(".exercise-name").textContent = data["name"];
+  };
 }
 const exerciseSettingsManager = new ExerciseSettingsManager();

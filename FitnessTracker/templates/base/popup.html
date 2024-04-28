@@ -5,7 +5,7 @@
   </div>
   <div id="{{ content_id }}" class="col {{ gap|default:"gap-lg" }} m-top_-1_5">
     {% if content_id == "rest-timer" %}
-      <h1 id="timer" class="text-center">00:00</h1>
+      <h1 id="rest-timer-display" class="text-center">00:00</h1>
     {% elif workouts %}
       {% for workout in workouts %}
         <div class="workout border border-invis hover p-0_2" data-pk="{{ workout.1 }}">{{ workout.0 }}</div>

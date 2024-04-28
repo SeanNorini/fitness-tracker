@@ -32,6 +32,9 @@ class WorkoutTemplateView(ExerciseTemplateView):
             workout = context["routine_settings"].get_workout()
 
             if workout:
-                context["workout"] = WorkoutSerializer(instance=workout).data
+                context["workout"] = WorkoutSerializer(
+                    instance=workout, context={"configure": True}
+                ).data
                 context["workout"]["workout_name"] = workout.name
+
         return context

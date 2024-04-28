@@ -7,6 +7,7 @@ router.register(r"exercises", views.ExerciseViewSet)
 router.register(r"workouts", views.WorkoutViewSet)
 router.register(r"routines", views.RoutineViewSet)
 router.register(r"routine_settings", views.RoutineSettingsViewSet)
+router.register(r"workout_settings", views.WorkoutSettingsViewSet)
 
 urlpatterns = [
     path("workout/", views.WorkoutView.as_view(), name="workout"),
@@ -17,19 +18,9 @@ urlpatterns = [
         name="workout_settings",
     ),
     path(
-        "workout/settings/save/",
-        views.WorkoutSettingsSaveView.as_view(),
-        name="workout_settings_save_workout",
-    ),
-    path(
         "workout/exercise_settings/",
         views.ExerciseSettingsView.as_view(),
         name="exercise_settings",
-    ),
-    path(
-        "workout/exercise_settings/edit_exercise/<str:exercise_name>",
-        views.EditExerciseView.as_view(),
-        name="edit_exercise",
     ),
     path(
         "workout/routine_settings/",
@@ -40,11 +31,6 @@ urlpatterns = [
         "workout/routine_settings/get_active_workout_search_list/",
         views.GetActiveWorkoutSearchListView.as_view(),
         name="get_active_workout_search_list",
-    ),
-    path(
-        "workout/get_routine_workout/<str:direction>",
-        views.GetRoutineWorkoutView.as_view(),
-        name="get_routine_workout",
     ),
 ]
 

@@ -28,6 +28,5 @@ urlpatterns = [
     path("cardio/", include("cardio.urls")),
     path("nutrition/", include("nutrition_tracker.urls")),
     path("stats/", include("stats.urls")),
-    path("api/", include(workout_api)),
-    path("api/", include(log_api)),
+    path("api/", include(workout_api + log_api)),
 ]

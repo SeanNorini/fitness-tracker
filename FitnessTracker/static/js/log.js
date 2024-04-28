@@ -1,7 +1,6 @@
 class LogManager {
   constructor() {
     this.baseURL = pageManager.baseURL + "/log";
-    this.currentLog = null;
   }
 
   initialize() {
@@ -23,7 +22,7 @@ class LogManager {
         day.addEventListener("click", (e) => {
           // Set current log to selection and retrieve log
           this.currentLog = day;
-          this.getLog();
+          this.getLog(day);
         });
       } else {
         // For future dates don't add event listeners and remove day class to prevent hover styling
@@ -31,11 +30,12 @@ class LogManager {
       }
     });
   }
-  getCalendarDate(day) {
+  getCalendarDate(day = null) {
     const monthAndYear = document.querySelector("#month-name");
     let month = parseInt(monthAndYear.dataset.month);
     let year = parseInt(monthAndYear.dataset.year);
-    return { year: year, month: month, day: parseInt(day.dataset.day) };
+    day = parseInt(day?.dataset.day) ?? null;
+    return { year: year, month: month, day: day };
   }
   getCalendar(calendarNav) {
     const navDate = this.getCalendarNavDate(calendarNav);
@@ -65,17 +65,10 @@ class LogManager {
     }
     return currentCalendarDate;
   }
-  getCurrentLogDate() {
-    const monthAndYear = document.querySelector("#month-name");
-    const year = monthAndYear.dataset.year;
-    const month = monthAndYear.dataset.month;
-    const day = this.currentLog.dataset.day;
-    return { year: year, month: month, day: day };
-  }
 
-  getLog() {
+  getLog(day) {
     // Get info from currently selected log
-    const logDate = this.getCurrentLogDate();
+    const logDate = this.getCalendarDate(day);
     const url = `${this.baseURL}/${logDate.year}/${logDate.month}/${logDate.day}`;
 
     // Fetch page and open log popup

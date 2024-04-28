@@ -144,14 +144,10 @@ class Workout(models.Model):
     def get_workout(cls, user, workout_name):
         # Get workout for user or default user, prioritizing user
         workout = get_user_model_or_default(user, Workout, workout_name).first()
-
         if not workout:
-            workout, _ = cls.objects.get_or_create(
-                user=User.get_default_user(), name=workout_name
-            )
+            workout, _ = cls.objects.get_or_create(user=user, name=workout_name)
         elif workout.user == User.get_default_user():
             workout = clone_for_user(workout, user)
-
         return workout
 
 
@@ -263,8 +259,9 @@ class RoutineSettings(models.Model):
                     weeks_in_routine = Week.objects.filter(routine=self.routine).count()
                     self.week_number = (self.week_number % weeks_in_routine) + 1
         elif direction == "prev":
-            self.workout_index = (self.workout_index - 1) % workouts_count
-            if self.workout_index == workouts_count - 1:
+            if self.workout_index > 0:
+                self.workout_index -= 1
+            else:
                 self.day_number = 7 if self.day_number == 1 else self.day_number - 1
                 if self.day_number == 7:
                     weeks_in_routine = Week.objects.filter(routine=self.routine).count()
@@ -273,6 +270,10 @@ class RoutineSettings(models.Model):
                         if self.week_number == 1
                         else self.week_number - 1
                     )
+                    count = Workout.objects.filter(
+                        dayworkout__day=self._get_day()
+                    ).count()
+                    self.workout_index = count - 1 if count > 0 else 0
 
         self.save()
 

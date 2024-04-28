@@ -1,23 +1,20 @@
 from django.views.generic import TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse, Http404
-from rest_framework import status, viewsets
-from rest_framework.views import APIView
+from django.http import JsonResponse
+from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.decorators import action
-from users.models import User
 from .models import Workout, Exercise, WorkoutSettings, Routine, RoutineSettings
 from .serializers import (
     RoutineSerializer,
     RoutineSettingsSerializer,
     ExerciseSerializer,
     WorkoutSerializer,
+    WorkoutSettingsSerializer,
 )
 from .forms import WorkoutSettingsForm, ExerciseForm
 from .base import ExerciseTemplateView, WorkoutTemplateView
-from common.base import BaseTemplateView, BaseOwnerViewSet
+from common.base import BaseOwnerViewSet
 from common.common_utils import clone_for_user
 
 
@@ -32,19 +29,6 @@ class WorkoutView(WorkoutTemplateView):
             user=self.request.user
         )
 
-        return context
-
-
-class WorkoutSettingsView(WorkoutTemplateView):
-    template_name = "workout/settings/settings.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        user_workout_settings = WorkoutSettings.objects.filter(
-            user=self.request.user
-        ).first()
-        context["form"] = WorkoutSettingsForm(instance=user_workout_settings)
         return context
 
 
@@ -70,38 +54,41 @@ class WorkoutViewSet(BaseOwnerViewSet):
             obj.save()
 
 
-class WorkoutSettingsSaveView(LoginRequiredMixin, FormView):
-    model = WorkoutSettings
-    form_class = WorkoutSettingsForm
+class WorkoutSettingsView(WorkoutTemplateView):
+    template_name = "workout/settings/settings.html"
 
-    def form_valid(self, form):
-        workout_settings, created = WorkoutSettings.objects.get_or_create(
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        user_workout_settings = WorkoutSettings.objects.filter(
             user=self.request.user
-        )
-        workout_settings.auto_update_five_rep_max = form.cleaned_data[
-            "auto_update_five_rep_max"
-        ]
-        workout_settings.show_rest_timer = form.cleaned_data["show_rest_timer"]
-        workout_settings.show_workout_timer = form.cleaned_data["show_workout_timer"]
-        workout_settings.save()
+        ).first()
+        context["form"] = WorkoutSettingsForm(instance=user_workout_settings)
+        return context
 
-        return JsonResponse({"success": True}, safe=False)
+
+class WorkoutSettingsViewSet(BaseOwnerViewSet):
+    queryset = WorkoutSettings.objects.all()
+    serializer_class = WorkoutSettingsSerializer
+
+    def get_object(self):
+        return WorkoutSettings.objects.get(user=self.request.user)
+
+    @action(detail=False, methods=["PUT", "PATCH"])
+    def update_settings(self, request):
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance=instance, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            print(request.data)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ExerciseSettingsView(ExerciseTemplateView):
     template_name = "workout/exercise_settings.html"
-
-
-class EditExerciseView(LoginRequiredMixin, FormView):
-    form_class = ExerciseForm
-    template_name = "workout/edit_exercise.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        exercise_name = self.kwargs.get("exercise_name")
-        context["exercise"] = Exercise.get_exercise(self.request.user, exercise_name)
-
-        return context
 
 
 class ExerciseViewSet(BaseOwnerViewSet):
@@ -135,38 +122,37 @@ class RoutineViewSet(BaseOwnerViewSet):
     serializer_class = RoutineSerializer
 
 
-class GetRoutineWorkoutView(WorkoutTemplateView, TemplateView):
-    template_name = "workout/workout_session.html"
-
-    def get_context_data(self, **kwargs):
-        direction = kwargs["direction"]
-        routine_settings = RoutineSettings.objects.get(user=self.request.user)
-
-        if direction == "next":
-            routine_settings.get_next_workout()
-        elif direction == "prev":
-            routine_settings.get_prev_workout()
-        context = super().get_context_data(**kwargs)
-        return context
-
-
 class RoutineSettingsViewSet(BaseOwnerViewSet):
     queryset = RoutineSettings.objects.all()
     serializer_class = RoutineSettingsSerializer
 
-    @action(detail=False, methods=["get"], url_path="next_workout")
+    @action(detail=False, methods=["get"])
     def next_workout(self, request):
         routine_settings = RoutineSettings.objects.get(user=request.user)
         next_workout = routine_settings.get_next_workout()
-        serializer = WorkoutSerializer(next_workout, context={"configure": True})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        data = self.get_workout_data(routine_settings, next_workout)
+        return Response(data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["get"], url_path="previous_workout")
+    @action(detail=False, methods=["get"])
     def previous_workout(self, request):
         routine_settings = RoutineSettings.objects.get(user=request.user)
         previous_workout = routine_settings.get_previous_workout()
-        serializer = WorkoutSerializer(previous_workout, context={"configure": True})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        data = self.get_workout_data(routine_settings, previous_workout)
+        return Response(data, status=status.HTTP_200_OK)
+
+    def get_workout_data(self, settings_instance, workout_instance):
+        serializer = WorkoutSerializer(
+            instance=workout_instance, context={"configure": True}
+        )
+        data = serializer.data
+        data.update(
+            {
+                "routine_name": settings_instance.routine.name,
+                "week": settings_instance.week_number,
+                "day": settings_instance.day_number,
+            }
+        )
+        return data
 
 
 class GetActiveWorkoutSearchListView(TemplateView):

@@ -7,6 +7,7 @@ from .models import (
     RoutineSettings,
     DayWorkout,
     Exercise,
+    WorkoutSettings,
 )
 from .services import configure_workout
 
@@ -80,8 +81,8 @@ class RoutineSerializer(serializers.ModelSerializer):
                 )
                 DayWorkout.objects.filter(day=day).delete()
                 for workout_name in workouts_data:
-                    workout, _ = Workout.objects.get_or_create(
-                        name=workout_name, user=self.context["request"].user
+                    workout = Workout.get_workout(
+                        workout_name=workout_name, user=self.context["request"].user
                     )
                     day.workouts.add(workout.id)
         return routine
@@ -144,3 +145,10 @@ class WorkoutSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ["user"]
         model = Workout
+
+
+class WorkoutSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = "__all__"
+        read_only_fields = ["user"]
+        model = WorkoutSettings

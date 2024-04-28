@@ -1,0 +1,35 @@
+<template id="exercise-template">
+  <div id="exercise" class="exercise col col-lg col-align-center border bg-secondary gap-md p">
+    <input type="hidden" name="exercise-pk" id="exercise-pk" class="id">
+    <input type="hidden" name="exercise-name" id="exercise-name" class="name">
+    <div class="exercise-name row text-center">
+    </div>
+    <div class="row row-center gap-md max-rep">
+      5-Rep Max:
+      <input type="number" class="round-float amount input-sm text-center five_rep_max" name="five-rep-max" value="{{ exercise.five_rep_max }}">
+      {{ user_settings.weight_unit }}
+    </div>
+    <hr class="half-width">
+    <div class="sets">
+      <div class="set row row-center gap-lg">
+        <div class="row gap-md">
+          <div>
+            <input type="number" class="weight input-sm text-center default_weight" name="default-weight" step=".5" value="{{ exercise.default_weight }}">
+          </div>
+          <div>
+            Default {{ user_settings.weight_unit }}
+          </div>
+        </div>
+        <div class="row gap-md">
+          <div>
+            <input type="number" class="reps input-xs text-center default_reps" name="default-reps" value="{{ exercise.default_reps }}">
+          </div>
+          <div>
+            Default Reps
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+

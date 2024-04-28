@@ -1,6 +1,6 @@
 from datetime import timedelta
 from django.db.models import Q, When, Case, QuerySet, Model, Subquery, OuterRef
-from django.db import models
+from django.db import models, transaction
 from django.shortcuts import get_object_or_404
 import matplotlib
 import matplotlib.dates as mdates
@@ -174,10 +174,31 @@ def clone_for_user(instance: models.Model, user) -> models.Model:
     if not instance.pk:
         raise ValueError("Cannot clone unsaved model instance")
 
-    instance.pk = None
-    instance.user = user
-    instance.save()
+    with transaction.atomic():
+        m2m_data = get_many_to_many_objs(instance)
+
+        instance.pk = None
+        instance.user = user
+        instance.save()
+
+        clone_many_to_many_fields(instance, m2m_data)
+
     return instance
+
+
+def clone_many_to_many_fields(instance: models.Model, m2m_data):
+    for field_name, related_objects in m2m_data.items():
+        m2m_field = getattr(instance, field_name)
+        m2m_field.set(related_objects)
+
+
+def get_many_to_many_objs(instance: models.Model) -> dict:
+    m2m_data = {}
+    for field in instance._meta.get_fields():
+        if field.many_to_many and hasattr(instance, field.name):
+            m2m_field = getattr(instance, field.name)
+            m2m_data[field.name] = list(m2m_field.all())
+    return m2m_data
 
 
 def get_user_model_or_default(
@@ -186,15 +207,19 @@ def get_user_model_or_default(
     name: str = None,
     include_default: bool = True,
 ) -> QuerySet:
-
-    query = Q(name__iexact=name) & Q(user=user) if name else Q(user=user)
+    query = Q(user=user)
+    if name:
+        query &= Q(name__iexact=name)
 
     if include_default:
         default_user = User.get_default_user()
-        query |= Q(user=default_user)
+        default_query = Q(user=default_user)
+        if name:
+            default_query &= Q(name__iexact=name)
+
+        query = query | default_query
         return query_default_included(model, user, default_user, query)
-    else:
-        return model.objects.filter(query)
+    return model.objects.filter(query)
 
 
 def query_default_included(

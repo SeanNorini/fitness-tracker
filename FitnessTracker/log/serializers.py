@@ -100,6 +100,7 @@ class WorkoutLogSerializer(serializers.ModelSerializer):
             self.handle_workout_sets_creation(
                 instance, validated_data.get("workout_exercises", [])
             )
+            instance.total_time = validated_data.get("total_time")
             self.validate_and_save(instance)
         return instance
 

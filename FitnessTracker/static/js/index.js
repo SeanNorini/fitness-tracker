@@ -1,8 +1,10 @@
 const URLS = { BASE_URL: window.location.origin };
 const API = {
   BASE_URL: window.location.origin + "/api",
+  ROUTINES: "/routines/",
   ROUTINE_SETTINGS: "/routine_settings/",
   WORKOUTS: "/workouts/",
+  WORKOUT_SETTINGS: "/workout_settings/",
   EXERCISES: "/exercises/",
   WORKOUT_LOGS: "/workout_logs/",
   FOOD_LOGS: "/food_logs/",
@@ -474,10 +476,17 @@ class FormUtils {
         return;
       }
 
-      if (element.type === "radio" && element.checked) {
+      if (
+        (element.type === "radio" || element.type === "checkbox") &&
+        element.checked
+      ) {
         formData[element.name] = element.value;
       } else if (element.value || settings.blankFields) {
-        formData[element.name] = element.value;
+        if (element.type === "checkbox") {
+          formData[element.name] = "off";
+        } else {
+          formData[element.name] = element.value;
+        }
       }
     });
 
@@ -614,4 +623,13 @@ function splitDate(date) {
   const month = parseInt(dateParts[1], 10);
   const day = parseInt(dateParts[2], 10);
   return { year: year, month: month, day: day };
+}
+
+function debounce(func, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    const context = this;
+    timer = setTimeout(() => func.apply(context, args), delay);
+  };
 }

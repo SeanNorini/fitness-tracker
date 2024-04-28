@@ -1,13 +1,12 @@
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.db import IntegrityError
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from selenium import webdriver
 from unittest.mock import patch
 import time
 from users.models import User
 from common.test_globals import *
+from common.test_utils import SeleniumTestCase
 from common.selenium_utils import (
     get_value,
     fill_form,
@@ -24,23 +23,6 @@ from common.test_utils import (
 
 from users.forms import RegistrationForm
 from users.services import account_token_generator
-
-
-class SeleniumTestCase(StaticLiveServerTestCase):
-    driver = None
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.driver = webdriver.Chrome()
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        cls.driver.quit()
-        super().tearDownClass()
-
-    def setUp(self) -> None:
-        self.user = User.objects.create_user(**CREATE_USER)
 
 
 class TestLogin(SeleniumTestCase):

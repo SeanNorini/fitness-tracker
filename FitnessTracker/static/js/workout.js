@@ -45,8 +45,7 @@ class BaseWorkoutManager {
         )
       ) {
         this.fetchWorkout(e.target.dataset.pk);
-        this.selectWorkoutSearchBar.searchInput.value =
-          e.target.textContent.trim();
+        this.selectWorkoutSearchBar.setValue(e.target.textContent);
         this.unsavedChanges = false;
       }
     }
@@ -68,14 +67,23 @@ class BaseWorkoutManager {
     });
   }
 
-  fetchWorkoutSuccessHandler(response) {
+  fetchWorkoutSuccessHandler(data) {
     this.clearWorkout();
-    console.log(response);
-    for (let i = 0; i < response["exercises"].length; i++) {
-      const exercise = response["exercises"][i];
+    for (let i = 0; i < data["exercises"].length; i++) {
+      const exercise = data["exercises"][i];
       this.updateExercises(exercise);
     }
+    this.updateRoutineHeader(data);
     this.unsavedChanges = false;
+  }
+
+  updateRoutineHeader(data) {
+    if (!data["routine_name"]) {
+      return;
+    }
+    const header = document.getElementById("workout-routine");
+    header.textContent = `${data["routine_name"]}, Week #${data["week"]}, Day#${data["day"]}`;
+    this.selectWorkoutSearchBar.setValue(data["workout_name"]);
   }
 
   clearWorkout() {
@@ -322,7 +330,7 @@ class WorkoutManager extends BaseWorkoutManager {
 
   initializeTimers() {
     if (this.showRestTimerSetting === "True") {
-      this.restTimer = new Timer("rest-timer");
+      this.restTimer = new Timer("rest-timer-display");
     } else {
       this.restTimer = null;
     }
@@ -421,7 +429,7 @@ class WorkoutManager extends BaseWorkoutManager {
   };
 
   setComplete(e) {
-    if (this.showRestTimerSetting.value === "True" && e.target.checked) {
+    if (this.showRestTimerSetting === "True" && e.target.checked) {
       this.showRestTimer();
     }
   }
@@ -567,42 +575,34 @@ class WorkoutSettingsManager extends BaseWorkoutManager {
     element.querySelector(".amount").value = 0;
   }
 
-  readWorkoutSettings() {
-    const formData = new FormData();
-    const autoUpdateFiveRepMax = document.getElementById(
-      "id_auto_update_five_rep_max",
-    );
-    const showRestTimer = document.getElementById("id_show_rest_timer");
-    const showWorkoutTimer = document.getElementById("id_show_workout_timer");
-
-    formData.append("auto_update_five_rep_max", autoUpdateFiveRepMax.checked);
-    formData.append("show_rest_timer", showRestTimer.checked);
-    formData.append("show_workout_timer", showWorkoutTimer.checked);
-
+  workoutSettingsFormPostprocessHandler(formData) {
+    Object.entries(formData).forEach(([key, value]) => {
+      formData[key] = value.replace("id_", "");
+    });
     return formData;
   }
 
   saveWorkoutSettings() {
     // Get settings data
-    const formData = this.readWorkoutSettings();
+    const formData = FormUtils.getFormData("workout_settings", {
+      postprocessFunc: this.workoutSettingsFormPostprocessHandler,
+    });
 
-    pageManager
-      .fetchData({
-        url: `${this.baseURL}/settings/save/`,
-        method: "POST",
-        body: formData,
-        responseType: "json",
-      })
-      .then((response) => {
-        if (response.success === true) {
-          const successMessage = document.querySelector(".success-message");
-          successMessage.classList.remove("hidden");
-          setTimeout(() => {
-            successMessage.classList.add("hidden");
-          }, 3000);
-        }
-      });
+    FetchUtils.apiFetch({
+      url: `${API.BASE_URL}${API.WORKOUT_SETTINGS}update_settings/`,
+      method: "PUT",
+      body: formData,
+      successHandler: this.saveWorkoutSettingsSuccessHandler,
+    });
   }
+
+  saveWorkoutSettingsSuccessHandler = (response) => {
+    const successMessage = document.querySelector(".success-message");
+    successMessage.classList.remove("hidden");
+    setTimeout(() => {
+      successMessage.classList.add("hidden");
+    }, 3000);
+  };
 
   saveWorkout(successHandler, errorHandler = null) {
     const exercises = this.validateWorkoutForm();
@@ -611,7 +611,7 @@ class WorkoutSettingsManager extends BaseWorkoutManager {
     }
 
     // Get data from current workout
-    const formData = this.readCurrentWorkout();
+    const formData = this.readWorkout();
     const method = this.overwrite ? "PUT" : "POST";
     const pk = this.overwrite
       ? document.getElementById("workout-pk").value + "/"
@@ -643,7 +643,7 @@ class WorkoutSettingsManager extends BaseWorkoutManager {
     document.getElementById("workout-pk").value = response["id"];
   };
 
-  readCurrentWorkout(exercises) {
+  readWorkout() {
     // Get workout name, returns null if user didn't confirm
     const workoutName = this.saveWorkoutConfirmation();
     if (workoutName === null || workoutName.trim() === "") {
@@ -652,8 +652,8 @@ class WorkoutSettingsManager extends BaseWorkoutManager {
     const workoutData = { name: workoutName, exercises: [], config: [] };
 
     // Iterate form fields and populate FormData
-    const workoutExercises = document.querySelectorAll(".exercise");
-    workoutExercises.forEach((exercise) => {
+    const exercises = document.querySelectorAll(".exercise");
+    exercises.forEach((exercise) => {
       const exerciseName = exercise
         .querySelector(".exercise-name")
         .textContent.trim();

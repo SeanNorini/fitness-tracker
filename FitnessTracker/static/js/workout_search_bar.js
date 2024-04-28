@@ -140,4 +140,12 @@ class SearchBar_ {
       }, delay);
     };
   }
+
+  setValue(value) {
+    this.searchInput.value = capitalize(value.trim());
+  }
+
+  getValue() {
+    return this.searchInput.value.trim();
+  }
 }
