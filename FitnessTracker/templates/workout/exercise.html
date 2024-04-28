@@ -1,13 +1,15 @@
 {% load custom_filters %}
 <div class="drag-and-drop-element exercise col-lg gap-md border bg-secondary p">
-  <input type="hidden" class="default_weight" value="{{ sets.default_weight|default:'0' }}">
-  <input type="hidden" class="default_reps" value="{{ sets.default_reps|default:'0' }}">
-  <input type="hidden" class="name" value="{{ exercise }}">
-  <input type="hidden" class="id" value="{{ sets.id }}">
+  <input type="hidden" class="default_weight" value="{{ sets.default_weight|default:'' }}">
+  <input type="hidden" class="default_reps" value="{{ sets.default_reps|default:'' }}">
+  <input type="hidden" class="name" value="{{ exercise|default:'' }}">
+  <input type="hidden" class="id" value="{{ sets.id|default:'' }}">
   <div class="col col-align-center gap-md">
     <div class="row row row-center gap-md">
       <div class="exercise-name drag-and-drop-handlebar">
-        {{ exercise.name }}
+        {% if exercise %}
+          {{ exercise.name }}
+        {% endif %}
       </div>
       <div>
         <span class="material-symbols-outlined delete-exercise hover-red text-xxl">
@@ -17,17 +19,19 @@
     </div>
     <hr class="hr half-width">
     <div class="sets col col-align-center gap-md">
-      {% for weight, reps in exercise.sets.weights|zip_lists:exercise.sets.reps %}
-        {% include 'workout/set.html' %}
-      {% endfor %}
+      {% if exercise %}
+        {% for weight, reps in exercise.sets.weights|zip_lists:exercise.sets.reps %}
+          {% include 'workout/exercise_set.html' %}
+        {% endfor %}
+      {% endif %}
     </div>
     <hr class="hr half-width">
     <div class="row row-center">
-      <span class="material-symbols-outlined delete-set hover-red text-xxl">
+      <span class="material-symbols-outlined delete-set hover-pointer text-xxl">
         remove
       </span>
       <div class="text-lg">&nbspSet&nbsp</div>
-      <span class="material-symbols-outlined add-set hover-red text-xxl">
+      <span class="material-symbols-outlined add-set hover-pointer text-xxl">
         add
       </span>
     </div>

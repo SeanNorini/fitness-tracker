@@ -34,6 +34,7 @@ class BaseWorkoutManager {
       const exercisePK = e.target.dataset.pk;
       this.addExercise(exercisePK);
       this.unsavedChanges = true;
+      this.addExerciseSearchBar.closeSearchList(e);
     }
   };
 
@@ -47,6 +48,7 @@ class BaseWorkoutManager {
         this.fetchWorkout(e.target.dataset.pk);
         this.selectWorkoutSearchBar.setValue(e.target.textContent);
         this.unsavedChanges = false;
+        this.selectWorkoutSearchBar.closeSearchList(e);
       }
     }
   };
@@ -198,14 +200,14 @@ class BaseWorkoutManager {
 
     this.workoutController.addEventListener("focusout", (e) => {
       if (e.target.dataset.type === "float") {
-        InputUtils.roundedFloatHandler(e.target, 0, 1500, 0.25);
+        InputUtils.roundedFloatHandler(e.target, 0, 1500, 0.5);
       } else if (e.target.dataset.type === "int") {
         InputUtils.roundedIntegerHandler(e.target, 0, 100);
       }
     });
     this.workoutController.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && e.target.dataset.type === "float") {
-        InputUtils.roundedFloatHandler(e.target, 0, 1500, 0.25);
+        InputUtils.roundedFloatHandler(e.target, 0, 1500, 0.5);
       } else if (e.key === "Enter" && e.target.dataset.type === "int") {
         InputUtils.roundedIntegerHandler(e.target, 0, 100);
       }
@@ -479,6 +481,7 @@ class WorkoutSettingsManager extends BaseWorkoutManager {
         );
         this.deleteWorkoutBtn = document.getElementById("delete-workout");
         super.initialize();
+        this.dragAndDrop.initialize("-20rem");
       });
   }
   addWorkoutListeners() {

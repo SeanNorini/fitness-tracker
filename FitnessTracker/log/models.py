@@ -37,7 +37,7 @@ class WorkoutLog(models.Model):
             "exercises": [],
         }
 
-        workout_sets = WorkoutSet.objects.filter(workout_log=self).order_by("pk")
+        workout_sets = self.workout_sets.order_by("pk")
         exercise_summary = {"name": workout_sets[0].exercise.name, "sets": []}
         for workout_set in workout_sets:
             if exercise_summary["name"] != workout_set.exercise.name:

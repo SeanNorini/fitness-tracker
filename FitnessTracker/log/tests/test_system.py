@@ -1,8 +1,10 @@
 import time
-from common.test_globals import LOGIN_USER_FORM_FIELDS
 from common.test_utils import SeleniumTestCase
 from common.selenium_utils import find_element, click, login, find_elements
 from selenium.webdriver.common.by import By
+from users.models import User
+from log.models import WeightLog, WorkoutLog
+from datetime import datetime
 
 MONTHS = {
     "January": 1,
@@ -35,6 +37,7 @@ class TestLogView(SeleniumTestCase):
             {"username": "default", "password": "demouser"},
         )
         self.driver.get(self.live_server_url + "/log")
+        self.driver.implicitly_wait(5)
 
     def test_navigate_calendar(self):
         """Verify calendar navigation works"""
@@ -46,7 +49,6 @@ class TestLogView(SeleniumTestCase):
             self.assertEqual(year, "2024")
 
         with self.subTest("Navigate previous returns correct month"):
-            time.sleep(1)
             click(self.driver, "id", "nav-prev")
             time.sleep(1)
             month, year = find_element(self.driver, "id", "month-name").text.split(" ")
@@ -54,7 +56,6 @@ class TestLogView(SeleniumTestCase):
             self.assertEqual(year, "2024")
 
         with self.subTest("Navigate next returns correct month"):
-            time.sleep(1)
             click(self.driver, "id", "nav-next")
             time.sleep(1)
             month, year = find_element(self.driver, "id", "month-name").text.split(" ")
@@ -63,7 +64,6 @@ class TestLogView(SeleniumTestCase):
 
         with self.subTest("Rollover end of last year"):
             self.driver.get(self.live_server_url + "/log/2024/1")
-            time.sleep(1)
             click(self.driver, "id", "nav-prev")
             time.sleep(1)
             month, year = find_element(self.driver, "id", "month-name").text.split(" ")
@@ -72,7 +72,6 @@ class TestLogView(SeleniumTestCase):
 
         with self.subTest("Rollover beginning of next year"):
             self.driver.get(self.live_server_url + "/log/2024/12")
-            time.sleep(1)
             click(self.driver, "id", "nav-next")
             time.sleep(1)
             month, year = find_element(self.driver, "id", "month-name").text.split(" ")
@@ -80,7 +79,7 @@ class TestLogView(SeleniumTestCase):
             self.assertEqual(year, "2025")
 
     def test_get_log(self):
-        """Pulls up a log and verifies all logs. Should verify a weight log,
+        """Pulls up a daily log and verifies all logs. Should verify a weight log,
         a single workout, and a single cardio session"""
         self.driver.get(self.live_server_url + "/log/2024/4")
         time.sleep(1)

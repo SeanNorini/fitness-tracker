@@ -4,7 +4,7 @@
   </div>
   <div class="row row-center row-nowrap gap-md">
     <div>
-      <input type="number" class="weight input-sm bg-primary text-primary text-center border" data-id="float" value="{{ weight|default:"0" }}">
+      <input type="number" class="weight input-sm bg-primary text-primary text-center border" data-type="float" value="{{ weight|default:'0' }}">
     </div>
     <div>
       {{ user_settings.weight_unit }}
@@ -12,7 +12,7 @@
   </div>
   <div class="row row-center row-nowrap gap-md">
     <div>
-      <input type="number" class="reps input-xs bg-primary text-primary text-center border" data-id="int" value="{{ reps|default:"0" }}">
+      <input type="number" class="reps input-xs bg-primary text-primary text-center border" data-type="int" value="{{ reps|default:'0' }}">
     </div>
     <div>
     Reps

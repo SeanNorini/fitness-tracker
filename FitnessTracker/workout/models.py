@@ -146,7 +146,9 @@ class Workout(models.Model):
         workout = get_user_model_or_default(user, Workout, workout_name).first()
         if not workout:
             workout, _ = cls.objects.get_or_create(user=user, name=workout_name)
-        elif workout.user == User.get_default_user():
+        elif (
+            workout.user == User.get_default_user() and user != User.get_default_user()
+        ):
             workout = clone_for_user(workout, user)
         return workout
 

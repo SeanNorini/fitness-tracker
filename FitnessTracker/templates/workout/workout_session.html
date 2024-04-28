@@ -77,6 +77,10 @@
   </div>
 
 </form>
-{% include "workout/exercise_template.html"  %}
-{% include "workout/exercise_set_template.html"  %}
+<template id="exercise-template">
+  {% include "workout/exercise.html"  %}
+</template>
+<template id="exercise-set-template">
+  {% include "workout/exercise_set.html"  %}
+</template>
 {% include "base/popup.html" with popup_id="rest-timer-popup" content_id="rest-timer"%}

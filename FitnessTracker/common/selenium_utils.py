@@ -3,7 +3,18 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
+from selenium.webdriver.support.wait import WebDriverWait
+
+SELECTOR_TYPE = {
+    "id": By.ID,
+    "name": By.NAME,
+    "class": By.CLASS_NAME,
+    "tag": By.TAG_NAME,
+    "css": By.CSS_SELECTOR,
+    "xpath": By.XPATH,
+}
 
 
 def select(
@@ -68,7 +79,7 @@ def click(driver: webdriver.Chrome, selector_type, selector_value) -> None:
 
 def find_element(
     driver: webdriver.Chrome | WebElement, selector_type: str, selector_value: str
-) -> WebElement:
+) -> WebElement | None:
     """
     Finds and returns a WebElement using the provided selector.
 
@@ -80,23 +91,15 @@ def find_element(
     Returns:
         WebElement: The found WebElement. Not found returns None.
     """
-    element = None
-    # Find element by given css selector
-    match selector_type:
-        case "id":
-            element = driver.find_element(By.ID, selector_value)
-        case "name":
-            element = driver.find_element(By.NAME, selector_value)
-        case "class":
-            element = driver.find_element(By.CLASS_NAME, selector_value)
-        case "tag":
-            element = driver.find_element(By.TAG_NAME, selector_value)
-    return element
+    try:
+        return driver.find_element(SELECTOR_TYPE[selector_type], selector_value)
+    except NoSuchElementException:
+        return None
 
 
 def find_elements(
     driver: webdriver.Chrome | WebElement, selector_type: str, selector_value: str
-) -> list[WebElement]:
+) -> list[WebElement] | None:
     """
     Finds and returns a list of WebElements using the provided selector.
 
@@ -106,20 +109,12 @@ def find_elements(
         selector_value (str): The value of the selector.
 
     Returns:
-        WebElement: The found WebElement. Not found returns None.
+        list[WebElement]: The found WebElements. Not found returns None.
     """
-    elements = None
-    # Find elements by given css selector
-    match selector_type:
-        case "id":
-            elements = driver.find_elements(By.ID, selector_value)
-        case "name":
-            elements = driver.find_elements(By.NAME, selector_value)
-        case "class":
-            elements = driver.find_elements(By.CLASS_NAME, selector_value)
-        case "tag":
-            elements = driver.find_elements(By.TAG_NAME, selector_value)
-    return elements
+    try:
+        return driver.find_elements(SELECTOR_TYPE[selector_type], selector_value)
+    except NoSuchElementException:
+        return None
 
 
 def elements_exist(driver: webdriver.Chrome, elements: dict) -> bool:
@@ -196,30 +191,39 @@ def validate_required_fields(driver, form_id, required_fields) -> bool:
     return True
 
 
-def get_value(driver, selector_type, selector_value):
+def get_value(driver: webdriver.Chrome, selector_type: str, selector_value: str):
     try:
         element = find_element(driver, selector_type, selector_value)
-        if element:
-            return element.get_attribute("value")
-        else:
-            print(f"No element found with {selector_type}='{selector_value}'")
-            return None
+        return element.get_attribute("value")
     except NoSuchElementException as e:
-        print(f"Element not found: {e}")
+        print(f"No element found with {selector_type}='{selector_value}'")
         return None
 
 
-def is_selected(driver, selector_type, selector_value):
+def is_selected(
+    driver: webdriver.Chrome, selector_type: str, selector_value: str
+) -> bool:
     try:
         element = find_element(driver, selector_type, selector_value)
-        if element:
-            return element.is_selected()
-        else:
-            print(f"No element found with {selector_type}='{selector_value}'")
-            return None
+        return element.is_selected()
     except NoSuchElementException as e:
-        print(f"Element not found: {e}")
-        return None
+        print(f"No element found with {selector_type}='{selector_value}'")
+        return False
+
+
+def wait_until_visible(
+    driver: webdriver.Chrome, selector_type: str, selector_value: str
+) -> WebElement:
+    wait = WebDriverWait(driver, 5)
+    return wait.until(
+        EC.visibility_of_element_located((SELECTOR_TYPE[selector_type], selector_value))
+    )
+
+
+def set_date(driver, element_id, date_value):
+    driver.execute_script(
+        f"document.getElementById('{element_id}').value = '{date_value}';"
+    )
 
 
 def drag_y(driver, selector_type, selector_value, y_value):
