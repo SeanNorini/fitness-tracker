@@ -4,7 +4,7 @@
   <a href="https://github.com/jaammons/FitnessTracker">https://github.com/jaammons/FitnessTracker</a>
 </div>
 
-### Contributors
+### Contributors.
 
 - James Ammons - Project Manager
 - Sean Norini - Developer
@@ -14,7 +14,7 @@
 
 ### Setting up testing and development
 
-### Installation
+### Installation.
 
 1. Clone the repo
    ```sh
@@ -34,7 +34,7 @@
    pip install -r requirements.txt
    ```
 
-### Running Django
+### Running Django.
 
 1. Navigate to project folder in terminal
    ```sh
