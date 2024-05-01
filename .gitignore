@@ -5,5 +5,5 @@ __pycache__
 db.sqlite3
 staticfiles
 mediafiles
-.env
+.env*
 .idea
