@@ -1,6 +1,6 @@
 import datetime
 import time
-
+from selenium.webdriver.support.ui import WebDriverWait
 from log.models import WorkoutLog
 from workout.models import Workout, WorkoutSettings
 from selenium.webdriver.common.action_chains import ActionChains
@@ -44,6 +44,9 @@ class WorkoutTestCase(StaticLiveServerTestCase):
         )
         self.driver.get(self.live_server_url + "/workout/")
         self.driver.implicitly_wait(5)
+        WebDriverWait(self.driver, 10).until(
+            lambda driver: driver.execute_script("return document.readyState") == "complete"
+        )
 
     def select_from_search_list(self, search_bar_id, options_id, text):
         """
@@ -54,7 +57,6 @@ class WorkoutTestCase(StaticLiveServerTestCase):
         options_id (str): The ID of the search list element.
         text (str): The text of the item to select within the search list.
         """
-
         click(self.driver, "id", search_bar_id)
         search_list = wait_until_visible(self.driver, "id", options_id)
         click(search_list, "xpath", f"//div[contains(text(), '{text}')]")
@@ -66,6 +68,7 @@ class TestWorkout(WorkoutTestCase):
     def test_select_exercise(self):
         """Verifies that user is able to click on exercise list, select an exercise, and the exercise is
         added to the workout and the search list closes."""
+        search_bar = wait_until_visible(self.driver, "id", "add-exercise")
         result = self.select_from_search_list(
             "add-exercise", "add-exercise-options", "Bench Press"
         )
@@ -77,6 +80,7 @@ class TestWorkout(WorkoutTestCase):
 
     def test_select_workout(self):
         """Verifies that user can select a workout and the populated exercises match expected values"""
+        search_bar = wait_until_visible(self.driver, "id", "select-workout")
         result = self.select_from_search_list(
             "select-workout", "select-workout-options", "Starting Strength - A"
         )
@@ -94,7 +98,9 @@ class TestWorkout(WorkoutTestCase):
         self.select_from_search_list(
             "select-workout", "select-workout-options", "Starting Strength - A"
         )
+        time.sleep(1)
         click(self.driver, "id", "save-workout")
+        time.sleep(1)
         popup = find_element(self.driver, "id", "popup-message")
         self.assertEqual(popup.text, "Workout Saved")
         workout_log = (
@@ -206,6 +212,7 @@ class TestWorkout(WorkoutTestCase):
         time.sleep(3)
         rest_timer_display = find_element(self.driver, "id", "rest-timer-display")
         self.assertEqual(rest_timer_display.text, "00:03")
+
 
 
 class TestExerciseSettings(WorkoutTestCase):

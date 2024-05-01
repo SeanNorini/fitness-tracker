@@ -16,6 +16,7 @@ from common.selenium_utils import (
     is_selected,
     elements_exist,
     find_element,
+    wait_until_visible
 )
 from common.test_utils import (
     get_cookie_expiration_time,
@@ -273,9 +274,12 @@ class TestSettings(SeleniumTestCase):
             "email": "new_email@gmail.com",
             "confirm_email": "new_email@gmail.com",
         }
+        time.sleep(1)
+        wait_until_visible(self.driver, "id", "update-account")
         clear_form(self.driver, account_data)
         fill_form(self.driver, account_data)
         click(self.driver, "id", "update-account")
+        time.sleep(1)
         self.driver.get(self.live_server_url + "/user/settings/")
         time.sleep(1)
         first_name = get_value(self.driver, "name", "first_name")
@@ -286,9 +290,12 @@ class TestSettings(SeleniumTestCase):
         self.assertEqual(email, "new_email@gmail.com")
 
     def test_update_partial_account(self):
+        time.sleep(1)
+        wait_until_visible(self.driver, "id", "update-account")
         clear_form(self.driver, {"first_name": "newfirstname"})
         fill_form(self.driver, {"first_name": "newfirstname"})
         click(self.driver, "id", "update-account")
+        time.sleep(1)
         self.driver.get(self.live_server_url + "/user/settings/")
         time.sleep(1)
         first_name = get_value(self.driver, "name", "first_name")
@@ -297,17 +304,20 @@ class TestSettings(SeleniumTestCase):
         self.assertEqual(last_name, "last")
 
     def test_update_full_user_settings(self):
+        time.sleep(1)
         user_settings_data = {
             "age": 35,
             "height": 75,
             "body_weight": 200,
             "body_fat": 25,
         }
+        wait_until_visible(self.driver, "id", "update-user-settings")
         clear_form(self.driver, user_settings_data)
         fill_form(self.driver, user_settings_data)
         click(self.driver, "id", "system_of_measurement_1")
         click(self.driver, "id", "gender_1")
         click(self.driver, "id", "update-user-settings")
+        time.sleep(1)
         self.driver.get(self.live_server_url + "/user/settings/")
         time.sleep(1)
         age = get_value(self.driver, "name", "age")
@@ -322,10 +332,12 @@ class TestSettings(SeleniumTestCase):
         self.assertTrue(is_selected(self.driver, "id", "system_of_measurement_1"))
 
     def test_update_partial_user_settings(self):
+        time.sleep(1)
         user_settings_data = {
             "body_weight": 200,
             "body_fat": 25,
         }
+        wait_until_visible(self.driver, "id", "update-user-settings")
         clear_form(self.driver, user_settings_data)
         fill_form(self.driver, user_settings_data)
         click(self.driver, "id", "update-user-settings")

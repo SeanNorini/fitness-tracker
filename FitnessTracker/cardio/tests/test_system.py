@@ -53,18 +53,23 @@ class TestCardio(SeleniumTestCase):
         self.assertTrue("Current Day" in self.driver.page_source)
 
     def test_cardio_log_entry(self):
+        # Click on form elements and let them expand before dragging inputs
         click(self.driver, "id", "date-header")
-        time.sleep(1)
-        drag_y(self.driver, "id", "date", 40)
-
         click(self.driver, "id", "duration")
-        time.sleep(1)
+        click(self.driver, "id", "distance")
+        time.sleep(3)
+
+        element = find_element(self.driver, "id", "distance")
+        self.driver.execute_script("""
+        const viewPortHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        const elementTop = arguments[0].getBoundingClientRect().top;
+        window.scrollBy(0, elementTop-(viewPortHeight/2));
+        """, element)
+
+        drag_y(self.driver, "id", "date", 40)
         drag_y(self.driver, "id", "dur-hours", -20)
         drag_y(self.driver, "id", "dur-minutes", 20)
         drag_y(self.driver, "id", "dur-seconds", -20)
-
-        click(self.driver, "id", "distance")
-        time.sleep(1)
         drag_y(self.driver, "id", "dist-int", -40)
         drag_y(self.driver, "id", "dist-dec", -60)
 
