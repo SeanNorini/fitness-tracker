@@ -110,7 +110,6 @@ class EmailService:
         message = EmailMultiAlternatives(
             subject=subject,
             body=message_body,
-            from_email=os.environ["EMAIL_HOST_USER"],
             to=[self.user.email],
         )
         message.attach_alternative(html_body, "text/html")

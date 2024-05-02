@@ -1,14 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.shortcuts import render
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import viewsets
 from calendar import month_name
 from datetime import datetime
-from common.permissions import IsOwner
 from common.base import BaseOwnerViewSet, BaseTemplateView
 from .utils import Calendar
-from workout.models import Workout, Exercise, get_attribute_list
+from workout.models import Workout, Exercise
+from workout.base import ExerciseTemplateView
 from .serializers import (
     CardioLogSerializer,
     WorkoutLogSerializer,
@@ -98,7 +96,7 @@ class WorkoutLogTemplateView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class UpdateWorkoutLogTemplateView(LoginRequiredMixin, TemplateView):
+class UpdateWorkoutLogTemplateView(ExerciseTemplateView):
     template_name = "workout/workout_session.html"
 
     def get_context_data(self, **kwargs):
@@ -110,7 +108,7 @@ class UpdateWorkoutLogTemplateView(LoginRequiredMixin, TemplateView):
         ).data
 
         context["workouts"] = Workout.get_workout_list(self.request.user)
-        context["exercises"] = Exercise.get_exercise_list(self.request.user)
+
         return context
 
 

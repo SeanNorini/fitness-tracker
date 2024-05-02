@@ -32,7 +32,7 @@ class BaseOwnerViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         obj = self.get_object()
-        if obj.user == User.get_default_user():
+        if obj.user == User.get_default_user() and obj.user != User.get_default_user():
             raise PermissionDenied("Default workouts cannot be deleted.")
         return super().destroy(request, *args, **kwargs)
 

@@ -199,7 +199,7 @@ class LogManager {
     const workoutLogPK = workoutLog.querySelector(".workout-log-pk").value;
 
     FetchUtils.apiFetch({
-      url: `${API.BASE_URL}${API.WORKOUTS}${workoutLogPK}`,
+      url: `${API.BASE_URL}${API.WORKOUT_LOGS}${workoutLogPK}`,
       method: "DELETE",
       successHandler: (response) => {
         this.deleteWorkoutLogSuccessHandler(workoutLog);
