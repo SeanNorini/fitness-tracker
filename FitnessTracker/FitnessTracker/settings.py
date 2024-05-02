@@ -34,7 +34,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "50.16.0.112",
-    "wtccfitnesstracker.hopto.org",
+    "fitness-tracker.hopto.org",
 ]
 
 
