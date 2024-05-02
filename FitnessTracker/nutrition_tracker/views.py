@@ -57,7 +57,7 @@ class FetchNutritionSummaryAPIView(APIView):
     def get(self, request, *args, **kwargs):
         user_summary = FoodLogService.get_user_food_summary(request.user)
         end = timezone.localdate()
-        start = end - timedelta(days=13)
+        start = end - timedelta(days=6)
         user_summary["bar_chart"] = Graph(
             user_summary["bar_graph_data"], "Calories", "bar", start, end
         ).plot_graph()

@@ -102,11 +102,21 @@ class UpdateWorkoutLogTemplateView(ExerciseTemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         pk = self.kwargs.get("pk")
-        workout_log = WorkoutLog.objects.filter(user=self.request.user, pk=pk).first()
-        context["workout"] = WorkoutLogSerializer(
-            instance=workout_log, context={"include_defaults": True}
+        log = WorkoutLog.objects.filter(user=self.request.user, pk=pk).first()
+        log_data = WorkoutLogSerializer(
+            instance=log, context={"include_defaults": True}
         ).data
-
+        exercises = []
+        for key in list(log_data["exercises"].keys()):
+            exercise = log_data["exercises"].pop(key)
+            exercises.append(
+                {
+                    "name": key,
+                    "sets": {"weights": exercise["weights"], "reps": exercise["reps"]},
+                }
+            )
+        log_data["exercises"] = exercises
+        context["workout"] = log_data
         context["workouts"] = Workout.get_workout_list(self.request.user)
 
         return context
